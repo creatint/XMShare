@@ -6,9 +6,8 @@ import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -22,7 +21,7 @@ public class ExampleUnitTest {
     }
 
     @Test
-    public void TestURLDecoder(){
+    public void TestURLDecoder() {
 
 
         String url = "http://172.28.67.84:8888/storage/emulated/legacy/%E7%8C%8E%E8%B1%B9%E6%B8%85%E7%90%86%E5%A4%A7%E5%B8%88";
@@ -39,17 +38,35 @@ public class ExampleUnitTest {
     }
 
     @Test
-    public void testDot(){
+    public void testDot() {
 
         String fileName = "andro.id";
 
         //找不到就是返回-1
         int i = fileName.lastIndexOf(".");
 
-        String substring = fileName.substring(i+1);
+        String substring = fileName.substring(i + 1);
         System.out.println(substring);
         System.out.println(i);
 
 
     }
+
+
+    @Test
+    public void testStr() {
+
+        String str = "helnjnjnjnjnjnjnjnj211\0";
+
+        int indexOf = str.indexOf('\0');
+
+        CharSequence sequence = str.subSequence(0, indexOf);
+        String s = sequence.toString();
+
+        System.out.println(s);
+
+
+    }
+
+
 }

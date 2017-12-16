@@ -10,7 +10,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/httpcoreserver" />
-            <option value="$PROJECT_DIR$/transferManager" />
+            <option value="$PROJECT_DIR$/p2ptransfercore" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

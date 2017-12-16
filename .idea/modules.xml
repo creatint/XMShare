@@ -5,7 +5,9 @@
       <module fileurl="file://$PROJECT_DIR$/XMShare.iml" filepath="$PROJECT_DIR$/XMShare.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/httpcoreserver/httpcoreserver.iml" filepath="$PROJECT_DIR$/httpcoreserver/httpcoreserver.iml" />
-      <module fileurl="file://$PROJECT_DIR$/transferManager/transferManager.iml" filepath="$PROJECT_DIR$/transferManager/transferManager.iml" />
+      <module fileurl="file://$PROJECT_DIR$/p2ptransfercore/p2ptransfercore.iml" filepath="$PROJECT_DIR$/p2ptransfercore/p2ptransfercore.iml" />
+      <module fileurl="file://$PROJECT_DIR$/transfercore/transferManager.iml" filepath="$PROJECT_DIR$/transfercore/transferManager.iml" />
+      <module fileurl="file://$PROJECT_DIR$/p2ptransfercore/transfercore.iml" filepath="$PROJECT_DIR$/p2ptransfercore/transfercore.iml" />
     </modules>
   </component>
 </project>

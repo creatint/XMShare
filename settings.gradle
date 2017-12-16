@@ -1,1 +1,1 @@
-include ':app', ':httpcoreserver', ':transferManager'
+include ':app', ':httpcoreserver', ':p2ptransfercore'

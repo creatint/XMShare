@@ -1,19 +1,15 @@
 package com.merpyzf.xmshare.ui.view;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.MutableContextWrapper;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import com.merpyzf.httpcoreserver.ui.HttpServerActivity;
-import com.merpyzf.httpcoreserver.util.LogUtil;
-import com.merpyzf.transfermanager.XMCommunicate;
+import com.merpyzf.transfermanager.PeerCommunicate;
 import com.merpyzf.xmshare.R;
-
-import java.io.Console;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,19 +31,8 @@ public class MainActivity extends AppCompatActivity {
         mContext = this;
         mbind = ButterKnife.bind(this);
         mBtnSend = findViewById(R.id.btn_send_broadcast);
-        final XMCommunicate communicate = new XMCommunicate();
-
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                // 接收响应回来的消息
-                communicate.receiveUdpMsg(MainActivity.this);
-                LogUtil.i(TAG, "接收响应回来的消息");
-
-            }
-        }).start();
-
+        final PeerCommunicate communicate = new PeerCommunicate(this, null);
+        communicate.start();
 
         mBtnSend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,8 +42,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
 
-                        communicate.sendUdpMsg("Hello");
-
+                        communicate.sendBroadcast();
+                        Log.i("wk", "向全网发送广播");
                     }
                 }).start();
 

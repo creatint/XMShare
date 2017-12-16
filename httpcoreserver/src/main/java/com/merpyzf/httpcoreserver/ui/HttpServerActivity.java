@@ -17,7 +17,7 @@ import com.merpyzf.httpcoreserver.util.NetworkUtil;
 public class HttpServerActivity extends AppCompatActivity {
     private TextView tvIpAddress;
     private Button btnStart;
-    private Intent mServicentent;
+    private Intent mServicIentent;
 
 
     public static void start(Context context) {
@@ -42,9 +42,9 @@ public class HttpServerActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                mServicentent = new Intent(getApplicationContext(), WebService.class);
+                mServicIentent = new Intent(getApplicationContext(), WebService.class);
                 //开启一个service
-                startService(mServicentent);
+                startService(mServicIentent);
 
 
             }
@@ -55,9 +55,13 @@ public class HttpServerActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        if (mServicIentent!=null){
+            // 关闭一个Service
+            stopService(mServicIentent);
+        }
+
         super.onDestroy();
-        // 关闭一个Service
-        stopService(mServicentent);
+
 
     }
 

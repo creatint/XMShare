@@ -45,12 +45,16 @@ public class WebService extends Service {
         super.onDestroy();
         LogUtil.i(TAG, "onDestroy方法执行了");
 
-        if(mHttpRequestListener!=null){
+        if (mHttpRequestListener != null) {
 
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+
+
                     mHttpRequestListener.destroy();
+
+
                 }
             }).start();
 
