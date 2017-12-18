@@ -1,4 +1,4 @@
-package com.merpyzf.xmshare.util.timer;
+package com.merpyzf.transfermanager.util.timer;
 
 
 import android.os.Handler;
@@ -12,16 +12,16 @@ public class OSTimer implements Runnable
 {
     private Handler mHandler;
     private int mInterval;
-    private TimeOut mTimeout;
+    private Timeout mTimeout;
 
-    private boolean isCycle = false;
+    private boolean isCycle = true;
     private boolean isCancel = false;
 
-    public OSTimer(Handler handler, TimeOut timeout, int interval)
+    public OSTimer(Handler handler, Timeout timeout, int interval, boolean isCycle)
     {
         mTimeout = timeout;
         mInterval = interval;
-        isCycle = false;
+        this.isCycle = isCycle;
         if (handler != null)
             mHandler = handler;
         else

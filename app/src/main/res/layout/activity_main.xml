@@ -16,13 +16,21 @@
       />
 
 
+
     <Button
-        android:id="@+id/btn_send_broadcast"
+        android:id="@+id/btn_send"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="发送广播"
+        android:text="发送文件"
         />
 
+
+    <Button
+        android:id="@+id/btn_receive"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="接收文件"
+        />
 
 
 

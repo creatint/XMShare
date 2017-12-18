@@ -1,15 +1,13 @@
 package com.merpyzf.xmshare.util.timer;
 
+
 /**
- * Created by wangke on 2017/11/20.
+ * Created by 郭攀峰 on 2015/9/19.
  */
-
-public interface TimeOut {
-
+public interface TimeOut
+{
     /**
-     * 倒计时任务执行完成
+     * 定时器时间到了
      */
-    void completed();
-
-
+    public void onTimeOut();
 }

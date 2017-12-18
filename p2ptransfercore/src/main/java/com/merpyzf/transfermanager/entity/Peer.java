@@ -7,8 +7,11 @@ package com.merpyzf.transfermanager.entity;
 
 public class Peer {
 
+    // 昵称
     private String nickName;
+    // 主机地址
     private String hostAddress;
+
 
     public Peer() {
     }
@@ -33,4 +36,18 @@ public class Peer {
     public void setHostAddress(String hostAddress) {
         this.hostAddress = hostAddress;
     }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Peer peer = (Peer) o;
+
+        if (nickName != null ? !nickName.equals(peer.nickName) : peer.nickName != null)
+            return false;
+        return hostAddress != null ? hostAddress.equals(peer.hostAddress) : peer.hostAddress == null;
+    }
+
 }

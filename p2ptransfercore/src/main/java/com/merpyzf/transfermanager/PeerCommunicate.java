@@ -136,7 +136,7 @@ public class PeerCommunicate extends Thread {
         InetAddress broadcastAddress = null;
         try {
             broadcastAddress = NetworkUtil.getBroadcastAddress(mContext);
-            Log.i("wk", "广播地址-->" + broadcastAddress.getHostAddress());
+            Log.i("wk", "组播地址-->" + broadcastAddress.getHostAddress());
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
@@ -153,8 +153,9 @@ public class PeerCommunicate extends Thread {
     public void release() {
 
         if (mUdpSocket != null) {
-
+            isLoop = false;
             mUdpSocket.close();
+
         }
 
 
