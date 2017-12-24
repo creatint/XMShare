@@ -45,7 +45,7 @@ public class PeerCommunicate extends Thread {
             // 初始化发送端所用socket
             mUdpSocket = new DatagramSocket(null);
             mUdpSocket.setReuseAddress(true);
-            mUdpSocket.bind(new InetSocketAddress(Constant.PORT));
+            mUdpSocket.bind(new InetSocketAddress(Constant.UDP_PORT));
         } catch (SocketException e) {
             e.printStackTrace();
         }
@@ -142,7 +142,7 @@ public class PeerCommunicate extends Thread {
         }
         String sinMsg = signMessage.convertProtocolStr();
         Log.i("wk", sinMsg);
-        sendUdpData(sinMsg, broadcastAddress, Constant.PORT);
+        sendUdpData(sinMsg, broadcastAddress, Constant.UDP_PORT);
     }
 
 

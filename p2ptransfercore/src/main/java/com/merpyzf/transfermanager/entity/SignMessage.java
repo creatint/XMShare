@@ -26,7 +26,6 @@ public class SignMessage {
      * 3. 回复配对请求
      */
 
-
     public SignMessage() {
 
         this.packetName = getTime();

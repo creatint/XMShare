@@ -6,7 +6,7 @@ import android.util.Log;
 import com.merpyzf.transfermanager.constant.Constant;
 import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.entity.SignMessage;
-import com.merpyzf.transfermanager.p2pinterface.PeerCommunCallback;
+import com.merpyzf.transfermanager.interfaces.PeerCommunCallback;
 import com.merpyzf.transfermanager.util.NetworkUtil;
 import com.merpyzf.transfermanager.util.timer.OSTimer;
 import com.merpyzf.transfermanager.util.timer.Timeout;

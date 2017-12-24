@@ -14,7 +14,9 @@ public class Constant {
 
     public static final int BUFFER_LENGTH = 8192;
 
-    public static final int PORT = 8900;
+    public static final int UDP_PORT = 8900;
+
+    public static final int SOCKET_PORT = 8088;
 
     // 数据传输中使用的字符集编码
     public static final String S_CHARSET = "utf-8";
