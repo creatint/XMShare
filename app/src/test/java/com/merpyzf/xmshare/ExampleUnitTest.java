@@ -4,7 +4,12 @@ import com.merpyzf.httpcoreserver.constant.Constant;
 
 import org.junit.Test;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
 import java.net.URLDecoder;
 
 import static org.junit.Assert.assertEquals;
@@ -64,6 +69,59 @@ public class ExampleUnitTest {
         String s = sequence.toString();
 
         System.out.println(s);
+
+
+    }
+
+    @Test
+    public void testSocketServer() throws IOException {
+
+        ServerSocket serverSocket =null;
+
+        try {
+            serverSocket = new ServerSocket();
+            serverSocket.setReuseAddress(true);
+            serverSocket.bind(new InetSocketAddress(8888));
+
+
+            while (true){
+
+                System.out.println("阻塞中...");
+                Socket clientSocket = serverSocket.accept();
+                System.out.println("连接设备:"+clientSocket.getInetAddress().getHostAddress());
+
+
+
+            }
+
+
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            serverSocket.close();
+        }
+
+
+    }
+
+    @Test
+    public void testSocketClient(){
+
+
+        try {
+            Socket socket = new Socket();
+            socket.setReuseAddress(true);
+            socket.bind(new InetSocketAddress(8888));
+
+
+
+        } catch (SocketException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
     }

@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.merpyzf.transfermanager.PeerManager;
 import com.merpyzf.transfermanager.entity.Peer;
-import com.merpyzf.transfermanager.p2pinterface.PeerCommunCallback;
+import com.merpyzf.transfermanager.interfaces.PeerCommunCallback;
 import com.merpyzf.xmshare.R;
 
 import java.util.ArrayList;

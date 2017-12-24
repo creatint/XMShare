@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.merpyzf.httpcoreserver.ui.HttpServerActivity;
+import com.merpyzf.transfermanager.receive.Receiver;
 import com.merpyzf.xmshare.R;
 
 import butterknife.BindView;
@@ -22,6 +23,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button btnReceive;
     @BindView(R.id.btn_send)
     Button btnSend;
+    @BindView(R.id.btn_ss)
+    Button btnStartSs;
+
 
     private String TAG = MainActivity.class.getSimpleName();
     private Context mContext = null;
@@ -44,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnStartServer.setOnClickListener(this);
         btnReceive.setOnClickListener(this);
         btnSend.setOnClickListener(this);
+        btnStartSs.setOnClickListener(this);
 
 
     }
@@ -62,6 +67,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.btn_send:
                 SendActivity.start(mContext);
+                break;
+
+            case R.id.btn_ss:
+
+                Receiver receiver = new Receiver();
+                receiver.startReceive();
+
                 break;
 
             default:

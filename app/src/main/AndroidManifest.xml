@@ -22,15 +22,20 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".ui.view.MainActivity">
+
+        </activity>
+        <activity android:name=".ui.view.SplashActivity" />
+        <activity android:name=".ui.view.ReceiveActivity" />
+        <activity android:name=".ui.view.SendActivity" />
+        <activity android:name=".ui.view.activity.SelectFilesActivity">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
-        <activity android:name=".ui.view.SplashActivity" />
-        <activity android:name=".ui.view.ReceiveActivity" />
-        <activity android:name=".ui.view.SendActivity"></activity>
     </application>
 
 </manifest>
