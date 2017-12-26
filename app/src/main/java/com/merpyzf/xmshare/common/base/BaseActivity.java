@@ -1,4 +1,4 @@
-package com.merpyzf.xmshare.ui.common.base;
+package com.merpyzf.xmshare.common.base;
 
 import android.support.v7.app.AppCompatActivity;
 

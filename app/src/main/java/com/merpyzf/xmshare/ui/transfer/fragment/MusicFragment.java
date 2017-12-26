@@ -1,6 +1,6 @@
 package com.merpyzf.xmshare.ui.transfer.fragment;
 
-import com.merpyzf.xmshare.ui.common.base.BaseFragment;
+import com.merpyzf.xmshare.common.base.BaseFragment;
 
 /**
  * Created by wangke on 2017/11/20.

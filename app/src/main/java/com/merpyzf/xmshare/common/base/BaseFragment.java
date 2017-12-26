@@ -1,4 +1,4 @@
-package com.merpyzf.xmshare.ui.transfer.fragment;
+package com.merpyzf.xmshare.common.base;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,17 +9,26 @@ import android.view.ViewGroup;
 
 /**
  * Created by wangke on 2017/11/20.
- * 显示手机中所有App
  */
 
-public class APPFragment extends Fragment {
+public abstract class BaseFragment extends Fragment {
+
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
 
+
+        return inflater.inflate(getLayoutId(), container, false);
     }
+
+    /**
+     * 获取Fragment布局id
+     * @return
+     */
+    protected abstract int getLayoutId();
+
+
 
 
 }

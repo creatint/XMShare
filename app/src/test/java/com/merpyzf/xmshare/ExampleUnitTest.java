@@ -11,6 +11,17 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.ObservableSource;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
+import io.reactivex.functions.Predicate;
 
 import static org.junit.Assert.assertEquals;
 
@@ -126,5 +137,67 @@ public class ExampleUnitTest {
 
     }
 
+
+
+    @Test
+    public void testRxJava(){
+
+        List<String> mList = new ArrayList<>();
+
+
+        mList.add("1");
+        mList.add("2");
+
+
+        Observable.fromIterable(mList)
+                .filter(new Predicate<String>() {
+                    @Override
+                    public boolean test(String s) throws Exception {
+
+
+                        if ("1".equals(s)) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+
+                    }
+                })
+                .flatMap(new Function<String, ObservableSource<Integer>>() {
+                    @Override
+                    public ObservableSource<Integer> apply(final String s) throws Exception {
+                        return Observable.create(new ObservableOnSubscribe<Integer>() {
+                            @Override
+                            public void subscribe(ObservableEmitter<Integer> e) throws Exception {
+
+                                e.onNext(Integer.valueOf(s));
+
+                            }
+                        });
+                    }
+                }).subscribe(new Observer<Integer>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(Integer value) {
+
+                System.out.println(value);
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
+    }
 
 }
