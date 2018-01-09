@@ -3,6 +3,9 @@ package com.merpyzf.xmshare.ui.adapter;
 import android.content.Context;
 import android.os.Environment;
 import android.support.annotation.Nullable;
+import android.util.Log;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -12,6 +15,7 @@ import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Constant;
 import com.merpyzf.xmshare.ui.entity.ApkFile;
 import com.merpyzf.xmshare.ui.entity.MusicFile;
+import com.merpyzf.xmshare.ui.entity.PicFile;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -30,7 +34,7 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
     }
 
     @Override
-    protected void convert(BaseViewHolder helper, T item) {
+    protected void convert(BaseViewHolder helper, final T item) {
 
 
         if (item instanceof ApkFile) {
@@ -44,8 +48,6 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
 
 
             MusicFile musicFile = (MusicFile) item;
-
-
 
             helper.setText(R.id.tv_title, musicFile.getName());
             float size = musicFile.getSize() / (1024 * 1024 * 1f);
@@ -62,9 +64,48 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
                         .centerCrop()
                         .into((ImageView) helper.getView(R.id.iv_music_album));
             }
+
+
+        } else if (item instanceof PicFile) {
+
+
+            PicFile picFile = (PicFile) item;
+            Glide.with(mContext)
+                    .load(picFile.getPath())
+                    .crossFade()
+                    .centerCrop()
+                    .into((ImageView) helper.getView(R.id.iv_gallery));
+
+        }
+
+
+        CheckBox cb = helper.getView(R.id.rb_check);
+
+        if (cb != null) {
+
+            cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                    if (isChecked) {
+
+                        Log.i("wk", "文件被选中");
+                        // TODO: 2018/1/9 将选择的事件回调给外界
+
+
+                    } else {
+
+
+                    }
+
+
+                }
+            });
+
         }
 
 
     }
+
 
 }

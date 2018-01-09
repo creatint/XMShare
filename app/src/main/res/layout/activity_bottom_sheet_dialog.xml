@@ -1,34 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.design.widget.CoordinatorLayout
+    android:id="@+id/cl"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:fitsSystemWindows="true"
-    tools:context="com.merpyzf.xmshare.ui.view.activity.SelectFilesActivity">
-
-    <LinearLayout
+    android:fitsSystemWindows="true">
+    <Button
+        android:id="@+id/btn_bottomsheet"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:textAllCaps="false"
+        android:text="展示BottomSheet"
+        />
 
-        <android.support.design.widget.TabLayout
-            android:id="@+id/tabs"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        </android.support.design.widget.TabLayout>
-
-
-        <android.support.v4.view.ViewPager
-            android:id="@+id/viewpager"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        </android.support.v4.view.ViewPager>
-
-    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/bottom_sheet"
@@ -37,7 +22,7 @@
         app:behavior_hideable="false"
         app:behavior_peekHeight="50dp"
         app:layout_behavior="@string/bottom_sheet_behavior">
-        <!--peekHeight 当Bottom Sheets关闭的时候可以看到的高度-->
+    <!--peekHeight 当Bottom Sheets关闭的时候可以看到的高度-->
 
 
         <LinearLayout
@@ -64,6 +49,4 @@
             <!-- 你自己的代码-->
         </LinearLayout>
     </LinearLayout>
-
-
 </android.support.design.widget.CoordinatorLayout>

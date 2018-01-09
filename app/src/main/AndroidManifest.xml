@@ -23,6 +23,7 @@
         android:theme="@style/AppTheme">
         <activity android:name=".ui.view.MainActivity">
 
+
         </activity>
         <activity android:name=".ui.view.SplashActivity" />
         <activity android:name=".ui.view.ReceiveActivity" />
@@ -34,6 +35,10 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+
+        </activity>
+        <activity android:name=".ui.test.BottomSheetDialogActivity">
 
         </activity>
     </application>

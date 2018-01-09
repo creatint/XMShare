@@ -4,6 +4,7 @@ import com.merpyzf.transfermanager.entity.FileInfo;
 
 /**
  * Created by wangke on 2017/12/23.
+ * 音乐文件
  */
 
 public class MusicFile extends FileInfo {
@@ -15,13 +16,11 @@ public class MusicFile extends FileInfo {
     // 时长
     private long duration;
 
-
-
     public MusicFile() {
     }
 
     public MusicFile(String name, String path, String type, long size, long albumId, String artist, long duration) {
-        super(name, path, type, size);
+        super(name, path, type, size,"mp3");
         this.albumId = albumId;
         this.artist = artist;
         this.duration = duration;

@@ -9,6 +9,7 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
+import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.xmshare.ui.entity.ApkFile;
 
 import java.io.ByteArrayOutputStream;
@@ -30,10 +31,10 @@ public class ApkUtils {
      * @param mPackageManager
      * @return
      */
-    public static List<ApkFile> getApp(Activity context, PackageManager mPackageManager) {
+    public static List<FileInfo> getApp(Activity context, PackageManager mPackageManager) {
         long start = System.currentTimeMillis();
 
-        List<ApkFile> apkFileList = new ArrayList<>();
+        List<FileInfo> apkFileList = new ArrayList<>();
 
         List<ApplicationInfo> appList = mPackageManager.getInstalledApplications(PackageManager.GET_UNINSTALLED_PACKAGES);
 

@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 
+import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.ui.entity.MusicFile;
 
@@ -61,22 +62,27 @@ public class MusicUtils {
     }
 
 
-    public static void writeAlbumImg2local(final Context context, final File parent, List<MusicFile> musicList) {
+    public static void writeAlbumImg2local(final Context context, final File parent, List<FileInfo> musicList) {
+
 
         Observable.fromIterable(musicList)
-                .filter(new Predicate<MusicFile>() {
+                .filter(new Predicate<FileInfo>() {
                     @Override
-                    public boolean test(MusicFile musicFile) throws Exception {
-                        if (parent.canWrite() && !isContain(parent, musicFile)) {
-                            return true;
+                    public boolean test(FileInfo musicFile) throws Exception {
+
+                        if (musicFile instanceof MusicFile) {
+
+                            if (parent.canWrite() && !isContain(parent, (MusicFile) musicFile)) {
+                                return true;
+                            }
                         }
                         return false;
 
                     }
-                }).flatMap(new Function<MusicFile, ObservableSource<Long>>() {
+                }).flatMap(new Function<FileInfo, ObservableSource<Long>>() {
             @Override
-            public ObservableSource<Long> apply(MusicFile musicFile) throws Exception {
-                return Observable.just(musicFile.getAlbumId());
+            public ObservableSource<Long> apply(FileInfo musicFile) throws Exception {
+                return Observable.just(((MusicFile)musicFile).getAlbumId());
             }
         }).subscribeOn(Schedulers.io())
                 .subscribe(new Consumer<Long>() {

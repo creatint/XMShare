@@ -6,6 +6,7 @@ import com.merpyzf.transfermanager.entity.FileInfo;
 
 /**
  * Created by wangke on 2017/12/24.
+ * 应用
  */
 
 public class ApkFile extends FileInfo {
@@ -14,7 +15,7 @@ public class ApkFile extends FileInfo {
 
 
     public ApkFile(String name, String path, String type, long size, Drawable aplDrawable) {
-        super(name, path, type, size);
+        super(name, path, type, size,"apk");
         this.aplDrawable = aplDrawable;
     }
 
