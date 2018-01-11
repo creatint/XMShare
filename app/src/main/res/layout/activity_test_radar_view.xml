@@ -4,15 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.merpyzf.xmshare.ui.view.ReceiveActivity">
-
-
-    <TextView
-        android:id="@+id/tv_show_peer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="接收文件"
-        android:textSize="20sp"
-        />
+    tools:context="com.merpyzf.xmshare.ui.test.TestRadarViewActivity">
 
 </android.support.constraint.ConstraintLayout>

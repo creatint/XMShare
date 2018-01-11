@@ -6,11 +6,14 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.merpyzf.transfermanager.PeerManager;
 import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.interfaces.PeerCommunCallback;
 import com.merpyzf.xmshare.R;
+import com.merpyzf.xmshare.common.Constant;
+import com.merpyzf.xmshare.util.SharedPreUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +30,7 @@ import butterknife.Unbinder;
  */
 public class SendActivity extends AppCompatActivity {
 
-
+    private Context mContext;
     private PeerManager mPeerManager;
     private List<Peer> mPeerList = new ArrayList<>();
     private Unbinder mUnbinder;
@@ -44,11 +47,17 @@ public class SendActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send);
+        mContext = this;
 
         mUnbinder = ButterKnife.bind(this);
 
+        String nickName = SharedPreUtils.getString(mContext, Constant.SP_USER, "nickName", "");
 
-        mPeerManager = new PeerManager(this);
+        mPeerManager = new PeerManager(this, nickName);
+
+        /**
+         * 此处建立的是一个接收UDP信息的服务端
+         */
         mPeerManager.listenBroadcast();
 
 
@@ -60,7 +69,7 @@ public class SendActivity extends AppCompatActivity {
 
                     mPeerList.add(peer);
 
-                    Log.i("wk", "有新设备上线了: " + peer.getNickName());
+                    Log.i("w2k", "有新设备上线了: " + peer.getNickName());
 
                     updateShowContent();
                 }
@@ -72,9 +81,12 @@ public class SendActivity extends AppCompatActivity {
             public void onDeviceOffLine(Peer peer) {
 
                 if (mPeerList.contains(peer)) {
+
                     mPeerList.remove(peer);
                     updateShowContent();
-                    Log.i("wwk", "设备下线了: " + peer.getNickName());
+                    Log.i("w2k", "设备离线了");
+                    Toast.makeText(SendActivity.this, "【接收文件】设备离线了 --> " + peer.getHostAddress(), Toast.LENGTH_SHORT).show();
+
                 }
 
 
@@ -107,17 +119,21 @@ public class SendActivity extends AppCompatActivity {
             sb.append("当前局域网内无可连接设备");
         }
 
-
-        tv_show_device.setText(sb.toString());
-
-
+        if (tv_show_device != null) {
+            tv_show_device.setText(sb.toString());
+        }
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         mUnbinder.unbind();
-        mPeerManager.stopListen();
+
+        // 发送下线广播
+        mPeerManager.sendOffLineBroadcast();
+        // 关闭UdpServer端，停止接收数据
+        mPeerManager.stopUdpServer();
+
+        super.onDestroy();
 
     }
 }
