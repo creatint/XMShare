@@ -45,9 +45,11 @@ public class Peer {
 
         Peer peer = (Peer) o;
 
-        if (nickName != null ? !nickName.equals(peer.nickName) : peer.nickName != null)
-            return false;
-        return hostAddress != null ? hostAddress.equals(peer.hostAddress) : peer.hostAddress == null;
+        return hostAddress.equals(peer.hostAddress);
     }
 
+    @Override
+    public int hashCode() {
+        return hostAddress.hashCode();
+    }
 }

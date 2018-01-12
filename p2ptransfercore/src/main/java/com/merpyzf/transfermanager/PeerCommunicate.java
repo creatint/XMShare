@@ -8,6 +8,9 @@ import android.util.Log;
 import com.merpyzf.transfermanager.constant.Constant;
 import com.merpyzf.transfermanager.entity.SignMessage;
 import com.merpyzf.transfermanager.util.NetworkUtil;
+import com.merpyzf.transfermanager.util.SharedPreUtils;
+import com.merpyzf.transfermanager.util.timer.OSTimer;
+import com.merpyzf.transfermanager.util.timer.Timeout;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -20,6 +23,7 @@ import java.net.UnknownHostException;
 
 /**
  * Created by wangke on 2017/12/3.
+ * 负责局域网内设备间UDP通讯
  */
 
 public class PeerCommunicate extends Thread {
@@ -29,6 +33,7 @@ public class PeerCommunicate extends Thread {
     private boolean isLoop = true;
     private Context mContext = null;
     private Handler mHandler = null;
+    private String nickName;
     private static final String TAG = PeerCommunicate.class.getName();
 
 
@@ -36,6 +41,8 @@ public class PeerCommunicate extends Thread {
 
         mContext = context;
         mHandler = handler;
+        nickName = SharedPreUtils.getString(context, Constant.SP_USER, "nickName", "");
+
         init();
     }
 
@@ -52,7 +59,7 @@ public class PeerCommunicate extends Thread {
     }
 
 
-    // 监听UDP消息
+    // UDPServer负责监听UDP消息
     @Override
     public void run() {
         try {
@@ -60,7 +67,8 @@ public class PeerCommunicate extends Thread {
                 while (isLoop) {
                     byte[] buffer = new byte[Constant.BUFFER_LENGTH];
                     DatagramPacket receivePacket = new DatagramPacket(buffer, 0, Constant.BUFFER_LENGTH);
-                    Log.i("wk", "开始监听UDP消息，阻塞。。。。。");
+
+                    //block
                     mUdpSocket.receive(receivePacket);
 
                     if (receivePacket.getLength() == 0) {
@@ -69,26 +77,16 @@ public class PeerCommunicate extends Thread {
 
                     int port = receivePacket.getPort();
                     String hostAddress = receivePacket.getAddress().getHostAddress();
-
                     String receiveMsg = new String(buffer, 0, buffer.length, "utf-8");
-                    Log.i(TAG, "接收的udp消息-->" + receiveMsg);
 
-
-
+                    // 当接收到UDP消息不是来自本机才进行一下操作
                     if (!NetworkUtil.isLocal(hostAddress)) {
-
                         SignMessage signMessage = SignMessage.decodeProtocol(receiveMsg);
-
                         Message message = Message.obtain();
-
                         message.obj = signMessage;
-
+                        // 将收到的消息转发给主线程处理
                         mHandler.sendMessage(message);
-
-                    } else {
-                        Log.i("wk", "收到的消息来自本机");
                     }
-
                 }
             }
 
@@ -105,12 +103,12 @@ public class PeerCommunicate extends Thread {
 
     /**
      * 发送UDP数据
-     *
-     * @param msg
+     * @param msg 消息内容
+     * @param dest 目标地址
+     * @param port 端口号
      */
     public void sendUdpData(String msg, InetAddress dest, int port) {
 
-        Log.i("wk", "发送UDP消息");
 
         try {
 
@@ -125,6 +123,7 @@ public class PeerCommunicate extends Thread {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+            mUdpSocket.close();
         }
     }
 
@@ -132,19 +131,31 @@ public class PeerCommunicate extends Thread {
      * 发送广播信息
      */
     public void sendBroadcast(SignMessage signMessage) {
-        //向全网发送探测信息
+
         InetAddress broadcastAddress = null;
         try {
             broadcastAddress = NetworkUtil.getBroadcastAddress(mContext);
-            Log.i("wk", "组播地址-->" + broadcastAddress.getHostAddress());
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
         String sinMsg = signMessage.convertProtocolStr();
-        Log.i("wk", sinMsg);
         sendUdpData(sinMsg, broadcastAddress, Constant.UDP_PORT);
     }
 
+    /**
+     * 将当前设备的信息回复给对端
+     */
+    public void replyMsg() {
+
+        String name = Thread.currentThread().getName();
+        SignMessage signMessage = new SignMessage();
+        signMessage.setHostAddress(NetworkUtil.getLocalIp(mContext));
+        signMessage.setMsgContent("ON_LINE");
+        signMessage.setCmd(Constant.cmd.ON_LINE);
+        signMessage.setNickName(nickName);
+        sendBroadcast(signMessage);
+
+    }
 
 
     /**
@@ -153,8 +164,21 @@ public class PeerCommunicate extends Thread {
     public void release() {
 
         if (mUdpSocket != null) {
-            isLoop = false;
-            mUdpSocket.close();
+
+
+            OSTimer osTimer = new OSTimer(null, new Timeout() {
+                @Override
+                public void onTimeOut() {
+
+                    Log.i("w2k", "udp被关闭");
+                    isLoop = false;
+                    mUdpSocket.close();
+
+
+                }
+            }, 0, false);
+
+            osTimer.start();
 
         }
 

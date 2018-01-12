@@ -44,4 +44,7 @@ dependencies {
     // material风格的dialog
     compile 'com.afollestad.material-dialogs:core:0.9.1.0'
     compile 'com.afollestad.material-dialogs:commons:0.9.1.0'
+    implementation project(':radarview')
+
+    compile 'de.hdodenhof:circleimageview:2.2.0'
 }

@@ -6,6 +6,9 @@ package com.merpyzf.transfermanager.constant;
 
 public class Constant {
 
+    // sp文件, 存储用户信息
+    public static final String SP_USER = "sp_user_info";
+
     // 字符读取时结束的标记位
     public static final String S_END = "\0";
 
@@ -28,14 +31,13 @@ public class Constant {
 
         //局域网内设备请求上线(在屏幕上显示局域网内可见的设备)
         public static final int ON_LINE = 1;
-
         // 设备是上线并建立连接的答复
         public static final int ON_LINE_ANSWER = 2;
-
         //下线
         public static final int OFF_LINE = 3;
         //请求建立连接
         public static final int REQUEST_CONN = 4;
+
 
 
 

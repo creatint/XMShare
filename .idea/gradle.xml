@@ -11,6 +11,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/httpcoreserver" />
             <option value="$PROJECT_DIR$/p2ptransfercore" />
+            <option value="$PROJECT_DIR$/radarview" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

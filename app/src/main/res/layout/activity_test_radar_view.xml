@@ -1,9 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
     tools:context="com.merpyzf.xmshare.ui.test.TestRadarViewActivity">
 
-</android.support.constraint.ConstraintLayout>
+    <com.merpyzf.radarview.RadarLayout
+        android:id="@+id/radar"
+        android:layout_width="match_parent"
+        android:layout_height="300dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_album_empty"
+            />
+
+    </com.merpyzf.radarview.RadarLayout>
+
+
+</LinearLayout>

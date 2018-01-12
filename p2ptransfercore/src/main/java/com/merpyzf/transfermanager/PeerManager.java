@@ -4,12 +4,14 @@ import android.content.Context;
 import android.util.Log;
 
 import com.merpyzf.transfermanager.constant.Constant;
-import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.entity.SignMessage;
 import com.merpyzf.transfermanager.interfaces.PeerCommunCallback;
 import com.merpyzf.transfermanager.util.NetworkUtil;
 import com.merpyzf.transfermanager.util.timer.OSTimer;
 import com.merpyzf.transfermanager.util.timer.Timeout;
+
+import java.net.InetAddress;
+import java.util.Timer;
 
 /**
  * Created by wangke on 2017/12/17.
@@ -22,103 +24,50 @@ public class PeerManager {
     private PeerCommunCallback mPeerCallback = null;
     private OSTimer mOsTimer;
     private PeerCommunicate mPeerCommunicate;
+    private String nickName;
+    private OSTimer mOnLineTimer;
+    private Timer mTimer;
+    private boolean isStop = false;
 
 
-    public PeerManager(Context context) {
-        mContext = context;
-        init();
+    public PeerManager(Context context, String nickName,PeerCommunCallback peerCallback) {
+        this.mContext = context;
+        this.nickName = nickName;
+        // 创建Handler用于接收的UDP消息处理
+        this.mPeerHandler = new PeerHandler(mContext, peerCallback);
+        this.mPeerCommunicate = new PeerCommunicate(mContext, mPeerHandler);
     }
-
-
-    private void init() {
-
-        mPeerHandler = new PeerHandler(mContext, this);
-
-        mPeerCommunicate = mPeerHandler.getmPeerCommunicate();
-
-    }
-
-    /**
-     * @param signMessage
-     */
-    public void dispatchMSG(SignMessage signMessage) {
-
-        int cmd = signMessage.getCmd();
-
-        Peer peer = new Peer();
-        peer.setHostAddress(signMessage.getHostAddress());
-        peer.setNickName(signMessage.getNickName());
-
-        switch (cmd) {
-
-            // 设备上线
-            case Constant.cmd.ON_LINE:
-
-                if (mPeerCallback != null) {
-                    mPeerCallback.onDeviceOnLine(peer);
-                }
-                break;
-            // 设备下线
-            case Constant.cmd.OFF_LINE:
-
-                if (mPeerCallback != null) {
-                    mPeerCallback.onDeviceOffLine(peer);
-                }
-                break;
-
-
-            case Constant.cmd.REQUEST_CONN:
-
-                break;
-
-            default:
-
-                break;
-
-        }
-
-
-    }
-
 
     /**
      * 发送设备上线广播
      */
-    public OSTimer sendOnLineBroadcast() {
-
+    public OSTimer sendOnLineBroadcast(boolean isCycle) {
 
         Timeout timeout = new Timeout() {
             @Override
             public void onTimeOut() {
 
-
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
 
-
-                        Log.i("wk", "定时发送上线广播");
                         String name = Thread.currentThread().getName();
-
-                        Log.i("wk", "所在线程-->" + name);
-
                         SignMessage signMessage = new SignMessage();
-
                         signMessage.setHostAddress(NetworkUtil.getLocalIp(mContext));
                         signMessage.setMsgContent("ON_LINE");
                         signMessage.setCmd(Constant.cmd.ON_LINE);
-                        signMessage.setNickName("merpyzf");
-                        mPeerHandler.sendBroadcastMsg(signMessage);
+                        signMessage.setNickName(nickName);
+                        Log.i("w2k", "发送上线广播");
+                        sendBroadcastMsg(signMessage);
 
                     }
                 }).start();
-
             }
         };
 
         timeout.onTimeOut();
         //发送两个广播消息
-        OSTimer osTimer = new OSTimer(null, timeout, 250, true);
+        OSTimer osTimer = new OSTimer(null, timeout, 100, isCycle);
         osTimer.start();
 
         return osTimer;
@@ -140,18 +89,20 @@ public class PeerManager {
                     @Override
                     public void run() {
 
-                        Log.i("wk", "定时发送下线广播");
+                        Log.i("wk", "发送设备离线广播");
                         String name = Thread.currentThread().getName();
 
-                        Log.i("wk", "所在线程-->" + name);
+//                        Log.i("wk", "所在线程-->" + name);
 
                         SignMessage signMessage = new SignMessage();
 
                         signMessage.setHostAddress(NetworkUtil.getLocalIp(mContext));
                         signMessage.setMsgContent("OFF_LINE");
                         signMessage.setCmd(Constant.cmd.OFF_LINE);
+
                         signMessage.setNickName("merpyzf");
-                        mPeerHandler.sendBroadcastMsg(signMessage);
+                        sendBroadcastMsg(signMessage);
+
                     }
                 }).start();
             }
@@ -161,9 +112,6 @@ public class PeerManager {
         //发送两个广播消息
         new OSTimer(null, timeout, 50, false).start();
         new OSTimer(null, timeout, 100, false).start();
-        new OSTimer(null, timeout, 150, false).start();
-
-
 
     }
 
@@ -179,21 +127,43 @@ public class PeerManager {
     /**
      * 停止广播监听
      */
-    public void stopListen() {
+    public void stopUdpServer() {
 
         mPeerCommunicate.release();
 
 
     }
 
+
     /**
-     * 设置局域网内设备在线状态的监听
-     *
-     * @param mPeerCallback
+     * 停止发送上线广播，终止循环发送
      */
-    public void setOnPeerCallback(PeerCommunCallback mPeerCallback) {
-        this.mPeerCallback = mPeerCallback;
+    public void stopSendOnlineBroadcast() {
+
+        isStop = true;
+        if (mTimer != null) {
+            Log.i("w2k", "停止继续发送上线广播");
+            mTimer.cancel();
+        }
     }
 
+
+    /**
+     * 给局域网内的其他设备发送UDP
+     */
+    public void send2Peer(String msg, InetAddress dest, int port) {
+        mPeerCommunicate.sendUdpData(msg, dest, port);
+    }
+
+
+    /**
+     * 发送组播消息
+     *
+     * @param signMessage
+     */
+    public void sendBroadcastMsg(SignMessage signMessage) {
+
+        mPeerCommunicate.sendBroadcast(signMessage);
+    }
 }
 

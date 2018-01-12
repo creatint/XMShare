@@ -2,12 +2,13 @@ package com.merpyzf.xmshare.ui.view;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.merpyzf.radarview.RadarLayout;
 import com.merpyzf.transfermanager.PeerManager;
 import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.interfaces.PeerCommunCallback;
@@ -17,7 +18,11 @@ import com.merpyzf.xmshare.common.Constant;
 import java.util.ArrayList;
 
 /**
- * 文件接收,接收的文件肯定来自唯一的一个设备,向局域网内定时发送广播，告知局域网内的设备有接收端的存在
+ * 接收端:
+ * <p>
+ * 1. 定时发送广播信息，用于发送端对接收端设备的发现
+ * 2. 需要开启一个UDPServer,用来显示需要进行连接的发送端的设备，点击发送端设备头像以完成连接确认
+ * 3. 当接收端退出的时候,需要发送一个离线广播
  */
 public class ReceiveActivity extends AppCompatActivity {
 
@@ -25,7 +30,7 @@ public class ReceiveActivity extends AppCompatActivity {
     private PeerManager mPeerManager;
     private Context mContext;
     private ArrayList<Peer> mPeerList;
-    private TextView tv_show_device;
+    private RadarLayout radar;
 
     public static void start(Context context) {
 
@@ -39,32 +44,21 @@ public class ReceiveActivity extends AppCompatActivity {
         setContentView(R.layout.activity_receive);
         this.mContext = this;
         mPeerList = new ArrayList<>();
-        tv_show_device = findViewById(R.id.tv_show_peer);
+
+        initUI();
 
 
         String nickName = com.merpyzf.xmshare.util.SharedPreUtils.getString(mContext, Constant.SP_USER, "nickName", "");
-        mPeerManager = new PeerManager(this, nickName);
 
-        mPeerManager.listenBroadcast();
-
-        /**
-         * 循环间隔一段时间发送一个上线广播
-         */
-        mPeerManager.sendOnLineBroadcast();
-
-        mPeerManager.setOnPeerCallback(new PeerCommunCallback() {
+        mPeerManager = new PeerManager(this, nickName, new PeerCommunCallback() {
             @Override
             public void onDeviceOnLine(Peer peer) {
-
                 if (!mPeerList.contains(peer)) {
 
                     mPeerList.add(peer);
-                    updateShowContent();
-
                     Log.i("w2k", "有设备上线了:" + peer.getNickName() + " " + peer.getHostAddress());
 
                 }
-
 
             }
 
@@ -74,44 +68,37 @@ public class ReceiveActivity extends AppCompatActivity {
                 if (mPeerList.contains(peer)) {
 
                     mPeerList.remove(peer);
-                    updateShowContent();
                     Toast.makeText(ReceiveActivity.this, "【接收文件】设备离线了 --> " + peer.getHostAddress(), Toast.LENGTH_SHORT).show();
 
                 }
 
-
             }
         });
+        mPeerManager.listenBroadcast();
+
+        /**
+         * 循环间隔一段时间发送一个上线广播
+         */
+        mPeerManager.sendOnLineBroadcast(true);
+
+
 
     }
-
 
     /**
-     * 更新界面内容显示
+     * 初始化UI
      */
-    private void updateShowContent() {
+    private void initUI() {
 
-
-        StringBuffer sb = new StringBuffer();
-
-        if (mPeerList.size() > 0) {
-            for (Peer peer : mPeerList) {
-
-                sb.append("主机地址: " + peer.getHostAddress() + "\n" + "昵称:  " + peer.getNickName() + "\n");
-                sb.append("*********************************");
-                sb.append("\n");
-
-            }
-        } else {
-
-            sb.append("当前局域网内无可连接设备");
-        }
-
-
-        tv_show_device.setText(sb.toString());
-
-
+        radar = findViewById(R.id.radar);
+        radar.setDuration(2000);
+        radar.setStyleIsFILL(true);
+        radar.setRadarColor(Color.GRAY);
+        radar.start();
     }
+
+
+
 
     @Override
     protected void onDestroy() {

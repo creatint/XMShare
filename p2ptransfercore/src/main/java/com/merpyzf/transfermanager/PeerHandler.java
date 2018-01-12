@@ -6,61 +6,27 @@ import android.os.Looper;
 import android.os.Message;
 
 import com.merpyzf.transfermanager.constant.Constant;
+import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.entity.SignMessage;
-
-import java.net.InetAddress;
+import com.merpyzf.transfermanager.interfaces.PeerCommunCallback;
 
 /**
  * Created by wangke on 2017/12/16.
- * 包含UDP消息的收发，和UDP消息的处理
+ * 接收从子线程转发来的UDP消息，并进行消息内容的处理和回调分发
  */
 public class PeerHandler extends Handler {
     private Context mContext = null;
     private PeerCommunicate mPeerCommunicate;
-    private PeerManager mPeerManager = null;
+    private PeerCommunCallback mPeerCommunCallback = null;
 
-    public PeerHandler(Context mContext, PeerManager peerManager) {
+    public PeerHandler(Context mContext, PeerCommunCallback peerCommunCallback) {
         this.mContext = mContext;
-        this.mPeerManager = peerManager;
-        init(mContext);
+        this.mPeerCommunCallback = peerCommunCallback;
     }
 
     public PeerHandler(Looper looper) {
         super(looper);
     }
-
-    private void init(Context context) {
-
-        mContext = context;
-        mPeerCommunicate = new PeerCommunicate(mContext, this);
-
-    }
-
-    public PeerCommunicate getmPeerCommunicate() {
-        return mPeerCommunicate;
-    }
-
-    /**
-     * 给局域网内的其他设备发送UDP
-     */
-    public void send2Peer(String msg, InetAddress dest, int port) {
-        mPeerCommunicate.sendUdpData(msg, dest, port);
-    }
-
-
-    /**
-     * 发送组播消息
-     *
-     * @param signMessage
-     */
-    public void sendBroadcastMsg(SignMessage signMessage) {
-
-        mPeerCommunicate.sendBroadcast(signMessage);
-    }
-
-
-
-
 
     /**
      * 获取接收到的udp消息
@@ -78,21 +44,36 @@ public class PeerHandler extends Handler {
         SignMessage signMessage = (SignMessage) msg.obj;
         int cmd = signMessage.getCmd();
 
+        Peer peer = new Peer();
+        peer.setHostAddress(signMessage.getHostAddress());
+        peer.setNickName(signMessage.getNickName());
+
         // 将事件的处理拆分到不同的类中进行处理
         // 1. PeerManager处理设备的上线下线
         // 2. sendManager处理文件的发送
         // 3. receiveManager处理文件的接收
+
         switch (cmd) {
+
 
             // 设备上线
             case Constant.cmd.ON_LINE:
 
-                mPeerManager.dispatchMSG(signMessage);
+                if (mPeerCommunCallback != null) {
+
+                    mPeerCommunCallback.onDeviceOnLine(peer);
+                }
+
                 break;
 
             // 设备下线
             case Constant.cmd.OFF_LINE:
-                mPeerManager.dispatchMSG(signMessage);
+
+                if (mPeerCommunCallback != null) {
+
+                    mPeerCommunCallback.onDeviceOffLine(peer);
+                }
+
 
                 break;
 
@@ -107,5 +88,9 @@ public class PeerHandler extends Handler {
 
 
     }
+
+
 }
+
+
 

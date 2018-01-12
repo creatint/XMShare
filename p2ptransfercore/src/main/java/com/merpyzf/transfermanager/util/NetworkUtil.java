@@ -4,7 +4,7 @@ import android.content.Context;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.util.Log;
+
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -41,7 +41,7 @@ public class NetworkUtil {
 
         String ip = intToIp(wifiInfo.getIpAddress());
 
-        Log.i(TAG, "当前设备的IP地址"+ip);
+//        Log.i(TAG, "当前设备的IP地址"+ip);
 
         return ip;
 

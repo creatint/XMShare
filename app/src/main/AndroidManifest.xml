@@ -23,17 +23,17 @@
         android:theme="@style/AppTheme">
         <activity android:name=".ui.view.MainActivity">
 
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
         <activity android:name=".ui.view.SplashActivity" />
-        <activity android:name=".ui.view.ReceiveActivity"
-            android:label="接收文件"
-            ></activity>
+        <activity
+            android:name=".ui.view.ReceiveActivity"
+            android:label="接收文件"></activity>
         <activity
             android:name=".ui.view.SendActivity"
             android:label="发送文件"></activity>
@@ -42,7 +42,10 @@
 
         </activity>
         <activity android:name=".ui.test.BottomSheetDialogActivity"></activity>
-        <activity android:name=".ui.test.TestRadarViewActivity"></activity>
+        <activity android:name=".ui.test.TestRadarViewActivity">
+
+
+        </activity>
     </application>
 
 </manifest>
