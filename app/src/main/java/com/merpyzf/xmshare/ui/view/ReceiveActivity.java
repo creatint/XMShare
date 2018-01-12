@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -16,6 +18,10 @@ import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Constant;
 
 import java.util.ArrayList;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
  * 接收端:
@@ -31,6 +37,9 @@ public class ReceiveActivity extends AppCompatActivity {
     private Context mContext;
     private ArrayList<Peer> mPeerList;
     private RadarLayout radar;
+    private Unbinder mUnbinder;
+    @BindView(R.id.rv_peers)
+    RecyclerView mRvPeers;
 
     public static void start(Context context) {
 
@@ -44,6 +53,7 @@ public class ReceiveActivity extends AppCompatActivity {
         setContentView(R.layout.activity_receive);
         this.mContext = this;
         mPeerList = new ArrayList<>();
+        mUnbinder = ButterKnife.bind(this);
 
         initUI();
 
@@ -74,6 +84,7 @@ public class ReceiveActivity extends AppCompatActivity {
 
             }
         });
+
         mPeerManager.listenBroadcast();
 
         /**
@@ -95,6 +106,8 @@ public class ReceiveActivity extends AppCompatActivity {
         radar.setStyleIsFILL(true);
         radar.setRadarColor(Color.GRAY);
         radar.start();
+
+        mRvPeers.setLayoutManager(new LinearLayoutManager(mContext));
     }
 
 
@@ -103,7 +116,7 @@ public class ReceiveActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
 
-
+        mUnbinder.unbind();
         /**
          * 发送下线广播
          */

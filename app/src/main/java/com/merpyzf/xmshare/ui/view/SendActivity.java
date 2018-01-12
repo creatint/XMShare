@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -12,11 +14,13 @@ import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.interfaces.PeerCommunCallback;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Constant;
+import com.merpyzf.xmshare.ui.adapter.PeerAdapter;
 import com.merpyzf.xmshare.util.SharedPreUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
@@ -45,6 +49,10 @@ public class SendActivity extends AppCompatActivity {
     private List<Peer> mPeerList = new ArrayList<>();
     private Unbinder mUnbinder;
 
+    @BindView(R.id.rv_peers)
+    RecyclerView mRvPeerList;
+    private PeerAdapter mPeerAdapter;
+
 
     public static void start(Context context) {
 
@@ -57,18 +65,21 @@ public class SendActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send);
         mContext = this;
-
         mUnbinder = ButterKnife.bind(this);
 
-        String nickName = SharedPreUtils.getString(mContext, Constant.SP_USER, "nickName", "");
+        initUI();
 
+        mPeerAdapter = new PeerAdapter(R.layout.item_rv_peer, mPeerList);
+        mRvPeerList.setAdapter(mPeerAdapter);
+
+        String nickName = SharedPreUtils.getString(mContext, Constant.SP_USER, "nickName", "");
         mPeerManager = new PeerManager(this, nickName, new PeerCommunCallback() {
             @Override
             public void onDeviceOnLine(Peer peer) {
                 if (!mPeerList.contains(peer)) {
 
                     mPeerList.add(peer);
-
+                    mPeerAdapter.notifyDataSetChanged();
                     Log.i("w2k", "有新设备上线了: " + peer.getNickName());
 
                 }
@@ -80,9 +91,9 @@ public class SendActivity extends AppCompatActivity {
                 if (mPeerList.contains(peer)) {
 
                     mPeerList.remove(peer);
+                    mPeerAdapter.notifyDataSetChanged();
                     Log.i("w2k", "设备离线了");
                     Toast.makeText(SendActivity.this, "【接收文件】设备离线了 --> " + peer.getHostAddress(), Toast.LENGTH_SHORT).show();
-
                 }
 
             }
@@ -93,7 +104,10 @@ public class SendActivity extends AppCompatActivity {
          */
         mPeerManager.listenBroadcast();
 
+    }
 
+    private void initUI() {
+        mRvPeerList.setLayoutManager(new LinearLayoutManager(mContext));
     }
 
 
