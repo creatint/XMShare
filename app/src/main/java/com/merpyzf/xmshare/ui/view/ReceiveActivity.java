@@ -83,6 +83,16 @@ public class ReceiveActivity extends AppCompatActivity {
                 }
 
             }
+
+            @Override
+            public void onRequestConnect(Peer peer) {
+
+                Log.i("w2k", "有设备请求建立连接:" + peer.getNickName() + " " + peer.getHostAddress());
+
+                Toast.makeText(ReceiveActivity.this, peer.getNickName()+"请求建立连接", Toast.LENGTH_SHORT).show();
+
+
+            }
         });
 
         mPeerManager.listenBroadcast();

@@ -7,16 +7,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.merpyzf.httpcoreserver.util.NetworkUtil;
 import com.merpyzf.transfermanager.PeerManager;
 import com.merpyzf.transfermanager.entity.Peer;
+import com.merpyzf.transfermanager.entity.SignMessage;
 import com.merpyzf.transfermanager.interfaces.PeerCommunCallback;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Constant;
 import com.merpyzf.xmshare.ui.adapter.PeerAdapter;
 import com.merpyzf.xmshare.util.SharedPreUtils;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +48,7 @@ import butterknife.Unbinder;
  * 同意建立连接
  * 下线通知
  */
-public class SendActivity extends AppCompatActivity {
+public class SendActivity extends AppCompatActivity implements BaseQuickAdapter.OnItemClickListener {
 
     private Context mContext;
     private PeerManager mPeerManager;
@@ -68,9 +74,11 @@ public class SendActivity extends AppCompatActivity {
         mUnbinder = ButterKnife.bind(this);
 
         initUI();
-
         mPeerAdapter = new PeerAdapter(R.layout.item_rv_peer, mPeerList);
         mRvPeerList.setAdapter(mPeerAdapter);
+
+        mPeerAdapter.setOnItemClickListener(this);
+
 
         String nickName = SharedPreUtils.getString(mContext, Constant.SP_USER, "nickName", "");
         mPeerManager = new PeerManager(this, nickName, new PeerCommunCallback() {
@@ -97,6 +105,11 @@ public class SendActivity extends AppCompatActivity {
                 }
 
             }
+
+            @Override
+            public void onRequestConnect(Peer peer) {
+
+            }
         });
 
         /**
@@ -108,6 +121,39 @@ public class SendActivity extends AppCompatActivity {
 
     private void initUI() {
         mRvPeerList.setLayoutManager(new LinearLayoutManager(mContext));
+    }
+
+    /**
+     * RecyclerView 列表中item点击的回调事件
+     *
+     * @param adapter
+     * @param view
+     * @param position
+     */
+    @Override
+    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+
+
+        final Peer peer = (Peer) adapter.getItem(position);
+        // 构造UDP消息的内容
+        SignMessage signMessage = new SignMessage();
+        signMessage.setHostAddress(NetworkUtil.getLocalIp(mContext));
+        signMessage.setNickName(SharedPreUtils.getNickName(mContext));
+        signMessage.setMsgContent("建立连接请求");
+        signMessage.setCmd(SignMessage.cmd.REQUEST_CONN);
+        String msg = signMessage.convertProtocolStr();
+
+
+        InetAddress dest = null;
+        try {
+            dest = InetAddress.getByName(peer.getHostAddress());
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+
+        // 将消息发送给对端
+        mPeerManager.send2Peer(msg, dest, com.merpyzf.transfermanager.constant.Constant.UDP_PORT);
+        Toast.makeText(mContext, "发送建立请求连接", Toast.LENGTH_SHORT).show();
     }
 
 
@@ -123,4 +169,6 @@ public class SendActivity extends AppCompatActivity {
         super.onDestroy();
 
     }
+
+
 }

@@ -7,8 +7,6 @@
       <module fileurl="file://$PROJECT_DIR$/httpcoreserver/httpcoreserver.iml" filepath="$PROJECT_DIR$/httpcoreserver/httpcoreserver.iml" />
       <module fileurl="file://$PROJECT_DIR$/p2ptransfercore/p2ptransfercore.iml" filepath="$PROJECT_DIR$/p2ptransfercore/p2ptransfercore.iml" />
       <module fileurl="file://$PROJECT_DIR$/radarview/radarview.iml" filepath="$PROJECT_DIR$/radarview/radarview.iml" />
-      <module fileurl="file://$PROJECT_DIR$/transfercore/transferManager.iml" filepath="$PROJECT_DIR$/transfercore/transferManager.iml" />
-      <module fileurl="file://$PROJECT_DIR$/p2ptransfercore/transfercore.iml" filepath="$PROJECT_DIR$/p2ptransfercore/transfercore.iml" />
     </modules>
   </component>
 </project>

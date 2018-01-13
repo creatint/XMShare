@@ -107,7 +107,7 @@ public class PeerCommunicate extends Thread {
      * @param dest 目标地址
      * @param port 端口号
      */
-    public void sendUdpData(String msg, InetAddress dest, int port) {
+    public synchronized void sendUdpData(String msg, InetAddress dest, int port) {
 
 
         try {
@@ -117,6 +117,7 @@ public class PeerCommunicate extends Thread {
                 byte[] buffer = msg.getBytes(Constant.S_CHARSET);
                 DatagramPacket sendPacket = new DatagramPacket(buffer, buffer.length, dest, port);
                 mUdpSocket.send(sendPacket);
+                Log.i("w22k", "消息发送出去了");
             }
 
         } catch (UnsupportedEncodingException e) {
@@ -151,7 +152,7 @@ public class PeerCommunicate extends Thread {
         SignMessage signMessage = new SignMessage();
         signMessage.setHostAddress(NetworkUtil.getLocalIp(mContext));
         signMessage.setMsgContent("ON_LINE");
-        signMessage.setCmd(Constant.cmd.ON_LINE);
+        signMessage.setCmd(SignMessage.cmd.ON_LINE);
         signMessage.setNickName(nickName);
         sendBroadcast(signMessage);
 

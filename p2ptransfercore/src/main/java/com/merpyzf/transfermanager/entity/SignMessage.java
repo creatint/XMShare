@@ -26,6 +26,20 @@ public class SignMessage {
      * 3. 回复配对请求
      */
 
+    public static class cmd{
+
+        //局域网内设备请求上线(在屏幕上显示局域网内可见的设备)
+        public static final int ON_LINE = 1;
+        // 设备是上线并建立连接的答复
+        public static final int ON_LINE_ANSWER = 2;
+        //下线
+        public static final int OFF_LINE = 3;
+        //请求建立连接
+        public static final int REQUEST_CONN = 4;
+
+
+    }
+
     public SignMessage() {
 
         this.packetName = getTime();

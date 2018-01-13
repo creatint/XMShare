@@ -17,6 +17,40 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+
+    allprojects {
+        repositories {
+            jcenter()
+            maven { url "https://jitpack.io" }
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    buildscript {
+        repositories {
+            mavenCentral()
+        }
+
+        dependencies {
+            classpath 'me.tatarka:gradle-retrolambda:3.2.5'
+        }
+    }
+
+    repositories {
+
+        mavenCentral()
+
+        flatDir {
+            dirs 'libs' //就是你放aar的目录地址
+        }
+    }
+
+
 }
 
 dependencies {

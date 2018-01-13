@@ -19,4 +19,11 @@ public interface PeerCommunCallback {
      * @param peer
      */
     void onDeviceOffLine(Peer peer);
+
+    /**
+     * 请求建立连接
+     * @param peer
+     */
+    void onRequestConnect(Peer peer);
+
 }

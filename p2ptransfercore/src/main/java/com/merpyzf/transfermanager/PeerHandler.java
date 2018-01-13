@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
-import com.merpyzf.transfermanager.constant.Constant;
 import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.entity.SignMessage;
 import com.merpyzf.transfermanager.interfaces.PeerCommunCallback;
@@ -57,7 +56,7 @@ public class PeerHandler extends Handler {
 
 
             // 设备上线
-            case Constant.cmd.ON_LINE:
+            case SignMessage.cmd.ON_LINE:
 
                 if (mPeerCommunCallback != null) {
 
@@ -67,7 +66,7 @@ public class PeerHandler extends Handler {
                 break;
 
             // 设备下线
-            case Constant.cmd.OFF_LINE:
+            case SignMessage.cmd.OFF_LINE:
 
                 if (mPeerCommunCallback != null) {
 
@@ -78,8 +77,12 @@ public class PeerHandler extends Handler {
                 break;
 
 
-            case Constant.cmd.REQUEST_CONN:
+            case SignMessage.cmd.REQUEST_CONN:
 
+                if (mPeerCommunCallback != null) {
+
+                    mPeerCommunCallback.onRequestConnect(peer);
+                }
 
                 break;
 

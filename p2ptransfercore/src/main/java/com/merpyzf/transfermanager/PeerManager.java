@@ -3,7 +3,6 @@ package com.merpyzf.transfermanager;
 import android.content.Context;
 import android.util.Log;
 
-import com.merpyzf.transfermanager.constant.Constant;
 import com.merpyzf.transfermanager.entity.SignMessage;
 import com.merpyzf.transfermanager.interfaces.PeerCommunCallback;
 import com.merpyzf.transfermanager.util.NetworkUtil;
@@ -30,7 +29,7 @@ public class PeerManager {
     private boolean isStop = false;
 
 
-    public PeerManager(Context context, String nickName,PeerCommunCallback peerCallback) {
+    public PeerManager(Context context, String nickName, PeerCommunCallback peerCallback) {
         this.mContext = context;
         this.nickName = nickName;
         // 创建Handler用于接收的UDP消息处理
@@ -55,9 +54,9 @@ public class PeerManager {
                         SignMessage signMessage = new SignMessage();
                         signMessage.setHostAddress(NetworkUtil.getLocalIp(mContext));
                         signMessage.setMsgContent("ON_LINE");
-                        signMessage.setCmd(Constant.cmd.ON_LINE);
+                        signMessage.setCmd(SignMessage.cmd.ON_LINE);
                         signMessage.setNickName(nickName);
-                        Log.i("w2k", "发送上线广播");
+//                        Log.i("w2k", "发送上线广播");
                         sendBroadcastMsg(signMessage);
 
                     }
@@ -98,7 +97,7 @@ public class PeerManager {
 
                         signMessage.setHostAddress(NetworkUtil.getLocalIp(mContext));
                         signMessage.setMsgContent("OFF_LINE");
-                        signMessage.setCmd(Constant.cmd.OFF_LINE);
+                        signMessage.setCmd(SignMessage.cmd.OFF_LINE);
 
                         signMessage.setNickName("merpyzf");
                         sendBroadcastMsg(signMessage);
@@ -151,10 +150,19 @@ public class PeerManager {
     /**
      * 给局域网内的其他设备发送UDP
      */
-    public void send2Peer(String msg, InetAddress dest, int port) {
-        mPeerCommunicate.sendUdpData(msg, dest, port);
-    }
+    public void send2Peer(final String msg, final InetAddress dest, final int port) {
 
+
+        // TODO: 2018/1/13 只发送一个UDP数据包，可能会出现UDP包丢失未能正确传送给对端的问题
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mPeerCommunicate.sendUdpData(msg, dest, port);
+            }
+        }).start();
+
+
+    }
 
     /**
      * 发送组播消息
