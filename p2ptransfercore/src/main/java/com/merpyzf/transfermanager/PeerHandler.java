@@ -86,6 +86,17 @@ public class PeerHandler extends Handler {
 
                 break;
 
+            case SignMessage.cmd.ANSWER_REQUEST_CONN:
+
+                if (mPeerCommunCallback != null) {
+
+                    mPeerCommunCallback.onAnswerRequestConnect(peer);
+                }
+
+                break;
+
+            default:
+                break;
 
         }
 

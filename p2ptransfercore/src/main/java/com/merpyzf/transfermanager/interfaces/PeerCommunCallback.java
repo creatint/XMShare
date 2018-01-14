@@ -26,4 +26,10 @@ public interface PeerCommunCallback {
      */
     void onRequestConnect(Peer peer);
 
+    /**
+     * 对端对请求建立连接请求的回应
+     * @param peer
+     */
+    void onAnswerRequestConnect(Peer peer);
+
 }

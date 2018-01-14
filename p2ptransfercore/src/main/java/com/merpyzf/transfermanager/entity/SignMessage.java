@@ -30,8 +30,8 @@ public class SignMessage {
 
         //局域网内设备请求上线(在屏幕上显示局域网内可见的设备)
         public static final int ON_LINE = 1;
-        // 设备是上线并建立连接的答复
-        public static final int ON_LINE_ANSWER = 2;
+        // 回应请求建立连接的请求
+        public static final int ANSWER_REQUEST_CONN = 2;
         //下线
         public static final int OFF_LINE = 3;
         //请求建立连接

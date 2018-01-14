@@ -171,6 +171,7 @@ public class PeerManager {
      */
     public void sendBroadcastMsg(SignMessage signMessage) {
 
+
         mPeerCommunicate.sendBroadcast(signMessage);
     }
 }

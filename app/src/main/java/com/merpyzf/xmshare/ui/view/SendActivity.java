@@ -21,7 +21,9 @@ import com.merpyzf.xmshare.common.Constant;
 import com.merpyzf.xmshare.ui.adapter.PeerAdapter;
 import com.merpyzf.xmshare.util.SharedPreUtils;
 
+import java.io.IOException;
 import java.net.InetAddress;
+import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +61,9 @@ public class SendActivity extends AppCompatActivity implements BaseQuickAdapter.
     RecyclerView mRvPeerList;
     private PeerAdapter mPeerAdapter;
 
+    // 要建立连接的对端设备
+    private Peer mPeerRequestConn;
+
 
     public static void start(Context context) {
 
@@ -74,7 +79,7 @@ public class SendActivity extends AppCompatActivity implements BaseQuickAdapter.
         mUnbinder = ButterKnife.bind(this);
 
         initUI();
-        mPeerAdapter = new PeerAdapter(R.layout.item_rv_peer, mPeerList);
+        mPeerAdapter = new PeerAdapter(R.layout.item_rv_send_peer, mPeerList);
         mRvPeerList.setAdapter(mPeerAdapter);
 
         mPeerAdapter.setOnItemClickListener(this);
@@ -110,6 +115,40 @@ public class SendActivity extends AppCompatActivity implements BaseQuickAdapter.
             public void onRequestConnect(Peer peer) {
 
             }
+
+
+            @Override
+            public void onAnswerRequestConnect(Peer peer) {
+
+                Log.i("wk", "onAnswerRequestConnect方法执行\n peer: " + peer.getHostAddress());
+
+                if (peer.equals(mPeerRequestConn)) {
+
+                    Toast.makeText(mContext, "验证成功,开始建立连接", Toast.LENGTH_SHORT).show();
+
+                    // 建立Socket连接，等待发送文件
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                Socket socket = new Socket(peer.getHostAddress(),
+                                        com.merpyzf.transfermanager.constant.Constant.SOCKET_PORT);
+                                Log.i("w2k", "建立Socket连接,发送文件");
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    }).start();
+
+
+                } else {
+
+                    Toast.makeText(mContext, "Peer不匹配，验证失败", Toast.LENGTH_SHORT).show();
+
+                }
+
+            }
         });
 
         /**
@@ -134,7 +173,7 @@ public class SendActivity extends AppCompatActivity implements BaseQuickAdapter.
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
 
 
-        final Peer peer = (Peer) adapter.getItem(position);
+        mPeerRequestConn = (Peer) adapter.getItem(position);
         // 构造UDP消息的内容
         SignMessage signMessage = new SignMessage();
         signMessage.setHostAddress(NetworkUtil.getLocalIp(mContext));
@@ -146,7 +185,7 @@ public class SendActivity extends AppCompatActivity implements BaseQuickAdapter.
 
         InetAddress dest = null;
         try {
-            dest = InetAddress.getByName(peer.getHostAddress());
+            dest = InetAddress.getByName(mPeerRequestConn.getHostAddress());
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
