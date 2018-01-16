@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.merpyzf.xmshare.ui.view.SendActivity">
+    tools:context="com.merpyzf.xmshare.ui.view.activity.SendActivity">
 
 
     <ProgressBar

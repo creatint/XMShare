@@ -1,4 +1,4 @@
-package com.merpyzf.xmshare.ui.view;
+package com.merpyzf.xmshare.ui.view.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -115,8 +115,7 @@ public class ReceiveActivity extends AppCompatActivity implements BaseQuickAdapt
                 Toast.makeText(ReceiveActivity.this, peer.getNickName() + "请求建立连接", Toast.LENGTH_SHORT).show();
 
                 mPeerAdapter.notifyDataSetChanged();
-                // 开启Socket服务,等待设备连接
-
+                // TODO: 2018/1/14  开启Socket服务等待设备连接，并开跳转到文件接收的界面，开始接收文件
                 try {
                     ServerSocket serverSocket = new ServerSocket(com.merpyzf.transfermanager.constant.Constant.SOCKET_PORT);
 

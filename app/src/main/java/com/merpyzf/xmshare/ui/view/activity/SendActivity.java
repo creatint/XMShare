@@ -1,4 +1,4 @@
-package com.merpyzf.xmshare.ui.view;
+package com.merpyzf.xmshare.ui.view.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -126,7 +126,7 @@ public class SendActivity extends AppCompatActivity implements BaseQuickAdapter.
 
                     Toast.makeText(mContext, "验证成功,开始建立连接", Toast.LENGTH_SHORT).show();
 
-                    // 建立Socket连接，等待发送文件
+                    // TODO: 2018/1/14 在这边开始建立Socket连接，并发送文件，切换到文件传输的界面
                     new Thread(new Runnable() {
                         @Override
                         public void run() {

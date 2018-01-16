@@ -1,39 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_file_root"
+
+    android:layout_width="90dp"
+    android:layout_height="90dp">
 
 
+    <ImageView
+        android:id="@+id/iv_apk_ico"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerInParent="true"
+        android:padding="10dp"
+        android:src="@drawable/ic_thumb_empty"
 
-    <LinearLayout
+        />
+
+    <TextView
+        android:id="@+id/tv_apk_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/iv_apk_ico"
+        android:gravity="center"
+        android:text="大象公会" />
+
+
+    <ImageView
+        android:id="@+id/iv_select"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_margin="3dp"
-        >
-
-        <ImageView
-            android:id="@+id/iv_apk_ico"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:padding="20dp"
-
-            />
-
-        <TextView
-            android:id="@+id/tv_apk_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:gravity="center"
-            />
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="end"
+        android:padding="10dp"
+        android:src="@drawable/ic_cb_checked"
+        android:tint="@color/colorAccent" />
 
 
-    </LinearLayout>
-
-
-
-
-
-
-</FrameLayout>
+</RelativeLayout>

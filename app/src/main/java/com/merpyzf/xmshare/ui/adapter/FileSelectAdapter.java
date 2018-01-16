@@ -1,10 +1,9 @@
 package com.merpyzf.xmshare.ui.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Environment;
 import android.support.annotation.Nullable;
-import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -14,23 +13,25 @@ import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Constant;
 import com.merpyzf.xmshare.common.base.App;
+import com.merpyzf.xmshare.receiver.FileSelectedListChangedReceiver;
 import com.merpyzf.xmshare.ui.entity.ApkFile;
 import com.merpyzf.xmshare.ui.entity.MusicFile;
 import com.merpyzf.xmshare.ui.entity.PicFile;
 import com.merpyzf.xmshare.ui.entity.VideoFile;
-import com.merpyzf.xmshare.util.FormatUtils;
+import com.merpyzf.xmshare.ui.view.activity.SelectFilesActivity;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.List;
 
 /**
  * Created by wangke on 2017/12/24.
  */
 
-public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
+public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
     private Context mContext;
 
-    public FileAdapter(Context context, int layoutResId, @Nullable List<T> data) {
+    public FileSelectAdapter(Context context, int layoutResId, @Nullable List<T> data) {
         super(layoutResId, data);
         this.mContext = context;
     }
@@ -38,22 +39,27 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
     @Override
     protected void convert(BaseViewHolder helper, final T item) {
 
+        FileInfo fileInfo = (FileInfo) item;
+        float size = fileInfo.getSize() / (1024 * 1024 * 1f);
+        DecimalFormat decimalFormat = new DecimalFormat("#.0");
+        String formatSize = decimalFormat.format(size);
+
+
+        helper.setText(R.id.tv_title, fileInfo.getName());
+        helper.setText(R.id.tv_path, fileInfo.getPath());
+        helper.setText(R.id.tv_size, "文件大小:" + formatSize + " MB");
+
 
         if (item instanceof ApkFile) {
 
             ApkFile apkFile = (ApkFile) item;
-            ImageView imageView = helper.getView(R.id.iv_apk_ico);
-            helper.setText(R.id.tv_apk_name, apkFile.getName());
+            ImageView imageView = helper.getView(R.id.iv_file_thumb);
             imageView.setImageDrawable(apkFile.getApkDrawable());
 
         } else if (item instanceof MusicFile) {
 
 
             MusicFile musicFile = (MusicFile) item;
-
-            helper.setText(R.id.tv_title, musicFile.getName());
-            helper.setText(R.id.tv_artist, "artist: " + musicFile.getArtist());
-            helper.setText(R.id.tv_size, "size:" + FormatUtils.convert2Mb(musicFile.getSize()) + " MB");
             File albumFile = new File(Environment.getExternalStorageDirectory().getPath()
                     + Constant.THUMB_MUSIC, String.valueOf(musicFile.getAlbumId()));
             if (albumFile.exists()) {
@@ -62,7 +68,7 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
                         .load(albumFile)
                         .crossFade()
                         .centerCrop()
-                        .into((ImageView) helper.getView(R.id.iv_music_album));
+                        .into((ImageView) helper.getView(R.id.iv_file_thumb));
             }
 
 
@@ -74,21 +80,15 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
                     .load(picFile.getPath())
                     .crossFade()
                     .centerCrop()
-                    .into((ImageView) helper.getView(R.id.iv_gallery));
+                    .into((ImageView) helper.getView(R.id.iv_file_thumb));
+
 
         } else if (item instanceof VideoFile) {
 
 
             VideoFile videoFile = (VideoFile) item;
-
-            helper.setText(R.id.tv_title, "视频名:" + videoFile.getName());
-
-            helper.setText(R.id.tv_size, "文件大小:" + FormatUtils.convert2Mb(videoFile.getSize()) + " MB");
-
-            ImageView ivVideoThumb = helper.getView(R.id.iv_video_album);
+            ImageView ivVideoThumb = helper.getView(R.id.iv_file_thumb);
             String videoThumbPath = Environment.getExternalStorageDirectory() + Constant.THUMB_VIDEO + "/" + videoFile.getName();
-            Log.i("wk", "videoThumbPath:" + videoThumbPath);
-
             Glide.with(mContext)
                     .load(new File(videoThumbPath))
                     .crossFade()
@@ -97,16 +97,18 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
 
         }
 
-        FileInfo fileInfo = (FileInfo) item;
-        ImageView ivSelect = helper.getView(R.id.iv_select);
 
-        if (App.getSendFileList().contains(fileInfo)) {
-            ivSelect.setVisibility(View.VISIBLE);
+        ImageView ivRemove = helper.getView(R.id.iv_remove);
 
-        } else {
-            ivSelect.setVisibility(View.INVISIBLE);
-        }
+        ivRemove.setOnClickListener(v -> {
 
+            App.removeSendFile(fileInfo);
+            // 发送文件发生改变的广播
+            mContext.sendBroadcast(new Intent(FileSelectedListChangedReceiver.ACTION));
+            notifyDataSetChanged();
+            //更新底部标题
+            ((SelectFilesActivity) mContext).updateBottomTitle();
+        });
 
     }
 

@@ -6,9 +6,11 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Environment;
 
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.xmshare.R;
+import com.merpyzf.xmshare.common.Constant;
 import com.merpyzf.xmshare.ui.entity.MusicFile;
 
 import java.io.BufferedOutputStream;
@@ -82,7 +84,7 @@ public class MusicUtils {
                 }).flatMap(new Function<FileInfo, ObservableSource<Long>>() {
             @Override
             public ObservableSource<Long> apply(FileInfo musicFile) throws Exception {
-                return Observable.just(((MusicFile)musicFile).getAlbumId());
+                return Observable.just(((MusicFile) musicFile).getAlbumId());
             }
         }).subscribeOn(Schedulers.io())
                 .subscribe(new Consumer<Long>() {
@@ -95,7 +97,7 @@ public class MusicUtils {
                                     "" + albumId)));
                             if (bitmap == null) {
 
-                                bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_album_empty);
+                                bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_thumb_empty);
                             }
                             bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
                         } catch (FileNotFoundException e) {
@@ -132,4 +134,20 @@ public class MusicUtils {
         return false;
     }
 
+
+    /**
+     * 更新封面图片
+     */
+    public static void updateAlbumImg(Context context, List<FileInfo> fileInfoList) {
+        File mParentAlbumFile = null;
+
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            mParentAlbumFile = new File(Environment.getExternalStorageDirectory(), Constant.THUMB_MUSIC);
+            if (!mParentAlbumFile.exists()) {
+                mParentAlbumFile.mkdirs();
+            }
+        }
+        writeAlbumImg2local(context, mParentAlbumFile, fileInfoList);
+
+    }
 }

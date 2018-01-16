@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.merpyzf.xmshare.ui.widget.SquareView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:foreground="@drawable/card_foreground"
     android:orientation="vertical"
     android:layout_margin="2dp"
     android:layout_width="match_parent"
@@ -10,7 +11,7 @@
         android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/ic_album_empty"
+        android:src="@drawable/ic_thumb_empty"
         android:scaleType="centerCrop"
         />
 
@@ -22,16 +23,15 @@
         android:visibility="invisible"
         />
 
-    <CheckBox
-        android:id="@+id/rb_check"
+    <ImageView
+        android:id="@+id/iv_select"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/selector_rb_check"
-        android:button="@null"
         android:layout_gravity="end"
         android:clickable="false"
         android:layout_margin="2dp"
-        android:backgroundTint="@color/colorAccent"
+        android:src="@drawable/ic_cb_checked"
+        android:tint="@color/colorAccent"
         />
 
 

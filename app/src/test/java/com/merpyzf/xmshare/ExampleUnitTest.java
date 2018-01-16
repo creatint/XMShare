@@ -200,4 +200,16 @@ public class ExampleUnitTest {
         });
     }
 
+    @Test
+    public void TestPath(){
+
+        String name =  "VIDEO0002.mp4";
+
+        int dotIndex = name.lastIndexOf('.');
+
+        String filename = name.substring(0,9);
+
+        System.out.println(filename);
+    }
+
 }

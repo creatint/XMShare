@@ -12,6 +12,8 @@ import com.merpyzf.httpcoreserver.ui.HttpServerActivity;
 import com.merpyzf.transfermanager.receive.Receiver;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Constant;
+import com.merpyzf.xmshare.ui.view.activity.ReceiveActivity;
+import com.merpyzf.xmshare.ui.view.activity.SendActivity;
 import com.merpyzf.xmshare.util.SharedPreUtils;
 
 import butterknife.BindView;

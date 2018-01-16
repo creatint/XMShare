@@ -9,5 +9,25 @@ import com.merpyzf.transfermanager.entity.FileInfo;
 
 public class VideoFile extends FileInfo {
 
+    // 封面ID
+    private String albumId;
 
+    // 视频时长
+    private long duration;
+
+    public String getAlbumId() {
+        return albumId;
+    }
+
+    public void setAlbumId(String albumId) {
+        this.albumId = albumId;
+    }
+
+    public long getDuration() {
+        return duration;
+    }
+
+    public void setDuration(long duration) {
+        this.duration = duration;
+    }
 }

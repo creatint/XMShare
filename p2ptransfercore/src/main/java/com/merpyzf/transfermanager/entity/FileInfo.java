@@ -7,21 +7,25 @@ package com.merpyzf.transfermanager.entity;
 public class FileInfo {
 
     /**
-     * 图片类型
-     */
-    public static final int FILE_TYPE_IMAGE = 1;
-    /**
      * 应用类型(APK)
      */
-    public static final int FILE_TYPE_APP = 2;
+    public static final int FILE_TYPE_APP = 1;
+
     /**
-     * 视频类型
+     * 图片类型
      */
-    public static final int FILE_TYPE_VIDEO = 3;
+    public static final int FILE_TYPE_IMAGE = 2;
+
     /**
      * 音乐类型
      */
-    public static final int FILE_TYPE_MUSIC = 4;
+    public static final int FILE_TYPE_MUSIC = 3;
+
+    /**
+     * 视频类型
+     */
+    public static final int FILE_TYPE_VIDEO = 4;
+
 
     // 文件id
     private String id;
@@ -35,9 +39,6 @@ public class FileInfo {
     private String suffix;
     // 文件大小
     private long size;
-    // 是否被选中
-    private boolean isChecked = false;
-
 
 
     public FileInfo() {
@@ -100,11 +101,4 @@ public class FileInfo {
         this.suffix = suffix;
     }
 
-    public boolean isChecked() {
-        return isChecked;
-    }
-
-    public void setChecked(boolean checked) {
-        isChecked = checked;
-    }
 }
