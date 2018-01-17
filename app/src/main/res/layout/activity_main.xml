@@ -53,7 +53,15 @@
         android:id="@+id/btn_ss"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="start socketServer"
+        android:text="Server Socket"
+        />
+
+
+    <Button
+        android:id="@+id/btn_sc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Client Socket"
         />
 
 

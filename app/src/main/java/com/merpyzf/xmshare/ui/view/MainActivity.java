@@ -9,10 +9,11 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.merpyzf.httpcoreserver.ui.HttpServerActivity;
-import com.merpyzf.transfermanager.receive.Receiver;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Constant;
+import com.merpyzf.xmshare.ui.test.transfer.TransferReceiveActivity;
 import com.merpyzf.xmshare.ui.view.activity.ReceiveActivity;
+import com.merpyzf.xmshare.ui.view.activity.SelectFilesActivity;
 import com.merpyzf.xmshare.ui.view.activity.SendActivity;
 import com.merpyzf.xmshare.util.SharedPreUtils;
 
@@ -31,6 +32,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button btnSend;
     @BindView(R.id.btn_ss)
     Button btnStartSs;
+    @BindView(R.id.btn_sc)
+    Button btnStarSc;
     @BindView(R.id.btn_save)
     Button btnSave;
     @BindView(R.id.edt_nickname)
@@ -39,6 +42,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private String TAG = MainActivity.class.getSimpleName();
     private Context mContext = null;
+
+
 
 
     @Override
@@ -72,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnSend.setOnClickListener(this);
         btnStartSs.setOnClickListener(this);
         btnSave.setOnClickListener(this);
+        btnStarSc.setOnClickListener(this);
 
 
     }
@@ -92,12 +98,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 SendActivity.start(mContext);
                 break;
 
+            // 开启一个Socket的服务端
             case R.id.btn_ss:
 
-                Receiver receiver = new Receiver();
-                receiver.startReceive();
+                TransferReceiveActivity.start(this);
 
                 break;
+
+            case R.id.btn_sc:
+
+
+                SelectFilesActivity.start(mContext);
+
+
+                break;
+
+
             case R.id.btn_save:
 
                 // TODO: 2018/1/11 在应用开启并且没有手动设置设备昵称时，获取设备的设备名作为设备的昵称

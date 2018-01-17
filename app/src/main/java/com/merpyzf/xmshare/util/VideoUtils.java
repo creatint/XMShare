@@ -10,7 +10,7 @@ import android.util.Log;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Constant;
-import com.merpyzf.xmshare.ui.entity.VideoFile;
+import com.merpyzf.transfermanager.entity.VideoFile;
 
 import java.io.BufferedOutputStream;
 import java.io.File;

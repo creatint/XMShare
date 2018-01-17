@@ -10,7 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import com.merpyzf.transfermanager.entity.FileInfo;
-import com.merpyzf.xmshare.ui.entity.ApkFile;
+import com.merpyzf.transfermanager.entity.ApkFile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -22,7 +22,6 @@ import java.util.List;
  */
 
 public class ApkUtils {
-
 
 
     /**
@@ -53,14 +52,15 @@ public class ApkUtils {
                     String appSourcePath = context.getApplication().getPackageManager().getApplicationInfo(appInfo.packageName, 0).sourceDir;
                     File file = new File(appSourcePath);
                     long length = file.length();
-                    float appSize = length / (1024 * 1f) / 1024;
-                    Log.i("wk", "appName: " + appName + " appSize:" + appSize);
 
                     app.setApkDrawable(appIco);
                     app.setName(appName);
                     app.setPath(appSourcePath);
-                    app.setSize(length);
+                    app.setLength(length);
+                    app.setSuffix(appSourcePath);
+                    app.setType(FileInfo.FILE_TYPE_APP);
                     apkFileList.add(app);
+
 
                 } catch (PackageManager.NameNotFoundException e) {
                     e.printStackTrace();
@@ -82,10 +82,11 @@ public class ApkUtils {
 
     /**
      * 获取Drawable实际占用大小
+     *
      * @param drawable
      * @return
      */
-    public static int getDrawableSize(Drawable drawable){
+    public static int getDrawableSize(Drawable drawable) {
 
         // 取 drawable 的长宽
         int w = drawable.getIntrinsicWidth();

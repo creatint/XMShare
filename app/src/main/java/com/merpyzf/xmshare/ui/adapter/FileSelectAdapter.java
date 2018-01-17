@@ -14,10 +14,10 @@ import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Constant;
 import com.merpyzf.xmshare.common.base.App;
 import com.merpyzf.xmshare.receiver.FileSelectedListChangedReceiver;
-import com.merpyzf.xmshare.ui.entity.ApkFile;
-import com.merpyzf.xmshare.ui.entity.MusicFile;
-import com.merpyzf.xmshare.ui.entity.PicFile;
-import com.merpyzf.xmshare.ui.entity.VideoFile;
+import com.merpyzf.transfermanager.entity.ApkFile;
+import com.merpyzf.transfermanager.entity.MusicFile;
+import com.merpyzf.transfermanager.entity.PicFile;
+import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.xmshare.ui.view.activity.SelectFilesActivity;
 
 import java.io.File;
@@ -40,7 +40,7 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
     protected void convert(BaseViewHolder helper, final T item) {
 
         FileInfo fileInfo = (FileInfo) item;
-        float size = fileInfo.getSize() / (1024 * 1024 * 1f);
+        float size = fileInfo.getLength() / (1024 * 1024 * 1f);
         DecimalFormat decimalFormat = new DecimalFormat("#.0");
         String formatSize = decimalFormat.format(size);
 

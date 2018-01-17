@@ -1,6 +1,4 @@
-package com.merpyzf.xmshare.ui.entity;
-
-import com.merpyzf.transfermanager.entity.FileInfo;
+package com.merpyzf.transfermanager.entity;
 
 /**
  * Created by wangke on 2018/1/9.
@@ -8,10 +6,8 @@ import com.merpyzf.transfermanager.entity.FileInfo;
  */
 
 public class VideoFile extends FileInfo {
-
     // 封面ID
     private String albumId;
-
     // 视频时长
     private long duration;
 
@@ -30,4 +26,7 @@ public class VideoFile extends FileInfo {
     public void setDuration(long duration) {
         this.duration = duration;
     }
+
+
+
 }

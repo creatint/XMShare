@@ -1,6 +1,4 @@
-package com.merpyzf.xmshare.ui.entity;
-
-import com.merpyzf.transfermanager.entity.FileInfo;
+package com.merpyzf.transfermanager.entity;
 
 /**
  * Created by wangke on 2018/1/9.
@@ -9,7 +7,7 @@ import com.merpyzf.transfermanager.entity.FileInfo;
 
 public class PicFile extends FileInfo {
 
-    public PicFile(String name, String path, String type, long size) {
+    public PicFile(String name, String path, int type, long size) {
         super(name, path, type, size,"png");
         // TODO: 2018/1/9 需要考虑文件后缀名的作用，
 

@@ -3,22 +3,21 @@ package com.merpyzf.xmshare.ui.adapter;
 import android.content.Context;
 import android.os.Environment;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.merpyzf.transfermanager.entity.ApkFile;
 import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.MusicFile;
+import com.merpyzf.transfermanager.entity.PicFile;
+import com.merpyzf.transfermanager.entity.VideoFile;
+import com.merpyzf.transfermanager.util.FormatUtils;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Constant;
 import com.merpyzf.xmshare.common.base.App;
-import com.merpyzf.xmshare.ui.entity.ApkFile;
-import com.merpyzf.xmshare.ui.entity.MusicFile;
-import com.merpyzf.xmshare.ui.entity.PicFile;
-import com.merpyzf.xmshare.ui.entity.VideoFile;
-import com.merpyzf.xmshare.util.FormatUtils;
 
 import java.io.File;
 import java.util.List;
@@ -53,7 +52,8 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
 
             helper.setText(R.id.tv_title, musicFile.getName());
             helper.setText(R.id.tv_artist, "artist: " + musicFile.getArtist());
-            helper.setText(R.id.tv_size, "size:" + FormatUtils.convert2Mb(musicFile.getSize()) + " MB");
+            helper.setText(R.id.tv_size, "size:" + FormatUtils.convert2Mb(musicFile.getLength()) + " MB");
+
             File albumFile = new File(Environment.getExternalStorageDirectory().getPath()
                     + Constant.THUMB_MUSIC, String.valueOf(musicFile.getAlbumId()));
             if (albumFile.exists()) {
@@ -78,16 +78,12 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
 
         } else if (item instanceof VideoFile) {
 
-
             VideoFile videoFile = (VideoFile) item;
-
             helper.setText(R.id.tv_title, "视频名:" + videoFile.getName());
-
-            helper.setText(R.id.tv_size, "文件大小:" + FormatUtils.convert2Mb(videoFile.getSize()) + " MB");
-
+            helper.setText(R.id.tv_size, "文件大小:" + FormatUtils.convert2Mb(videoFile.getLength()) + " MB");
+            helper.setText(R.id.tv_duration, "文件时长:"+FormatUtils.convertMS2Str(videoFile.getDuration()));
             ImageView ivVideoThumb = helper.getView(R.id.iv_video_album);
             String videoThumbPath = Environment.getExternalStorageDirectory() + Constant.THUMB_VIDEO + "/" + videoFile.getName();
-            Log.i("wk", "videoThumbPath:" + videoThumbPath);
 
             Glide.with(mContext)
                     .load(new File(videoThumbPath))

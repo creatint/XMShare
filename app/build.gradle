@@ -79,12 +79,12 @@ dependencies {
     compile 'com.afollestad.material-dialogs:core:0.9.1.0'
     compile 'com.afollestad.material-dialogs:commons:0.9.1.0'
     implementation project(':radarview')
-
     compile 'de.hdodenhof:circleimageview:2.2.0'
-
     compile 'pub.devrel:easypermissions:0.4.2'
-
     compile 'net.qiujuer.genius:ui:2.0.0'
     compile 'net.qiujuer.genius:res:2.0.0'
+    implementation 'com.google.code.gson:gson:2.2.4'
 }
+
+
 

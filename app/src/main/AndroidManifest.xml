@@ -31,7 +31,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.view.MainActivity" />
+        <activity android:name=".ui.view.MainActivity" >
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+
+
+        </activity>
         <activity android:name=".ui.view.SplashActivity" />
         <activity
             android:name=".ui.view.activity.ReceiveActivity"
@@ -40,24 +50,19 @@
             android:name=".ui.view.activity.SendActivity"
             android:label="发送文件" />
         <activity android:name=".ui.view.activity.SelectFilesActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".ui.test.BottomSheetDialogActivity" />
         <activity android:name=".ui.test.TestRadarViewActivity" />
-        <activity android:name=".ui.test.ScanVideoActivity"></activity>
+        <activity android:name=".ui.test.ScanVideoActivity" />
 
         <receiver
             android:name=".receiver.FileSelectedListChangedReceiver"
             android:enabled="true"
-            android:exported="true">
+            android:exported="true" />
 
-        </receiver>
-
-
+        <activity android:name=".ui.test.transfer.TransferSendActivity" />
+        <activity android:name=".ui.test.transfer.TransferReceiveActivity"></activity>
     </application>
 
 </manifest>

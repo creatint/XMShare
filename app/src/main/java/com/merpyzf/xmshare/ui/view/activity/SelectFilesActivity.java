@@ -1,6 +1,7 @@
 package com.merpyzf.xmshare.ui.view.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -24,6 +25,7 @@ import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.base.App;
 import com.merpyzf.xmshare.ui.adapter.FileSelectAdapter;
+import com.merpyzf.xmshare.ui.test.transfer.TransferSendActivity;
 import com.merpyzf.xmshare.ui.view.fragment.FileListFragment;
 import com.merpyzf.xmshare.ui.widget.ApplyPermissionFragment;
 
@@ -59,6 +61,13 @@ public class SelectFilesActivity extends AppCompatActivity {
     private BottomSheetBehavior<View> mSheetBehavior;
     private OnFileSelectListener<FileInfo> mFileSelectListener;
     private FileSelectAdapter<FileInfo> mFileSelectAdapter;
+
+
+    public static void start(Context context) {
+
+        context.startActivity(new Intent(context, SelectFilesActivity.class));
+
+    }
 
 
     @Override
@@ -124,8 +133,11 @@ public class SelectFilesActivity extends AppCompatActivity {
         mRvSelectedList.setLayoutManager(new LinearLayoutManager(mContext));
 
         mFileSelectAdapter = new FileSelectAdapter<>(mContext, R.layout.item_rv_select, App.getSendFileList());
-        mFileSelectAdapter.openLoadAnimation();
+
+        //        mFileSelectAdapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
+//        mFileSelectAdapter.isFirstOnly(false);
         mRvSelectedList.setAdapter(mFileSelectAdapter);
+
 
         mSheetBehavior = BottomSheetBehavior.from(mBottomSheet);
         // TODO: 2018/1/16 可能会出现OOM,使用ViewPager中Fragment的懒加载来解决ViewPager在快速切换时造成的卡顿问题
@@ -200,6 +212,9 @@ public class SelectFilesActivity extends AppCompatActivity {
         mFabSend.setOnClickListener(v -> {
 
             Log.i("w2k", "开始发送文件");
+
+            TransferSendActivity.start(mContext);
+
 
         });
 

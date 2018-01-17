@@ -1,4 +1,4 @@
-package com.merpyzf.xmshare.ui.entity;
+package com.merpyzf.transfermanager.entity;
 
 import com.merpyzf.transfermanager.entity.FileInfo;
 
@@ -19,8 +19,8 @@ public class MusicFile extends FileInfo {
     public MusicFile() {
     }
 
-    public MusicFile(String name, String path, String type, long size, long albumId, String artist, long duration) {
-        super(name, path, type, size,"mp3");
+    public MusicFile(String name, String path, int type, long length, long albumId, String artist, long duration) {
+        super(name, path, type, length, "mp3");
         this.albumId = albumId;
         this.artist = artist;
         this.duration = duration;

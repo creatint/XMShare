@@ -29,11 +29,12 @@ import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.base.App;
 import com.merpyzf.xmshare.receiver.FileSelectedListChangedReceiver;
 import com.merpyzf.xmshare.ui.adapter.FileAdapter;
-import com.merpyzf.xmshare.ui.entity.MusicFile;
-import com.merpyzf.xmshare.ui.entity.PicFile;
-import com.merpyzf.xmshare.ui.entity.VideoFile;
+import com.merpyzf.transfermanager.entity.MusicFile;
+import com.merpyzf.transfermanager.entity.PicFile;
+import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.xmshare.ui.view.activity.OnFileSelectListener;
 import com.merpyzf.xmshare.util.ApkUtils;
+import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.xmshare.util.MusicUtils;
 import com.merpyzf.xmshare.util.VideoUtils;
 
@@ -65,6 +66,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
     private String[] mProjections;
     private Handler mHandler;
     private OnFileSelectListener<FileInfo> mFileSelectListener;
+    private FileSelectedListChangedReceiver mFslcReceiver;
 
 
     @SuppressLint("ValidFragment")
@@ -135,7 +137,8 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
 
         });
 
-        FileSelectedListChangedReceiver fslcReceiver = new FileSelectedListChangedReceiver() {
+        // 当选择的文件列表发生改变时的回调
+        mFslcReceiver = new FileSelectedListChangedReceiver() {
             @Override
             public void onFileListChanged() {
                 // 当选择的文件列表发生改变时的回调
@@ -144,7 +147,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
         };
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(FileSelectedListChangedReceiver.ACTION);
-        getActivity().registerReceiver(fslcReceiver, intentFilter);
+        getActivity().registerReceiver(mFslcReceiver, intentFilter);
 
 
         return rootView;
@@ -286,10 +289,14 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                     String path = data.getString(2);
                     int album_id = data.getInt(3);
                     String mimeType = data.getString(4);
+
+                    // 注意这边的音乐文件的大小是否正确
                     long extra_max_bytes = data.getLong(5);
                     long duration = data.getLong(6);
-                    Log.i("wk", "title:" + title + "\nartist:" + artist + "\npath:" + path + "\nalbum:" + album_id + "\nduration:" + duration + "\nmimieType:" + mimeType + "\n max_bytes:" + extra_max_bytes);
-                    MusicFile fileInfo = new MusicFile(title, path, "mp3", extra_max_bytes, album_id, artist, duration);
+                    MusicFile fileInfo = new MusicFile(title, path, FileInfo.FILE_TYPE_MUSIC, extra_max_bytes, album_id, artist, duration);
+                    // 添加文件的后缀名
+                    fileInfo.setSuffix(FileUtils.getFileSuffix(path));
+
 
                     mFileLists.add(fileInfo);
 
@@ -330,7 +337,10 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                         picFile.setPath(path);
                         picFile.setName(title);
                         // 设置文件的大小
-                        picFile.setSize(new File(path).length());
+                        picFile.setLength(new File(path).length());
+                        picFile.setSuffix(path);
+                        // 设置文件的类型
+                        picFile.setType(FileInfo.FILE_TYPE_IMAGE);
                         mFileLists.add(picFile);
                     }
 
@@ -361,17 +371,16 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                     long duration = data.getLong(data.getColumnIndex(MediaStore.Video.Media.DURATION));
                     String path = data.getString(data.getColumnIndex(MediaStore.Video.Media.DATA));
 
-                    Log.i("w2k", "视频文件:" + path);
-
                     VideoFile videoFile = new VideoFile();
-
                     videoFile.setAlbumId(id);
                     videoFile.setName(title);
                     videoFile.setPath(path);
+                    videoFile.setLength(new File(path).length());
                     videoFile.setDuration(duration);
-
-                    videoFile.setSuffix("mp4");
-
+                    // 设置文件后缀
+                    videoFile.setSuffix(path);
+                    // 设置文件类型
+                    videoFile.setType(FileInfo.FILE_TYPE_VIDEO);
                     mFileLists.add(videoFile);
 
                 }
@@ -428,6 +437,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
 
         Log.i("w2k", LOAD_FILE_TYPE + "  的onDestory方法执行了");
         mLoaderManager.destroyLoader(LOAD_FILE_TYPE);
+        mContext.unregisterReceiver(mFslcReceiver);
         mUnbinder.unbind();
         super.onDestroy();
     }
