@@ -9,8 +9,8 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
-import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.ApkFile;
+import com.merpyzf.transfermanager.entity.FileInfo;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -56,8 +56,8 @@ public class ApkUtils {
                     app.setApkDrawable(appIco);
                     app.setName(appName);
                     app.setPath(appSourcePath);
-                    app.setLength(length);
-                    app.setSuffix(appSourcePath);
+                    app.setLength((int) length);
+                    app.setSuffix("apk");
                     app.setType(FileInfo.FILE_TYPE_APP);
                     apkFileList.add(app);
 

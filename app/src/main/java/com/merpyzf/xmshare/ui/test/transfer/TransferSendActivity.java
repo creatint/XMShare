@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 
-import com.merpyzf.transfermanager.send.Sender;
+import com.merpyzf.transfermanager.send.SenderManager;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.base.App;
 
@@ -36,7 +36,7 @@ public class TransferSendActivity extends AppCompatActivity {
         mUnbinder = ButterKnife.bind(this);
 
 
-        Sender sender = new Sender();
+        SenderManager sender = new SenderManager();
 
         // 发送文件
         btnSend.setOnClickListener(v -> {

@@ -293,7 +293,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                     // 注意这边的音乐文件的大小是否正确
                     long extra_max_bytes = data.getLong(5);
                     long duration = data.getLong(6);
-                    MusicFile fileInfo = new MusicFile(title, path, FileInfo.FILE_TYPE_MUSIC, extra_max_bytes, album_id, artist, duration);
+                    MusicFile fileInfo = new MusicFile(title, path, FileInfo.FILE_TYPE_MUSIC, (int) extra_max_bytes, album_id, artist, duration);
                     // 添加文件的后缀名
                     fileInfo.setSuffix(FileUtils.getFileSuffix(path));
 
@@ -337,8 +337,8 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                         picFile.setPath(path);
                         picFile.setName(title);
                         // 设置文件的大小
-                        picFile.setLength(new File(path).length());
-                        picFile.setSuffix(path);
+                        picFile.setLength((int) new File(path).length());
+                        picFile.setSuffix(FileUtils.getFileSuffix(path));
                         // 设置文件的类型
                         picFile.setType(FileInfo.FILE_TYPE_IMAGE);
                         mFileLists.add(picFile);
@@ -375,10 +375,10 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                     videoFile.setAlbumId(id);
                     videoFile.setName(title);
                     videoFile.setPath(path);
-                    videoFile.setLength(new File(path).length());
+                    videoFile.setLength((int) new File(path).length());
                     videoFile.setDuration(duration);
                     // 设置文件后缀
-                    videoFile.setSuffix(path);
+                    videoFile.setSuffix(FileUtils.getFileSuffix(path));
                     // 设置文件类型
                     videoFile.setType(FileInfo.FILE_TYPE_VIDEO);
                     mFileLists.add(videoFile);

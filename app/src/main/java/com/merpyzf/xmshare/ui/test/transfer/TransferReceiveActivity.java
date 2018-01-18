@@ -9,7 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import com.merpyzf.transfermanager.entity.FileInfo;
-import com.merpyzf.transfermanager.receive.Receiver;
+import com.merpyzf.transfermanager.receive.ReceiverManager;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.ui.adapter.FileTransferAdapter;
 
@@ -27,7 +27,7 @@ public class TransferReceiveActivity extends AppCompatActivity {
     private Context mContext;
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
-    private Receiver mReceiver;
+    private ReceiverManager mReceiver;
     private ExecutorService mThreadPool;
 
 
@@ -50,12 +50,12 @@ public class TransferReceiveActivity extends AppCompatActivity {
         initUI();
 
 
-        mReceiver = Receiver.getInstance();
+        mReceiver = ReceiverManager.getInstance();
 
         // 将线程的执行托管到线程池中进行
         mThreadPool.execute(mReceiver);
 
-        mReceiver.register(new Receiver.ReceiveObserver() {
+        mReceiver.register(new ReceiverManager.ReceiveObserver() {
 
             private FileTransferAdapter<FileInfo> fileTransferAdapter;
 
