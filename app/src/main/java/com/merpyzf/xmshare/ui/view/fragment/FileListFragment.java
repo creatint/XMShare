@@ -104,6 +104,10 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
         mLoaderManager = getActivity().getLoaderManager();
         mLoaderManager.initLoader(LOAD_FILE_TYPE, null, FileListFragment.this);
 
+        // 选择前先清空上一次选择的数据
+        if (App.getSendFileList().size() > 0) {
+            App.getSendFileList().clear();
+        }
         /**
          *  文件列表点击选择的回调事件
          */

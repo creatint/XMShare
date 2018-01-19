@@ -1,4 +1,4 @@
-package com.merpyzf.transfermanager.receive;
+package com.merpyzf.transfermanager.send;
 
 import com.merpyzf.transfermanager.entity.FileInfo;
 
@@ -6,7 +6,7 @@ import com.merpyzf.transfermanager.entity.FileInfo;
  * Created by wangke on 2017/12/22.
  */
 
-public interface IReceiveTask {
+public interface ISendTask {
 
     /**
      * 资源的初始化
@@ -14,19 +14,19 @@ public interface IReceiveTask {
     void init();
 
     /**
-     * 接收待接收文件列表
+     * 预先发送待传输的文件列表
      */
-    void receiveTransferFileList();
+    void sendTransferFileList();
 
     /**
      * 解析文件头信息
      */
-    FileInfo parseHeader();
+    void sendHeader(FileInfo file);
 
     /**
      * 读取文件
      */
-    void readBody(FileInfo fileInfo);
+    void sendBody(FileInfo file);
 
     /**
      * 释放资源

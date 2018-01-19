@@ -1,7 +1,5 @@
 package com.merpyzf.transfermanager.entity;
 
-import com.merpyzf.transfermanager.entity.FileInfo;
-
 /**
  * Created by wangke on 2017/12/23.
  * 音乐文件
@@ -19,7 +17,7 @@ public class MusicFile extends FileInfo {
     public MusicFile() {
     }
 
-    public MusicFile(String name, String path, int type, long length, long albumId, String artist, long duration) {
+    public MusicFile(String name, String path, int type, int length, long albumId, String artist, long duration) {
         super(name, path, type, length, "mp3");
         this.albumId = albumId;
         this.artist = artist;

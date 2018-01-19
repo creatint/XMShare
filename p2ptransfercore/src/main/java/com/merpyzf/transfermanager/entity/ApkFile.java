@@ -11,7 +11,7 @@ public class ApkFile extends FileInfo {
 
     private Drawable aplDrawable;
 
-    public ApkFile(String name, String path, int type, long size, Drawable aplDrawable) {
+    public ApkFile(String name, String path, int type, int size, Drawable aplDrawable) {
         super(name, path, type, size, "apk");
         this.aplDrawable = aplDrawable;
     }

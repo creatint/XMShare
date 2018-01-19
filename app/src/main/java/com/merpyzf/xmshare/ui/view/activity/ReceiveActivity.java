@@ -25,10 +25,7 @@ import com.merpyzf.xmshare.common.Constant;
 import com.merpyzf.xmshare.ui.adapter.PeerAdapter;
 import com.merpyzf.xmshare.util.SharedPreUtils;
 
-import java.io.IOException;
 import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
@@ -116,27 +113,6 @@ public class ReceiveActivity extends AppCompatActivity implements BaseQuickAdapt
 
                 mPeerAdapter.notifyDataSetChanged();
                 // TODO: 2018/1/14  开启Socket服务等待设备连接，并开跳转到文件接收的界面，开始接收文件
-                try {
-                    ServerSocket serverSocket = new ServerSocket(com.merpyzf.transfermanager.constant.Constant.SOCKET_PORT);
-
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                Log.i("w2k","阻塞中，等待设备连接");
-                                Socket socket = serverSocket.accept();
-                                Log.i("w2k", "已有设备连接:"+socket.getInetAddress().getHostAddress());
-
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }).start();
-
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
 
 
             }

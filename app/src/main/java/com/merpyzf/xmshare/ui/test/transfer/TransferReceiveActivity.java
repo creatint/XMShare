@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
+import com.merpyzf.transfermanager.constant.Constant;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.receive.ReceiverManager;
 import com.merpyzf.xmshare.R;
@@ -69,14 +70,23 @@ public class TransferReceiveActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onReceiveProgress() {
+            public void onReceiveProgress(FileInfo fileInfo) {
+
+
 
             }
 
             @Override
-            public void onReceiveStatus() {
+            public void onReceiveStatus(FileInfo fileInfo) {
+
+                if (fileInfo.getFileTransferStatus() == Constant.TransferStatus.TRANSFER_SUCCESS) {
+
+                    Log.i("w2k", fileInfo.getName() + "--> 传输完毕");
+                }
+
 
             }
+
         });
 
     }

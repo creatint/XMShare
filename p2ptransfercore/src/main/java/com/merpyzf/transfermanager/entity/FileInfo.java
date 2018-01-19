@@ -1,5 +1,7 @@
 package com.merpyzf.transfermanager.entity;
 
+import com.merpyzf.transfermanager.constant.Constant;
+
 /**
  * Created by wangke on 2017/12/23.
  */
@@ -26,7 +28,6 @@ public class FileInfo {
      */
     public static final int FILE_TYPE_VIDEO = 4;
 
-
     // 文件id
     private String id;
     // 文件名
@@ -34,21 +35,30 @@ public class FileInfo {
     // 文件路径
     private String path;
     // 文件类型
-    private String type;
+    private int type;
     // 文件的后缀名
     private String suffix;
     // 文件大小
-    private long size;
+    private int length;
+
+    // 文件传输的进度
+    private float progress;
+
+    // 默认的传输状态为等待状态
+    private int fileTransferStatus = Constant.TransferStatus.TRANSFER_WAITING;
+
+    //是否是传输中的最后一个文件，如果是则为1，不是默认为-1
+    private int isLast = -1;
 
 
     public FileInfo() {
     }
 
-    public FileInfo(String name, String path, String type, long size, String suffix) {
+    public FileInfo(String name, String path, int type, int length, String suffix) {
         this.name = name;
         this.path = path;
         this.type = type;
-        this.size = size;
+        this.length = length;
         this.suffix = suffix;
     }
 
@@ -77,20 +87,20 @@ public class FileInfo {
         this.path = path;
     }
 
-    public String getType() {
+    public int getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(int type) {
         this.type = type;
     }
 
-    public long getSize() {
-        return size;
+    public int getLength() {
+        return length;
     }
 
-    public void setSize(long size) {
-        this.size = size;
+    public void setLength(int length) {
+        this.length = length;
     }
 
     public String getSuffix() {
@@ -101,4 +111,69 @@ public class FileInfo {
         this.suffix = suffix;
     }
 
+    public int getIsLast() {
+        return isLast;
+    }
+
+    public void setIsLast(int isLast) {
+        this.isLast = isLast;
+    }
+
+    public int getFileTransferStatus() {
+        return fileTransferStatus;
+    }
+
+    public void setFileTransferStatus(int fileTransferStatus) {
+        this.fileTransferStatus = fileTransferStatus;
+    }
+
+    public float getProgress() {
+        return progress;
+    }
+
+    public void setProgress(float progress) {
+        this.progress = progress;
+    }
+
+    /**
+     * 获取传输中的文件头信息
+     *
+     * @return
+     */
+    public String getHeader() {
+
+
+        StringBuffer sb = new StringBuffer();
+        //文件类型
+        sb.append(type);
+        sb.append(":");
+        // 文件名
+        sb.append(name);
+        sb.append(":");
+        //文件大小
+        sb.append(length);
+        sb.append(":");
+        // 文件后缀
+        sb.append(suffix);
+        sb.append(":");
+        // 文件是否是最后一个的标记
+        sb.append(isLast);
+
+        sb.append(Constant.S_END);
+
+        // 当前文件头部的长度
+        int currentLength = sb.toString().getBytes().length;
+
+        if (currentLength < Constant.HEADER_LENGTH) {
+            // 少于的部分使用空格填充
+            for (int i = 0; i < Constant.HEADER_LENGTH - currentLength; i++) {
+
+                sb.append(" ");
+
+            }
+        }
+        return sb.toString();
+    }
 }
+
+

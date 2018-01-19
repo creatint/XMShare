@@ -34,10 +34,7 @@ public class TransferSendActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sned);
         mUnbinder = ButterKnife.bind(this);
-
-
-        SenderManager sender = new SenderManager();
-
+        SenderManager sender = new SenderManager(this);
         // 发送文件
         btnSend.setOnClickListener(v -> {
 
