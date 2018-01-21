@@ -8,13 +8,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
-import com.merpyzf.transfermanager.constant.Constant;
-import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.receive.ReceiverManager;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.ui.adapter.FileTransferAdapter;
 
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -52,43 +49,15 @@ public class TransferReceiveActivity extends AppCompatActivity {
 
 
         mReceiver = ReceiverManager.getInstance();
-
-        // 将线程的执行托管到线程池中进行
+        // 将线程的执行托管到线程池中进行, 开启一个ServerSocket,进行文件的接收
         mThreadPool.execute(mReceiver);
 
-        mReceiver.register(new ReceiverManager.ReceiveObserver() {
+        mReceiver.setOnTransferFileListListener(receiveFileList -> {
 
-            private FileTransferAdapter<FileInfo> fileTransferAdapter;
-
-            @Override
-            public void onReceiveListCompleted(List<FileInfo> receiveFileList) {
-
-                Log.i("w2k", "文件列表接收完毕 ----- > " + receiveFileList.size());
-                fileTransferAdapter = new FileTransferAdapter<>(R.layout.item_rv_transfer, receiveFileList);
-                mRecyclerView.setAdapter(fileTransferAdapter);
-
-            }
-
-            @Override
-            public void onReceiveProgress(FileInfo fileInfo) {
-
-
-
-            }
-
-            @Override
-            public void onReceiveStatus(FileInfo fileInfo) {
-
-                if (fileInfo.getFileTransferStatus() == Constant.TransferStatus.TRANSFER_SUCCESS) {
-
-                    Log.i("w2k", fileInfo.getName() + "--> 传输完毕");
-                }
-
-
-            }
+            FileTransferAdapter fileTransferAdapter = new FileTransferAdapter<>(R.layout.item_rv_transfer, receiveFileList);
+            mRecyclerView.setAdapter(fileTransferAdapter);
 
         });
-
     }
 
 

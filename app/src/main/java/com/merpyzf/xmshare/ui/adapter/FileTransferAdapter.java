@@ -95,10 +95,6 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
 
 
         ReceiverManager.getInstance().register(new ReceiverManager.ReceiveObserver() {
-            @Override
-            public void onReceiveListCompleted(List<FileInfo> receiveFileList) {
-
-            }
 
             // 这边只有一种状态，传输中
             @Override

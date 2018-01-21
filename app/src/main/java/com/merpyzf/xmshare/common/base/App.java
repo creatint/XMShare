@@ -23,7 +23,6 @@ public class App extends Application {
      */
     public static List<FileInfo> mSendFileList;
 
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -54,6 +53,7 @@ public class App extends Application {
 
         if (mSendFileList.contains(fileInfo)) {
             mSendFileList.remove(fileInfo);
+            //
         }
     }
 
