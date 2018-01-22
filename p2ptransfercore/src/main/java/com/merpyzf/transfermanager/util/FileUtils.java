@@ -24,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DecimalFormat;
 
 /**
  * Created by wangke on 2018/1/16.
@@ -126,7 +127,7 @@ public class FileUtils {
      * @param file
      * @return
      */
-    public static byte[] getFileThumbByteArray(Context mContext,FileInfo file) {
+    public static byte[] getFileThumbByteArray(Context mContext, FileInfo file) {
 
         byte[] FileThumbArray = new byte[0];
 
@@ -137,14 +138,14 @@ public class FileUtils {
             // 将文件的缩略图转换成
             Bitmap appThumbBmp = FileUtils.drawableToBitmap(appFile.getApkDrawable());
             // 对缩略图进行压缩
-            FileThumbArray = FileUtils.bitmapToByteArray(zoomImage(mContext,appThumbBmp));
+            FileThumbArray = FileUtils.bitmapToByteArray(zoomImage(mContext, appThumbBmp));
 
         } else if (file instanceof PicFile) {
 
             PicFile picFile = (PicFile) file;
             // 获取图片原始的bitmap
             Bitmap appThumbBmp = BitmapFactory.decodeFile(picFile.getPath());
-            FileThumbArray = FileUtils.bitmapToByteArray(zoomImage(mContext,appThumbBmp));
+            FileThumbArray = FileUtils.bitmapToByteArray(zoomImage(mContext, appThumbBmp));
 
 
         } else if (file instanceof MusicFile) {
@@ -155,7 +156,7 @@ public class FileUtils {
                     + Constant.THUMB_MUSIC, String.valueOf(musicFile.getAlbumId()));
             // 获取图片原始的bitmap
             Bitmap appThumbBmp = BitmapFactory.decodeFile(thumbFile.getPath());
-            FileThumbArray = FileUtils.bitmapToByteArray(zoomImage(mContext,appThumbBmp));
+            FileThumbArray = FileUtils.bitmapToByteArray(zoomImage(mContext, appThumbBmp));
 
         } else if (file instanceof VideoFile) {
 
@@ -165,7 +166,7 @@ public class FileUtils {
                     Constant.THUMB_VIDEO + "/" + videoFile.getName());
 
             Bitmap appThumbBmp = BitmapFactory.decodeFile(thumbFile.getPath());
-            FileThumbArray = FileUtils.bitmapToByteArray(zoomImage(mContext,appThumbBmp));
+            FileThumbArray = FileUtils.bitmapToByteArray(zoomImage(mContext, appThumbBmp));
         }
 
         return FileThumbArray;
@@ -179,9 +180,9 @@ public class FileUtils {
      * @param bmp
      * @return
      */
-    public static Bitmap zoomImage(Context mContext,Bitmap bmp) {
-        if(bmp == null){
-            bmp = BitmapFactory.decodeResource(mContext.getResources(),R.drawable.ic_thumb_empty);
+    public static Bitmap zoomImage(Context mContext, Bitmap bmp) {
+        if (bmp == null) {
+            bmp = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_thumb_empty);
         }
 
         // 获取这个图片的宽和高
@@ -307,6 +308,46 @@ public class FileUtils {
 
     }
 
+
+    /**
+     * 转换为流量数组
+     * String[0] 为数值
+     * String[1] 为单位
+     * 1024 ===》》》 1 k
+     *
+     * @param size
+     * @return
+     */
+    public static String[] getFileSizeArrayStr(long size) {
+        DecimalFormat decimalFormat = new DecimalFormat("####.#");
+
+        String[] result = new String[2];
+        if (size < 0) { //小于0字节则返回0
+            result[0] = "0";
+            result[1] = "B";
+            return result;
+        }
+
+        double value = 0f;
+        if ((size / 1024) < 1) {
+            result[0] = decimalFormat.format(size);
+            result[1] = "B";
+        } else if ((size / (1024 * 1024)) < 1) {
+            value = size / 1024f;
+            result[0] = decimalFormat.format(value);
+            result[1] = "KB";
+        } else if (size / (1024 * 1024 * 1024) < 1) {
+            value = (size * 100 / (1024 * 1024)) / 100f;
+            result[0] = decimalFormat.format(value);
+            result[1] = "MB";
+        } else {
+            value = (size * 100l / (1024l * 1024l * 1024l)) / 100f;
+            result[0] = decimalFormat.format(value);
+            result[1] = "GB";
+        }
+
+        return result;
+    }
 
     public static void main(String[] args) {
 

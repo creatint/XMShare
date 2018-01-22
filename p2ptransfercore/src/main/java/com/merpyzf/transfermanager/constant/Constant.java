@@ -38,7 +38,7 @@ public class Constant {
     public static final int UDP_PORT = 8900;
 
     // 接收端的IP地址
-    public static final String HOST_ADDRESS = "172.28.67.84";
+    public static final String HOST_ADDRESS = "192.168.31.184";
 
     public static final int SOCKET_PORT = 8088;
 

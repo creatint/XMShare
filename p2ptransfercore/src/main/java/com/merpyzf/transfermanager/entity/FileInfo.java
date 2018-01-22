@@ -44,6 +44,9 @@ public class FileInfo {
     // 文件传输的进度
     private float progress;
 
+    // 文件传输速度
+    private String[] transferSpeed;
+
     // 默认的传输状态为等待状态
     private int fileTransferStatus = Constant.TransferStatus.TRANSFER_WAITING;
 
@@ -133,6 +136,14 @@ public class FileInfo {
 
     public void setProgress(float progress) {
         this.progress = progress;
+    }
+
+    public String[] getTransferSpeed() {
+        return transferSpeed;
+    }
+
+    public void setTransferSpeed(String[] transferSpeed) {
+        this.transferSpeed = transferSpeed;
     }
 
     /**

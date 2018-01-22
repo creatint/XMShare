@@ -17,6 +17,7 @@ public class SenderManager {
 
     private ExecutorService mSingleThreadPool;
     private Context mContext;
+    private SenderTask mSenderTask;
 
     public SenderManager(Context context) {
         mSingleThreadPool = Executors.newSingleThreadExecutor();
@@ -26,7 +27,16 @@ public class SenderManager {
 
     public void send(List<FileInfo> filelist) {
 
-        mSingleThreadPool.execute(new SenderTask(mContext,filelist));
+        mSenderTask = new SenderTask(mContext, filelist);
 
+        mSingleThreadPool.execute(mSenderTask);
+
+    }
+
+    /**
+     * 传输结束时进行资源的释放
+     */
+    public void release() {
+        mSenderTask.release();
     }
 }

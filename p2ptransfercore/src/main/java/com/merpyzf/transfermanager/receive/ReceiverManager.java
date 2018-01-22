@@ -29,6 +29,8 @@ public class ReceiverManager implements Runnable {
     private static ReceiverManager mReceiver;
     // 观察者集合
     private List<ReceiveObserver> mReceiveObserverLists;
+    private TransferFileListListener mTransferFileListListener;
+
     private ReceiveTask mReceiveTask;
     private boolean isStop = false;
 
@@ -79,6 +81,7 @@ public class ReceiverManager implements Runnable {
 
     }
 
+
     /**
      * 接触注册一个观察者
      *
@@ -90,6 +93,9 @@ public class ReceiverManager implements Runnable {
         }
     }
 
+    public void setOnTransferFileListListener(TransferFileListListener transferFileListListener) {
+        this.mTransferFileListListener = transferFileListListener;
+    }
 
     @Override
     public void run() {
@@ -127,9 +133,10 @@ public class ReceiverManager implements Runnable {
 
                     List<FileInfo> mReceiveFileList = (List<FileInfo>) msg.obj;
 
-                    for (ReceiveObserver receiveObserver : mReceiveObserverLists) {
-                        // 回调 待接收文件列表传输完成事件
-                        receiveObserver.onReceiveListCompleted(mReceiveFileList);
+                    if (mTransferFileListListener != null && mReceiveFileList.size() > 0) {
+                        // 当接收到待传输文件列表时的回调
+                        mTransferFileListListener.onReceiveListCompleted(mReceiveFileList);
+
                     }
 
                     break;
@@ -159,13 +166,10 @@ public class ReceiverManager implements Runnable {
                         receiveObserver.onReceiveStatus(fileInfo1);
 
                     }
-
                     break;
 
 
                 case Constant.TransferStatus.TRANSFER_FAILED:
-
-
 
 
                     break;
@@ -178,14 +182,22 @@ public class ReceiverManager implements Runnable {
         }
     }
 
+    /**
+     * 传输文件列表监听接口
+     */
+    public interface TransferFileListListener {
 
-    public interface ReceiveObserver {
         /**
          * 接收待传输文件列表完成的回调
          *
          * @param receiveFileList
          */
         void onReceiveListCompleted(List<FileInfo> receiveFileList);
+
+
+    }
+
+    public interface ReceiveObserver {
 
         /**
          * 文件接收进度的回调
