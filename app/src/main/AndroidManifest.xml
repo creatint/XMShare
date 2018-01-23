@@ -31,14 +31,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.view.MainActivity" >
+        <activity android:name=".ui.view.MainActivity">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
 
 
         </activity>
@@ -51,6 +50,7 @@
             android:label="发送文件" />
         <activity android:name=".ui.view.activity.SelectFilesActivity">
 
+
         </activity>
         <activity android:name=".ui.test.BottomSheetDialogActivity" />
         <activity android:name=".ui.test.TestRadarViewActivity" />
@@ -61,8 +61,6 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".ui.test.transfer.TransferSendActivity" />
-        <activity android:name=".ui.test.transfer.TransferReceiveActivity"></activity>
     </application>
 
 </manifest>

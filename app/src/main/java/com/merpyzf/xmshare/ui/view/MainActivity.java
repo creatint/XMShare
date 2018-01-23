@@ -11,10 +11,8 @@ import android.widget.Toast;
 import com.merpyzf.httpcoreserver.ui.HttpServerActivity;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Constant;
-import com.merpyzf.xmshare.ui.test.transfer.TransferReceiveActivity;
 import com.merpyzf.xmshare.ui.view.activity.ReceiveActivity;
 import com.merpyzf.xmshare.ui.view.activity.SelectFilesActivity;
-import com.merpyzf.xmshare.ui.view.activity.SendActivity;
 import com.merpyzf.xmshare.util.SharedPreUtils;
 
 import butterknife.BindView;
@@ -29,10 +27,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @BindView(R.id.btn_receive)
     Button btnReceive;
     @BindView(R.id.btn_send)
-    Button btnSend;
-    @BindView(R.id.btn_ss)
-    Button btnStartSs;
-    @BindView(R.id.btn_sc)
     Button btnStarSc;
     @BindView(R.id.btn_save)
     Button btnSave;
@@ -74,8 +68,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         btnStartServer.setOnClickListener(this);
         btnReceive.setOnClickListener(this);
-        btnSend.setOnClickListener(this);
-        btnStartSs.setOnClickListener(this);
         btnSave.setOnClickListener(this);
         btnStarSc.setOnClickListener(this);
 
@@ -95,22 +87,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 ReceiveActivity.start(mContext);
                 break;
             case R.id.btn_send:
-                SendActivity.start(mContext);
-                break;
-
-            // 开启一个Socket的服务端
-            case R.id.btn_ss:
-
-                TransferReceiveActivity.start(this);
-
-                break;
-
-            case R.id.btn_sc:
-
-
                 SelectFilesActivity.start(mContext);
-
-
                 break;
 
 

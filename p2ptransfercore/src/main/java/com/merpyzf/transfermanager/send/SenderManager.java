@@ -2,8 +2,11 @@ package com.merpyzf.transfermanager.send;
 
 import android.content.Context;
 
+import com.merpyzf.transfermanager.P2pTransferHandler;
 import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.interfaces.TransferObserver;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -14,21 +17,64 @@ import java.util.concurrent.Executors;
 
 public class SenderManager {
 
-
     private ExecutorService mSingleThreadPool;
     private Context mContext;
+    private static SenderManager mSenderManager;
     private SenderTask mSenderTask;
+    private P2pTransferHandler mP2pTransferHandler;
+    // 观察者集合
+    private List<TransferObserver> mTransferObserverLists;
 
-    public SenderManager(Context context) {
+    public static SenderManager getInstance(Context context) {
+
+        if (mSenderManager == null) {
+
+            synchronized (Object.class) {
+
+                if (mSenderManager == null) {
+
+                    mSenderManager = new SenderManager(context);
+
+                }
+
+            }
+
+        }
+        return mSenderManager;
+    }
+
+
+    private SenderManager(Context context) {
+        mTransferObserverLists = new ArrayList<>();
+        mP2pTransferHandler = new P2pTransferHandler(mTransferObserverLists);
         mSingleThreadPool = Executors.newSingleThreadExecutor();
         this.mContext = context;
     }
 
 
-    public void send(List<FileInfo> filelist) {
+    public void register(TransferObserver transferObserver) {
 
-        mSenderTask = new SenderTask(mContext, filelist);
+        mTransferObserverLists.add(transferObserver);
 
+    }
+
+
+    public void unRegister(TransferObserver transferObserver) {
+
+        if (mTransferObserverLists.contains(transferObserver)) {
+            mTransferObserverLists.remove(transferObserver);
+        }
+
+    }
+
+    /**
+     * 发送文件， 异步的过程
+     *
+     * @param filelist
+     */
+    public void send(String destAddress, List<FileInfo> filelist) {
+
+        mSenderTask = new SenderTask(mContext, destAddress, filelist, mP2pTransferHandler);
         mSingleThreadPool.execute(mSenderTask);
 
     }

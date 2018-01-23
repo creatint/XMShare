@@ -1,8 +1,10 @@
 package com.merpyzf.transfermanager.send;
 
 import android.content.Context;
+import android.os.Message;
 import android.util.Log;
 
+import com.merpyzf.transfermanager.P2pTransferHandler;
 import com.merpyzf.transfermanager.constant.Constant;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.util.FileUtils;
@@ -27,17 +29,22 @@ public class SenderTask implements ISendTask, Runnable {
     private List<FileInfo> mSendFileList;
     private Socket mSocket;
     private OutputStream mOutputStream;
+    private P2pTransferHandler mP2pTransferHandler;
+    private long start_cal_speed;
+    private long end_cal_speed;
     private Context mContext;
+    private String mDestAddress;
 
     /**
      * 文件发送时，先发送待传输的文件列表,紧接着传送文件的 缩略图( 各种格式 -> bitmap -> byte[])
      * 发送文件 （头信息 + 内容部分）
      */
 
-    public SenderTask(Context context, List<FileInfo> sendFileList) {
+    public SenderTask(Context context, String destAddress, List<FileInfo> sendFileList, P2pTransferHandler p2pTransferHandler) {
         this.mSendFileList = sendFileList;
+        this.mP2pTransferHandler = p2pTransferHandler;
         this.mContext = context;
-
+        this.mDestAddress = destAddress;
     }
 
 
@@ -55,7 +62,7 @@ public class SenderTask implements ISendTask, Runnable {
     }
 
     /**
-     * 发送待传输文件列表
+     * 发送待传输文件列表(不计入传输的大小中去，传输时间可以小到忽略不计)
      */
     @Override
     public void sendTransferFileList() {
@@ -161,7 +168,7 @@ public class SenderTask implements ISendTask, Runnable {
         File file = new File(filePath);
         // 文件传输的总长度
         long totalLength = file.length();
-
+        int perSecondReadLength = 0;
         byte[] buffer = new byte[Constant.BUFFER_LENGTH];
 
         int readLength = 0;
@@ -170,21 +177,57 @@ public class SenderTask implements ISendTask, Runnable {
 
         long start = System.currentTimeMillis();
 
+        start_cal_speed = System.currentTimeMillis();
+
 
         BufferedInputStream bis = null;
         try {
             bis = new BufferedInputStream(new FileInputStream(file));
 
+            // 设置传输状态为: 传输中
+            fileInfo.setFileTransferStatus(Constant.TransferStatus.TRANSFING);
             while ((currentLength = bis.read(buffer)) != -1) {
-
 
                 mOutputStream.write(buffer, 0, currentLength);
                 readLength += currentLength;
 
+                long end = System.currentTimeMillis();
+                end_cal_speed = System.currentTimeMillis();
+                perSecondReadLength += currentLength;
+
+                // 传输速度
+                if (end_cal_speed - start_cal_speed >= 1000) {
+                    String[] perSecondSpeed = FileUtils.getFileSizeArrayStr(perSecondReadLength);
+                    fileInfo.setTransferSpeed(perSecondSpeed);
+                    // 重置
+                    perSecondReadLength = 0;
+                    start_cal_speed = end_cal_speed;
+                }
+
+                if (end - start > 50) {
+
+                    Log.i("w2k", "readLength: " + readLength + " totalLength: " + totalLength);
+
+//                    Log.i("w2k", "发送进度: "+(readLength / totalLength*1.0f));
+                    // 传输进度
+                    fileInfo.setProgress((readLength / (totalLength * 1.0f)));
+
+                    // 传输进度
+                    Message message = mP2pTransferHandler.obtainMessage();
+                    message.what = Constant.TransferStatus.TRANSFING;
+                    message.obj = fileInfo;
+                    mP2pTransferHandler.sendMessage(message);
+                    start = end;
+                }
 
                 // TODO: 2018/1/18 这边需要计算文件传输的进度，和传输的速率
             }
             mOutputStream.flush();
+            fileInfo.setFileTransferStatus(Constant.TransferStatus.TRANSFER_SUCCESS);
+            Message message = mP2pTransferHandler.obtainMessage();
+            message.what = Constant.TransferStatus.TRANSFER_SUCCESS;
+            message.obj = fileInfo;
+            mP2pTransferHandler.sendMessage(message);
 
 
         } catch (FileNotFoundException e) {
@@ -219,7 +262,7 @@ public class SenderTask implements ISendTask, Runnable {
 
         // 建立Socket连接
         try {
-            mSocket = new Socket(Constant.HOST_ADDRESS, Constant.SOCKET_PORT);
+            mSocket = new Socket(mDestAddress, Constant.SOCKET_PORT);
         } catch (IOException e) {
             e.printStackTrace();
         }

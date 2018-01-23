@@ -1,12 +1,12 @@
 package com.merpyzf.transfermanager.receive;
 
 
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 
+import com.merpyzf.transfermanager.P2pTransferHandler;
 import com.merpyzf.transfermanager.constant.Constant;
 import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.interfaces.TransferObserver;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -25,12 +25,10 @@ public class ReceiverManager implements Runnable {
     private ServerSocket mServerSocket;
     private ExecutorService mSingleThreadPool;
     private Socket mSocketClient;
-    private ReceiveHandler mReceiveHandler;
+    private P2pTransferHandler mP2pTransferHandler;
     private static ReceiverManager mReceiver;
     // 观察者集合
-    private List<ReceiveObserver> mReceiveObserverLists;
-    private TransferFileListListener mTransferFileListListener;
-
+    private List<TransferObserver> mTransferObserverLists;
     private ReceiveTask mReceiveTask;
     private boolean isStop = false;
 
@@ -57,8 +55,8 @@ public class ReceiverManager implements Runnable {
     private ReceiverManager() {
 
         try {
-            mReceiveHandler = new ReceiveHandler();
-            mReceiveObserverLists = new ArrayList<>();
+            mTransferObserverLists = new ArrayList<>();
+            mP2pTransferHandler = new P2pTransferHandler(mTransferObserverLists);
             mServerSocket = new ServerSocket(Constant.SOCKET_PORT);
             mSingleThreadPool = Executors.newSingleThreadExecutor();
         } catch (IOException e) {
@@ -70,13 +68,13 @@ public class ReceiverManager implements Runnable {
     /**
      * 注册一个观察者
      *
-     * @param receiveObserver
+     * @param transferObserver
      */
 
-    public void register(ReceiveObserver receiveObserver) {
+    public void register(TransferObserver transferObserver) {
 
-        if (!mReceiveObserverLists.contains(receiveObserver)) {
-            mReceiveObserverLists.add(receiveObserver);
+        if (!mTransferObserverLists.contains(transferObserver)) {
+            mTransferObserverLists.add(transferObserver);
         }
 
     }
@@ -85,16 +83,16 @@ public class ReceiverManager implements Runnable {
     /**
      * 接触注册一个观察者
      *
-     * @param receiveObserver
+     * @param transferObserver
      */
-    public void unRegister(ReceiveObserver receiveObserver) {
-        if (mReceiveObserverLists.contains(receiveObserver)) {
-            mReceiveObserverLists.remove(receiveObserver);
+    public void unRegister(TransferObserver transferObserver) {
+        if (mTransferObserverLists.contains(transferObserver)) {
+            mTransferObserverLists.remove(transferObserver);
         }
     }
 
     public void setOnTransferFileListListener(TransferFileListListener transferFileListListener) {
-        this.mTransferFileListListener = transferFileListListener;
+        mP2pTransferHandler.setTransferFileListListener(transferFileListListener);
     }
 
     @Override
@@ -106,7 +104,7 @@ public class ReceiverManager implements Runnable {
                 Log.i("w2k", "阻塞中,等待设备连接....");
                 mSocketClient = mServerSocket.accept();
                 Log.i("w2k", "有设备连接:" + mSocketClient.getInetAddress().getHostAddress());
-                mReceiveTask = new ReceiveTask(mSocketClient, mReceiveHandler);
+                mReceiveTask = new ReceiveTask(mSocketClient, mP2pTransferHandler);
                 mSingleThreadPool.execute(mReceiveTask);
 
             } catch (IOException e) {
@@ -116,70 +114,6 @@ public class ReceiverManager implements Runnable {
         }
 
 
-    }
-
-    class ReceiveHandler extends Handler {
-
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-
-            switch (msg.what) {
-
-                /**
-                 * 待接收文件列表传输完毕
-                 */
-                case Constant.TransferStatus.TRANSFER_FILE_LIST_SUCCESS:
-
-                    List<FileInfo> mReceiveFileList = (List<FileInfo>) msg.obj;
-
-                    if (mTransferFileListListener != null && mReceiveFileList.size() > 0) {
-                        // 当接收到待传输文件列表时的回调
-                        mTransferFileListListener.onReceiveListCompleted(mReceiveFileList);
-
-                    }
-
-                    break;
-
-
-                /**
-                 * 传输中
-                 */
-                case Constant.TransferStatus.TRANSFING:
-
-                    FileInfo fileInfo = (FileInfo) msg.obj;
-
-                    for (ReceiveObserver receiveObserver : mReceiveObserverLists) {
-                        receiveObserver.onReceiveProgress(fileInfo);
-
-                    }
-
-                    break;
-                /**
-                 * 传输成功
-                 */
-                case Constant.TransferStatus.TRANSFER_SUCCESS:
-
-
-                    FileInfo fileInfo1 = (FileInfo) msg.obj;
-                    for (ReceiveObserver receiveObserver : mReceiveObserverLists) {
-                        receiveObserver.onReceiveStatus(fileInfo1);
-
-                    }
-                    break;
-
-
-                case Constant.TransferStatus.TRANSFER_FAILED:
-
-
-                    break;
-
-                default:
-                    break;
-            }
-
-
-        }
     }
 
     /**
@@ -197,24 +131,14 @@ public class ReceiverManager implements Runnable {
 
     }
 
-    public interface ReceiveObserver {
-
-        /**
-         * 文件接收进度的回调
-         */
-        void onReceiveProgress(FileInfo fileInfo);
-
-        /**
-         * 文件接收状态的回调
-         */
-        void onReceiveStatus(FileInfo fileInfo);
-    }
 
     /**
      * 释放资源
      */
     public void release() {
         isStop = true;
-        mReceiveTask.release();
+        if (mReceiveTask != null) {
+            mReceiveTask.release();
+        }
     }
 }

@@ -25,7 +25,6 @@ import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.base.App;
 import com.merpyzf.xmshare.ui.adapter.FileSelectAdapter;
-import com.merpyzf.xmshare.ui.test.transfer.TransferSendActivity;
 import com.merpyzf.xmshare.ui.view.fragment.FileListFragment;
 import com.merpyzf.xmshare.ui.widget.ApplyPermissionFragment;
 
@@ -212,9 +211,8 @@ public class SelectFilesActivity extends AppCompatActivity {
         mFabSend.setOnClickListener(v -> {
 
             Log.i("w2k", "开始发送文件");
-
-            TransferSendActivity.start(mContext);
-
+//            TransferSendActivity.start(mContext);
+            SendActivity.start(mContext);
 
         });
 

@@ -1,12 +1,14 @@
-package com.merpyzf.xmshare.ui.test.transfer;
+package com.merpyzf.xmshare.ui.view.fragment.transfer;
+
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.merpyzf.transfermanager.receive.ReceiverManager;
 import com.merpyzf.xmshare.R;
@@ -19,7 +21,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class TransferReceiveActivity extends AppCompatActivity {
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class TransferReceiveFragment extends Fragment {
 
     private Unbinder mUnbinder;
     private Context mContext;
@@ -28,22 +33,20 @@ public class TransferReceiveActivity extends AppCompatActivity {
     private ReceiverManager mReceiver;
     private ExecutorService mThreadPool;
 
-
-    public static void start(Context context) {
-
-        context.startActivity(new Intent(context, TransferReceiveActivity.class));
-
+    public TransferReceiveFragment() {
+        // Required empty public constructor
     }
 
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_receive2);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        View rootView = inflater.inflate(R.layout.fragment_transfer_receive, container, false);
 
         mThreadPool = Executors.newSingleThreadExecutor();
-
-        mUnbinder = ButterKnife.bind(this);
-        mContext = this;
+        mUnbinder = ButterKnife.bind(this, rootView);
+        mContext = getActivity();
 
         initUI();
 
@@ -54,12 +57,15 @@ public class TransferReceiveActivity extends AppCompatActivity {
 
         mReceiver.setOnTransferFileListListener(receiveFileList -> {
 
-            FileTransferAdapter fileTransferAdapter = new FileTransferAdapter<>(R.layout.item_rv_transfer, receiveFileList);
+            FileTransferAdapter fileTransferAdapter = new FileTransferAdapter<>(R.layout.item_rv_transfer, FileTransferAdapter.TYPE_RECEIVE, receiveFileList);
             mRecyclerView.setAdapter(fileTransferAdapter);
 
         });
-    }
 
+
+
+        return rootView;
+    }
 
     /**
      * 初始化UI
@@ -71,11 +77,8 @@ public class TransferReceiveActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onDestroy() {
-
-        super.onDestroy();
+    public void onDestroy() {
         mReceiver.release();
-
-
+        super.onDestroy();
     }
 }

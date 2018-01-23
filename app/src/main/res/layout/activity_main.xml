@@ -12,60 +12,34 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="请输入昵称:"
-        android:textSize="18sp"
-        />
+        android:textSize="18sp" />
 
     <Button
         android:id="@+id/btn_save"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="设置昵称"
-        />
-
+        android:text="设置昵称" />
 
 
     <Button
         android:id="@+id/btn_start_server"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="开启服务器"
-      />
-
+        android:text="开启文件服务器" />
 
 
     <Button
         android:id="@+id/btn_send"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="发送文件"
-        />
+        android:text="发送文件" />
 
 
     <Button
         android:id="@+id/btn_receive"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="接收文件"
-        />
-
-
-    <Button
-        android:id="@+id/btn_ss"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Server Socket"
-        />
-
-
-    <Button
-        android:id="@+id/btn_sc"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Client Socket"
-        />
-
-
-
+        android:text="接收文件" />
 
 
 </LinearLayout>

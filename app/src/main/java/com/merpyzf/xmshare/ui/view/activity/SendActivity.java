@@ -1,30 +1,25 @@
 package com.merpyzf.xmshare.ui.view.activity;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
+import android.view.animation.AccelerateInterpolator;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.merpyzf.httpcoreserver.util.NetworkUtil;
-import com.merpyzf.transfermanager.PeerManager;
 import com.merpyzf.transfermanager.entity.Peer;
-import com.merpyzf.transfermanager.entity.SignMessage;
-import com.merpyzf.transfermanager.interfaces.PeerCommunCallback;
+import com.merpyzf.transfermanager.send.SenderManager;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.Constant;
-import com.merpyzf.xmshare.ui.adapter.PeerAdapter;
-import com.merpyzf.xmshare.util.SharedPreUtils;
+import com.merpyzf.xmshare.common.base.App;
+import com.merpyzf.xmshare.ui.view.fragment.ScanPeerFragment;
+import com.merpyzf.xmshare.ui.view.fragment.transfer.TransferSendFragment;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,19 +45,19 @@ import butterknife.Unbinder;
  * 同意建立连接
  * 下线通知
  */
-public class SendActivity extends AppCompatActivity implements BaseQuickAdapter.OnItemClickListener {
+public class SendActivity extends AppCompatActivity implements ScanPeerFragment.OnPairActionListener {
+
+    @BindView(R.id.linear_rocket)
+    LinearLayout mLinearRocket;
+    @BindView(R.id.frame_content)
+    FrameLayout mFrameContent;
+    @BindView(R.id.tool_bar)
+    android.support.v7.widget.Toolbar mToolbar;
 
     private Context mContext;
-    private PeerManager mPeerManager;
     private List<Peer> mPeerList = new ArrayList<>();
     private Unbinder mUnbinder;
-
-    @BindView(R.id.rv_peers)
-    RecyclerView mRvPeerList;
-    private PeerAdapter mPeerAdapter;
-
-    // 要建立连接的对端设备
-    private Peer mPeerRequestConn;
+    private ScanPeerFragment mScanPeerFragment;
 
 
     public static void start(Context context) {
@@ -77,134 +72,105 @@ public class SendActivity extends AppCompatActivity implements BaseQuickAdapter.
         setContentView(R.layout.activity_send);
         mContext = this;
         mUnbinder = ButterKnife.bind(this);
-
         initUI();
-        mPeerAdapter = new PeerAdapter(R.layout.item_rv_send_peer, mPeerList);
-        mRvPeerList.setAdapter(mPeerAdapter);
+        initEvent();
 
-        mPeerAdapter.setOnItemClickListener(this);
-
-
-        String nickName = SharedPreUtils.getString(mContext, Constant.SP_USER, "nickName", "");
-        mPeerManager = new PeerManager(this, nickName, new PeerCommunCallback() {
-            @Override
-            public void onDeviceOnLine(Peer peer) {
-                if (!mPeerList.contains(peer)) {
-
-                    mPeerList.add(peer);
-                    mPeerAdapter.notifyDataSetChanged();
-                    Log.i("w2k", "有新设备上线了: " + peer.getNickName());
-
-                }
-
-            }
-
-            @Override
-            public void onDeviceOffLine(Peer peer) {
-                if (mPeerList.contains(peer)) {
-
-                    mPeerList.remove(peer);
-                    mPeerAdapter.notifyDataSetChanged();
-                    Log.i("w2k", "设备离线了");
-                    Toast.makeText(SendActivity.this, "【接收文件】设备离线了 --> " + peer.getHostAddress(), Toast.LENGTH_SHORT).show();
-                }
-
-            }
-
-            @Override
-            public void onRequestConnect(Peer peer) {
-
-            }
-
-
-            @Override
-            public void onAnswerRequestConnect(Peer peer) {
-
-                Log.i("wk", "onAnswerRequestConnect方法执行\n peer: " + peer.getHostAddress());
-
-                if (peer.equals(mPeerRequestConn)) {
-
-                    Toast.makeText(mContext, "验证成功,开始建立连接", Toast.LENGTH_SHORT).show();
-
-                    // TODO: 2018/1/14 在这边开始建立Socket连接，并发送文件，切换到文件传输的界面
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                Socket socket = new Socket(peer.getHostAddress(),
-                                        com.merpyzf.transfermanager.constant.Constant.SOCKET_PORT);
-                                Log.i("w2k", "建立Socket连接,发送文件");
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-
-                        }
-                    }).start();
-
-
-                } else {
-
-                    Toast.makeText(mContext, "Peer不匹配，验证失败", Toast.LENGTH_SHORT).show();
-
-                }
-
-            }
-        });
-
-        /**
-         * 此处建立的是一个接收UDP信息的服务端
-         */
-        mPeerManager.listenBroadcast();
 
     }
 
+
+    /**
+     * 初始化UI
+     */
     private void initUI() {
-        mRvPeerList.setLayoutManager(new LinearLayoutManager(mContext));
+
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setTitle("我要发送");
+        // 加载好友扫描的Fragment
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        mScanPeerFragment = new ScanPeerFragment();
+        transaction.replace(R.id.frame_content, mScanPeerFragment);
+        transaction.commit();
+
     }
 
     /**
-     * RecyclerView 列表中item点击的回调事件
-     *
-     * @param adapter
-     * @param view
-     * @param position
+     * 初始化事件
      */
-    @Override
-    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+    private void initEvent() {
 
+        mScanPeerFragment.setOnPeerActionListener(this);
 
-        mPeerRequestConn = (Peer) adapter.getItem(position);
-        // 构造UDP消息的内容
-        SignMessage signMessage = new SignMessage();
-        signMessage.setHostAddress(NetworkUtil.getLocalIp(mContext));
-        signMessage.setNickName(SharedPreUtils.getNickName(mContext));
-        signMessage.setMsgContent("建立连接请求");
-        signMessage.setCmd(SignMessage.cmd.REQUEST_CONN);
-        String msg = signMessage.convertProtocolStr();
-
-
-        InetAddress dest = null;
-        try {
-            dest = InetAddress.getByName(mPeerRequestConn.getHostAddress());
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-
-        // 将消息发送给对端
-        mPeerManager.send2Peer(msg, dest, com.merpyzf.transfermanager.constant.Constant.UDP_PORT);
-        Toast.makeText(mContext, "发送建立请求连接", Toast.LENGTH_SHORT).show();
     }
 
 
     @Override
+    public void onSendConnRequestAction() {
+
+        Log.i("w2k", "显示火箭的图标");
+        // 设为可见状态
+        mLinearRocket.setVisibility(View.VISIBLE);
+        mLinearRocket.setFocusable(true);
+        mFrameContent.setFocusable(false);
+        mFrameContent.setClickable(false);
+
+    }
+
+    @Override
+    public void onPeerPairSuccessAction(Peer peer) {
+
+
+        Log.i("w2k", "配对成功, 火箭升空，并跳转到Fragment的界面上去");
+        // 跳转到文件发送的界面
+        SenderManager senderManager = SenderManager.getInstance(mContext);
+        senderManager.send(peer.getHostAddress(), App.getSendFileList());
+
+
+        // 开始进行文件的发送，并添加动画
+        ObjectAnimator animator = ObjectAnimator.ofFloat(mLinearRocket, "translationY", 0.0f - 1000f);
+        animator.setInterpolator(new AccelerateInterpolator());
+        animator.setDuration(500);
+        animator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mLinearRocket.setVisibility(View.INVISIBLE);
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.frame_content, new TransferSendFragment());
+                transaction.commit();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        animator.start();
+
+    }
+
+    @Override
+    public void onPeerPairFailedAction(Peer peer) {
+
+        Log.i("w2k", "隐藏火箭并提示配对失败");
+        // 隐藏
+        mLinearRocket.setVisibility(View.INVISIBLE);
+
+    }
+
+    @Override
     protected void onDestroy() {
+
         mUnbinder.unbind();
-
-        // 发送下线广播
-        mPeerManager.sendOffLineBroadcast();
-        // 关闭UdpServer端，停止接收数据
-        mPeerManager.stopUdpServer();
-
         super.onDestroy();
 
     }

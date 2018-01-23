@@ -4,6 +4,7 @@ import android.os.Environment;
 import android.os.Message;
 import android.util.Log;
 
+import com.merpyzf.transfermanager.P2pTransferHandler;
 import com.merpyzf.transfermanager.constant.Constant;
 import com.merpyzf.transfermanager.entity.ApkFile;
 import com.merpyzf.transfermanager.entity.FileInfo;
@@ -29,16 +30,16 @@ public class ReceiveTask implements Runnable, IReceiveTask {
 
     private Socket mSocketClient;
     private InputStream mInputStream;
-    private ReceiverManager.ReceiveHandler mReceiveHandler;
+    private P2pTransferHandler mP2pTransferHandler;
     private List<FileInfo> mReceiveFileList;
     private long start_cal_speed;
     private long end_cal_speed;
     private String TAG = ReceiveTask.class.getSimpleName();
     private boolean isStop = false;
 
-    public ReceiveTask(Socket socket, ReceiverManager.ReceiveHandler receiveHandler) {
+    public ReceiveTask(Socket socket, P2pTransferHandler receiveHandler) {
         this.mSocketClient = socket;
-        this.mReceiveHandler = receiveHandler;
+        this.mP2pTransferHandler = receiveHandler;
         init();
     }
 
@@ -146,11 +147,11 @@ public class ReceiveTask implements Runnable, IReceiveTask {
             }
         }
 
-        Message message = mReceiveHandler.obtainMessage();
+        Message message = mP2pTransferHandler.obtainMessage();
         // 通知待接收文件列表传输完成
         message.what = Constant.TransferStatus.TRANSFER_FILE_LIST_SUCCESS;
         message.obj = mReceiveFileList;
-        mReceiveHandler.sendMessage(message);
+        mP2pTransferHandler.sendMessage(message);
     }
 
     @Override
@@ -285,11 +286,11 @@ public class ReceiveTask implements Runnable, IReceiveTask {
                 if (end - start >= 50) {
                     float progress = currentLength / (totalLength * 1.0f);
                     fileInfo.setProgress(progress);
-                    Message message = mReceiveHandler.obtainMessage();
+                    Message message = mP2pTransferHandler.obtainMessage();
                     message.obj = fileInfo;
                     // 标记传输中
                     message.what = Constant.TransferStatus.TRANSFING;
-                    mReceiveHandler.sendMessage(message);
+                    mP2pTransferHandler.sendMessage(message);
                     start = end;
                 }
 
@@ -299,10 +300,10 @@ public class ReceiveTask implements Runnable, IReceiveTask {
             // 标记文件传输成功
             fileInfo.setFileTransferStatus(Constant.TransferStatus.TRANSFER_SUCCESS);
             // 回调通知外界文件传输完成
-            Message message = mReceiveHandler.obtainMessage();
+            Message message = mP2pTransferHandler.obtainMessage();
             message.what = Constant.TransferStatus.TRANSFER_SUCCESS;
             message.obj = fileInfo;
-            mReceiveHandler.sendMessage(message);
+            mP2pTransferHandler.sendMessage(message);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ArrayIndexOutOfBoundsException e) {

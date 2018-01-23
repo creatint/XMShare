@@ -8,6 +8,8 @@ import com.merpyzf.transfermanager.entity.FileInfo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by wangke on 2018/1/16.
@@ -22,12 +24,14 @@ public class App extends Application {
      * 待发送的文件集合
      */
     public static List<FileInfo> mSendFileList;
+    public static ExecutorService mSingleThreadPool;
 
     @Override
     public void onCreate() {
         super.onCreate();
         AppContext = getApplicationContext();
         mSendFileList = new ArrayList<>();
+        mSingleThreadPool = Executors.newSingleThreadExecutor();
         Log.i("w2k", "application的 onCreate方法执行了");
     }
 
@@ -67,5 +71,7 @@ public class App extends Application {
         return mSendFileList;
     }
 
-
+    public static ExecutorService getSingleThreadPool() {
+        return mSingleThreadPool;
+    }
 }
