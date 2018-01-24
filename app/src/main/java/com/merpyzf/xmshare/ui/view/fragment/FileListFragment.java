@@ -421,7 +421,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
 
-            Log.i("wk", "扫描到的应用的长度:" + mFileLists.size());
+//            Log.i("wk", "扫描到的应用的长度:" + mFileLists.size());
             mFileListAdapter.notifyDataSetChanged();
             mProgressBar.setVisibility(View.INVISIBLE);
         }
@@ -431,15 +431,12 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onDestroyView() {
 
-        Log.i("w2k", LOAD_FILE_TYPE + "  的onDestoryView方法执行了");
         mLoaderManager.destroyLoader(LOAD_FILE_TYPE);
         super.onDestroyView();
     }
 
     @Override
     public void onDestroy() {
-
-        Log.i("w2k", LOAD_FILE_TYPE + "  的onDestory方法执行了");
         mLoaderManager.destroyLoader(LOAD_FILE_TYPE);
         mContext.unregisterReceiver(mFslcReceiver);
         mUnbinder.unbind();

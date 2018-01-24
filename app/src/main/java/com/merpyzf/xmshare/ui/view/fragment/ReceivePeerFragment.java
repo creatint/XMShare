@@ -52,6 +52,7 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
     private OSTimer mOsTimer;
     private PeerAdapter mPeerAdapter;
     private OnReceivePairActionListener mOnReceivePairActionListener;
+    private String mNickName;
 
     public ReceivePeerFragment() {
     }
@@ -71,8 +72,10 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
         this.mContext = getActivity();
         mPeerList = new ArrayList<>();
         initUI();
+
         mPeerAdapter = new PeerAdapter(R.layout.item_rv_recive_peer, mPeerList);
         mRvPeerList.setAdapter(mPeerAdapter);
+
         mPeerAdapter.setOnItemClickListener(this);
 
         String nickName = com.merpyzf.xmshare.util.SharedPreUtils.getString(mContext, Constant.SP_USER, "nickName", "");
@@ -122,6 +125,11 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
             @Override
             public void onAnswerRequestConnect(Peer peer) {
 
+
+            }
+
+            @Override
+            public void onTransferBreak(Peer peer) {
 
             }
         });
@@ -202,7 +210,6 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
 
         super.onDestroy();
     }
-
 
     public interface OnReceivePairActionListener {
 

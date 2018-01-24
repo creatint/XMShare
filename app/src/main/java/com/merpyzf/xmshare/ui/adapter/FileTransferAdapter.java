@@ -151,7 +151,7 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
 
                     if (file.getFileTransferStatus() == Constant.TransferStatus.TRANSFING) {
 
-                        Log.i("w2k", fileInfo.getName() + "传输中");
+//                        Log.i("w2k", fileInfo.getName() + "传输中");
                         if (fileName.equals(fileInfo.getName())) {
 
                             int currentProgress = (int) (file.getProgress() * 100);

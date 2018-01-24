@@ -31,6 +31,7 @@ public class ReceiveActivity extends AppCompatActivity {
     private Context mContext;
     private Unbinder mUnbinder;
     private ReceivePeerFragment mReceivePeerFragment;
+    private TransferReceiveFragment mTransferReceiveFragment;
 
 
     public static void start(Context context) {
@@ -74,6 +75,9 @@ public class ReceiveActivity extends AppCompatActivity {
 
         if (mReceivePeerFragment != null) {
             mReceivePeerFragment.setOnReceivePairActionListener(new ReceivePeerFragment.OnReceivePairActionListener() {
+
+
+
                 @Override
                 public void onRequestSendFileAction() {
 
@@ -90,7 +94,8 @@ public class ReceiveActivity extends AppCompatActivity {
                     Log.i("w2k", "同意对端发送文件");
 
                     FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                    transaction.replace(R.id.frame_content, new TransferReceiveFragment());
+                    mTransferReceiveFragment = new TransferReceiveFragment();
+                    transaction.replace(R.id.frame_content,mTransferReceiveFragment);
                     transaction.commit();
 
 
@@ -98,6 +103,15 @@ public class ReceiveActivity extends AppCompatActivity {
             });
         }
 
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        if(mTransferReceiveFragment!=null){
+            mTransferReceiveFragment.onBackPressed();
+        }
+        super.onBackPressed();
     }
 
     @Override

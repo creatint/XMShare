@@ -13,6 +13,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
+import com.merpyzf.transfermanager.PeerManager;
 import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.send.SenderManager;
 import com.merpyzf.xmshare.R;
@@ -58,6 +59,9 @@ public class SendActivity extends AppCompatActivity implements ScanPeerFragment.
     private List<Peer> mPeerList = new ArrayList<>();
     private Unbinder mUnbinder;
     private ScanPeerFragment mScanPeerFragment;
+    private TransferSendFragment mTransferSendFragment;
+    private PeerManager mPeerManager;
+    private SenderManager mSenderManager;
 
 
     public static void start(Context context) {
@@ -101,6 +105,7 @@ public class SendActivity extends AppCompatActivity implements ScanPeerFragment.
 
         mScanPeerFragment.setOnPeerActionListener(this);
 
+
     }
 
 
@@ -120,10 +125,9 @@ public class SendActivity extends AppCompatActivity implements ScanPeerFragment.
     public void onPeerPairSuccessAction(Peer peer) {
 
 
-        Log.i("w2k", "配对成功, 火箭升空，并跳转到Fragment的界面上去");
         // 跳转到文件发送的界面
-        SenderManager senderManager = SenderManager.getInstance(mContext);
-        senderManager.send(peer.getHostAddress(), App.getSendFileList());
+        mSenderManager = SenderManager.getInstance(mContext);
+        mSenderManager.send(peer.getHostAddress(), App.getSendFileList());
 
 
         // 开始进行文件的发送，并添加动画
@@ -131,6 +135,9 @@ public class SendActivity extends AppCompatActivity implements ScanPeerFragment.
         animator.setInterpolator(new AccelerateInterpolator());
         animator.setDuration(500);
         animator.addListener(new Animator.AnimatorListener() {
+
+
+
             @Override
             public void onAnimationStart(Animator animation) {
 
@@ -140,7 +147,8 @@ public class SendActivity extends AppCompatActivity implements ScanPeerFragment.
             public void onAnimationEnd(Animator animation) {
                 mLinearRocket.setVisibility(View.INVISIBLE);
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.frame_content, new TransferSendFragment());
+                mTransferSendFragment = new TransferSendFragment();
+                transaction.replace(R.id.frame_content, mTransferSendFragment);
                 transaction.commit();
             }
 
@@ -160,20 +168,29 @@ public class SendActivity extends AppCompatActivity implements ScanPeerFragment.
 
     @Override
     public void onPeerPairFailedAction(Peer peer) {
-
-        Log.i("w2k", "隐藏火箭并提示配对失败");
         // 隐藏
         mLinearRocket.setVisibility(View.INVISIBLE);
 
     }
 
     @Override
-    protected void onDestroy() {
-
-        mUnbinder.unbind();
-        super.onDestroy();
-
+    public void onBackPressed() {
+        if(mTransferSendFragment!=null){
+            mTransferSendFragment.onBackPressed();
+        }
+        super.onBackPressed();
     }
 
+    @Override
+    protected void onDestroy() {
+        mUnbinder.unbind();
+        if (mSenderManager != null) {
+            mSenderManager.release();
+            mSenderManager = null;
+        }
+
+
+        super.onDestroy();
+    }
 
 }

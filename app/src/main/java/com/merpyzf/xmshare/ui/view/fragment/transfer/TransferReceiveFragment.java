@@ -9,13 +9,19 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.merpyzf.transfermanager.PeerManager;
+import com.merpyzf.transfermanager.entity.Peer;
+import com.merpyzf.transfermanager.interfaces.PeerCommunCallback;
 import com.merpyzf.transfermanager.receive.ReceiverManager;
 import com.merpyzf.xmshare.R;
+import com.merpyzf.xmshare.common.base.App;
 import com.merpyzf.xmshare.ui.adapter.FileTransferAdapter;
+import com.merpyzf.xmshare.util.SharedPreUtils;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,14 +30,15 @@ import butterknife.Unbinder;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TransferReceiveFragment extends Fragment {
+public class TransferReceiveFragment extends Fragment implements PeerCommunCallback {
 
     private Unbinder mUnbinder;
     private Context mContext;
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
     private ReceiverManager mReceiver;
-    private ExecutorService mThreadPool;
+    private String mNickName;
+    private PeerManager mPeerManager;
 
     public TransferReceiveFragment() {
         // Required empty public constructor
@@ -44,24 +51,20 @@ public class TransferReceiveFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_transfer_receive, container, false);
 
-        mThreadPool = Executors.newSingleThreadExecutor();
         mUnbinder = ButterKnife.bind(this, rootView);
         mContext = getActivity();
-
+        mNickName = SharedPreUtils.getNickName(mContext);
+        mPeerManager = new PeerManager(mContext, mNickName, this);
+        // 开启一个UDPServer
+        mPeerManager.listenBroadcast();
         initUI();
 
-
-        mReceiver = ReceiverManager.getInstance();
-        // 将线程的执行托管到线程池中进行, 开启一个ServerSocket,进行文件的接收
-        mThreadPool.execute(mReceiver);
-
-        mReceiver.setOnTransferFileListListener(receiveFileList -> {
+        ReceiverManager.getInstance().setOnTransferFileListListener(receiveFileList -> {
 
             FileTransferAdapter fileTransferAdapter = new FileTransferAdapter<>(R.layout.item_rv_transfer, FileTransferAdapter.TYPE_RECEIVE, receiveFileList);
             mRecyclerView.setAdapter(fileTransferAdapter);
 
         });
-
 
 
         return rootView;
@@ -76,9 +79,69 @@ public class TransferReceiveFragment extends Fragment {
     }
 
 
+    public void onBackPressed() {
+        if (mPeerManager == null) {
+            return;
+        }
+        // 发送传输中断的广播
+        mPeerManager.sendTransferBreakBroadcast();
+    }
+
     @Override
     public void onDestroy() {
-        mReceiver.release();
+
+        // 关闭UDPServer释放资源
+        mPeerManager.stopUdpServer();
+
+        App.getSendFileList().clear();
         super.onDestroy();
+    }
+
+    @Override
+    public void onDeviceOnLine(Peer peer) {
+
+    }
+
+    @Override
+    public void onDeviceOffLine(Peer peer) {
+
+    }
+
+    @Override
+    public void onRequestConnect(Peer peer) {
+
+    }
+
+    @Override
+    public void onAnswerRequestConnect(Peer peer) {
+
+    }
+
+    /**
+     * 传输中断
+     *
+     * @param peer
+     */
+    @Override
+    public void onTransferBreak(Peer peer) {
+
+        Toast.makeText(mContext, "对端 " + peer.getNickName() + "退出了，即将关闭", Toast.LENGTH_SHORT).show();
+
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        getActivity().finish();
+                    }
+                });
+
+
+            }
+        }, 0);
+
+
     }
 }

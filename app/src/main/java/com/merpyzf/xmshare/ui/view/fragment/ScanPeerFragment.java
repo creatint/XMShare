@@ -131,6 +131,11 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
 
                 // 将界面切换到文件传输的Fragment，根据peer中的主机地址连接到指定的那个主机
             }
+
+            @Override
+            public void onTransferBreak(Peer peer) {
+
+            }
         });
 
         /**
