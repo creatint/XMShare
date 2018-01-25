@@ -33,7 +33,7 @@ public class Constant {
     // 传输过程中参数间的分割符
     public static final String S_SEPARATOR = ":";
 
-    public static final int BUFFER_LENGTH = 1024*8;
+    public static final int BUFFER_LENGTH = 1024*6;
 
     public static final int UDP_PORT = 8900;
 

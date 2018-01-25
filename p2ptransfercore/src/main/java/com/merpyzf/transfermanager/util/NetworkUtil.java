@@ -48,8 +48,7 @@ public class NetworkUtil {
 
     }
 
-    private static String intToIp(int paramInt)
-    {
+    private static String intToIp(int paramInt) {
         return (paramInt & 0xFF) + "." + (0xFF & paramInt >> 8) + "."
                 + (0xFF & paramInt >> 16) + "." + (0xFF & paramInt >> 24);
     }
@@ -100,8 +99,7 @@ public class NetworkUtil {
      * 获取本机硬件设备绑定的所有IP地址
      * @return
      */
-    private static String[] getLocalAllIP()
-    {
+    private static String[] getLocalAllIP() {
         ArrayList<String> IPs = new ArrayList<String>();
 
         try
@@ -160,5 +158,24 @@ public class NetworkUtil {
         return true;
     }
 
+
+    /**
+     * 获取MAC地址
+     * @param mContext
+     * @return
+     */
+    public static String getMacAddress(Context mContext) {
+        String macStr = "";
+        WifiManager wifiManager = (WifiManager) mContext
+                .getSystemService(Context.WIFI_SERVICE);
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        if (wifiInfo.getMacAddress() != null) {
+            macStr = wifiInfo.getMacAddress();// MAC地址
+        } else {
+            macStr = "null";
+        }
+
+        return macStr;
+    }
 
 }

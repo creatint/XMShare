@@ -3,16 +3,20 @@ package com.merpyzf.xmshare.ui.view;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.merpyzf.httpcoreserver.ui.HttpServerActivity;
+import com.merpyzf.transfermanager.util.ApManager;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Constant;
 import com.merpyzf.xmshare.ui.view.activity.ReceiveActivity;
 import com.merpyzf.xmshare.ui.view.activity.SelectFilesActivity;
+import com.merpyzf.xmshare.ui.view.activity.SettingActivity;
 import com.merpyzf.xmshare.util.SharedPreUtils;
 
 import butterknife.BindView;
@@ -32,13 +36,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button btnSave;
     @BindView(R.id.edt_nickname)
     EditText edtNickName;
-
+    @BindView(R.id.tool_bar)
+    Toolbar mToolbar;
 
     private String TAG = MainActivity.class.getSimpleName();
     private Context mContext = null;
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +48,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         mContext = this;
         mbind = ButterKnife.bind(this);
-
         init();
-
+        initUI();
         initEvent();
+        // 关闭AP
+        ApManager.configApState(mContext);
 
 
+    }
+
+    private void initUI() {
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setTitle("小马快传");
     }
 
     /**
@@ -71,6 +79,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnSave.setOnClickListener(this);
         btnStarSc.setOnClickListener(this);
 
+        mToolbar.setOnMenuItemClickListener(item -> {
+
+
+            switch (item.getItemId()) {
+
+                case R.id.menu_item_setting:
+
+                    SettingActivity.start(mContext);
+
+                    break;
+
+                case R.id.menu_item_about:
+                    break;
+                default:
+                    break;
+            }
+
+
+            return false;
+        });
 
     }
 
@@ -126,6 +154,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onDestroy();
     }
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
 
 }
 

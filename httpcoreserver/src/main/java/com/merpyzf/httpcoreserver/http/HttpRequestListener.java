@@ -5,8 +5,6 @@ import com.merpyzf.httpcoreserver.handle.FileBrowserHandler;
 import com.merpyzf.httpcoreserver.handle.RequestHandleTask;
 import com.merpyzf.httpcoreserver.util.LogUtil;
 
-import org.apache.http.HttpServerConnection;
-import org.apache.http.impl.DefaultBHttpClientConnection;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.DefaultHttpResponseFactory;
 import org.apache.http.impl.DefaultHttpServerConnection;
@@ -48,7 +46,7 @@ public class HttpRequestListener extends Thread {
     }
 
 
-    public void initServer(){
+    public void initServer() {
 
 
         try {
@@ -68,7 +66,7 @@ public class HttpRequestListener extends Thread {
             // 3.HttpParams初始化http信息
             mHttpParams = new BasicHttpParams();
             mHttpParams.setIntParameter(CoreConnectionPNames.SO_TIMEOUT, 5000)
-                    .setIntParameter(CoreConnectionPNames.SOCKET_BUFFER_SIZE, 8*1024)
+                    .setIntParameter(CoreConnectionPNames.SOCKET_BUFFER_SIZE, 8 * 1024)
                     .setBooleanParameter(CoreConnectionPNames.STALE_CONNECTION_CHECK, false)
                     .setBooleanParameter(CoreConnectionPNames.TCP_NODELAY, true)
                     .setParameter(CoreProtocolPNames.ORIGIN_SERVER, "WebServer/1.1");
@@ -95,16 +93,16 @@ public class HttpRequestListener extends Thread {
     /**
      * 监听客户端的连接
      */
-    public void startListen(){
+    public void startListen() {
 
-        while (isLoop){
+        while (isLoop) {
 
-            if(mServerSocket==null){
+            if (mServerSocket == null) {
 
                 LogUtil.i(TAG, "mServerSocket为null");
                 return;
             }
-            if(!mServerSocket.isClosed()){
+            if (!mServerSocket.isClosed()) {
                 // 阻塞等待客户端的接入
                 try {
 
@@ -114,10 +112,10 @@ public class HttpRequestListener extends Thread {
 
                     DefaultHttpServerConnection serverConnection = new DefaultHttpServerConnection();
 
-                    serverConnection.bind(socketClient,mHttpParams);
+                    serverConnection.bind(socketClient, mHttpParams);
 
                     // 接入客户端绑定的任务放入创建的线程池中处理
-                    mExecutorPool.execute(new RequestHandleTask(mHttpService,serverConnection));
+                    mExecutorPool.execute(new RequestHandleTask(mHttpService, serverConnection));
 
 
                 } catch (IOException e) {
@@ -128,12 +126,16 @@ public class HttpRequestListener extends Thread {
             }
 
 
-
         }
-
 
 
     }
 
+    /**
+     * 关闭前调用，进行资源释放
+     */
+    public void release() {
 
+        isLoop = false;
+    }
 }

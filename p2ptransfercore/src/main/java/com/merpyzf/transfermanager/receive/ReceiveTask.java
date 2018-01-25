@@ -163,8 +163,11 @@ public class ReceiveTask implements Runnable, IReceiveTask {
         while (!isStop) {
 
             FileInfo fileInfo = parseHeader();
-            readBody(fileInfo);
+            if(fileInfo == null){
+                return;
+            }
 
+            readBody(fileInfo);
             if (fileInfo.getIsLast() == 1) {
                 break;
             }
@@ -243,6 +246,9 @@ public class ReceiveTask implements Runnable, IReceiveTask {
     @Override
     public synchronized void readBody(FileInfo fileInfo) {
 
+        if(fileInfo == null){
+            return;
+        }
         // 读取文件的总长度
         int totalLength = fileInfo.getLength();
         int currentLength = 0;

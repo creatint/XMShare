@@ -26,7 +26,7 @@ public class SignMessage {
      * 3. 回复配对请求
      */
 
-    public static class cmd{
+    public static class cmd {
 
         //局域网内设备请求上线(在屏幕上显示局域网内可见的设备)
         public static final int ON_LINE = 1;
@@ -36,6 +36,8 @@ public class SignMessage {
         public static final int OFF_LINE = 3;
         //请求建立连接
         public static final int REQUEST_CONN = 4;
+        // 文件传输中断的信号
+        public static final int TRANSFER_BREAK = 5;
 
 
     }

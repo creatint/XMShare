@@ -117,7 +117,7 @@ public class PeerCommunicate extends Thread {
                 byte[] buffer = msg.getBytes(Constant.S_CHARSET);
                 DatagramPacket sendPacket = new DatagramPacket(buffer, buffer.length, dest, port);
                 mUdpSocket.send(sendPacket);
-                Log.i("w22k", "消息发送出去了");
+//                Log.i("w22k", "消息发送出去了");
             }
 
         } catch (UnsupportedEncodingException e) {

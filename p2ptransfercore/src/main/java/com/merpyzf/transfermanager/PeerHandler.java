@@ -94,6 +94,13 @@ public class PeerHandler extends Handler {
                 }
 
                 break;
+            case SignMessage.cmd.TRANSFER_BREAK:
+                if(mPeerCommunCallback!=null){
+
+                    mPeerCommunCallback.onTransferBreak(peer);
+                }
+
+
 
             default:
                 break;

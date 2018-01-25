@@ -30,7 +30,7 @@ public class ReceiverManager implements Runnable {
     // 观察者集合
     private List<TransferObserver> mTransferObserverLists;
     private ReceiveTask mReceiveTask;
-    private boolean isStop = false;
+    private static boolean isStop = false;
 
     /**
      * 单例获取实例
@@ -48,6 +48,7 @@ public class ReceiverManager implements Runnable {
                 }
             }
         }
+        reset();
         return mReceiver;
     }
 
@@ -129,6 +130,13 @@ public class ReceiverManager implements Runnable {
         void onReceiveListCompleted(List<FileInfo> receiveFileList);
 
 
+    }
+
+    /**
+     * 重置
+     */
+    private static void reset(){
+        isStop = false;
     }
 
 

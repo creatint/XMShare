@@ -52,7 +52,7 @@ public class WebService extends Service {
                 public void run() {
 
 
-                    mHttpRequestListener.destroy();
+                    mHttpRequestListener.release();
 
 
                 }

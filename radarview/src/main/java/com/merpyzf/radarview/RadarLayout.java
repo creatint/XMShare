@@ -20,7 +20,7 @@ import java.util.List;
 
 /**
  * Created by 春水碧于天 on 2017/9/22.
- * 雷达扫描
+ * 雷达圆心扩散
  */
 
 public class RadarLayout extends FrameLayout {
@@ -97,18 +97,18 @@ public class RadarLayout extends FrameLayout {
         for (int i = 0; i < mRadarCount; i++) {
 
 
-            RadarView radarView = new RadarView(getContext());
-            radarView.setScaleX(0);
-            radarView.setScaleY(0);
-            radarView.setAlpha(1);
+            Radar radar = new Radar(getContext());
+            radar.setScaleX(0);
+            radar.setScaleY(0);
+            radar.setAlpha(1);
 
-            addView(radarView, i);
+            addView(radar, i);
 
             int delay = i * mDuration / mRadarCount;
 
-            animators.add(create(radarView, "scaleX", ObjectAnimator.INFINITE, delay, 0, 1));
-            animators.add(create(radarView, "scaleY", ObjectAnimator.INFINITE, delay, 0, 1));
-            animators.add(create(radarView, "alpha", ObjectAnimator.INFINITE, delay, 1, 0));
+            animators.add(create(radar, "scaleX", ObjectAnimator.INFINITE, delay, 0, 1));
+            animators.add(create(radar, "scaleY", ObjectAnimator.INFINITE, delay, 0, 1));
+            animators.add(create(radar, "alpha", ObjectAnimator.INFINITE, delay, 1, 0));
 
         }
 
@@ -217,10 +217,10 @@ public class RadarLayout extends FrameLayout {
         }
     }
 
-    class RadarView extends View {
+    class Radar extends View {
 
 
-        public RadarView(Context context) {
+        public Radar(Context context) {
             super(context);
         }
 

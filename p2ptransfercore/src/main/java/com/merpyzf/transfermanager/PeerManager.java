@@ -37,6 +37,45 @@ public class PeerManager {
         this.mPeerCommunicate = new PeerCommunicate(mContext, mPeerHandler);
     }
 
+
+    /**
+     * 发送传输中断广播
+     */
+    public void sendTransferBreakBroadcast() {
+
+
+        Timeout timeout = new Timeout() {
+            @Override
+            public void onTimeOut() {
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        Log.i("w2k", "发送中断传输的广播");
+                        String name = Thread.currentThread().getName();
+                        SignMessage signMessage = new SignMessage();
+                        signMessage.setHostAddress(NetworkUtil.getLocalIp(mContext));
+                        signMessage.setMsgContent("TRANSFER_BREAK");
+                        signMessage.setCmd(SignMessage.cmd.TRANSFER_BREAK);
+                        // TODO: 2018/1/24 获取已存储在本地的用户名
+                        signMessage.setNickName("merpyzf");
+                        sendBroadcastMsg(signMessage);
+
+                    }
+                }).start();
+            }
+        };
+
+        timeout.onTimeOut();
+        //发送两个广播消息
+        new OSTimer(null, timeout, 50, false).start();
+        new OSTimer(null, timeout, 100, false).start();
+
+
+    }
+
+
     /**
      * 发送设备上线广播
      */

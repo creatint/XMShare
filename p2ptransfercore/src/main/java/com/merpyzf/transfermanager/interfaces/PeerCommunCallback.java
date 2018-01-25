@@ -10,26 +10,34 @@ public interface PeerCommunCallback {
 
     /**
      * 设备上线
+     *
      * @param peer
      */
     void onDeviceOnLine(Peer peer);
 
     /**
      * 设备离线
+     *
      * @param peer
      */
     void onDeviceOffLine(Peer peer);
 
     /**
      * 请求建立连接
+     *
      * @param peer
      */
     void onRequestConnect(Peer peer);
 
     /**
      * 对端对请求建立连接请求的回应
+     *
      * @param peer
      */
     void onAnswerRequestConnect(Peer peer);
 
+    /**
+     * 中断传输
+     */
+    void onTransferBreak(Peer peer);
 }
