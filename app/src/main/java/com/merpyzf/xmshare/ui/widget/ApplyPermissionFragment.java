@@ -35,19 +35,13 @@ import pub.devrel.easypermissions.EasyPermissions;
  */
 public class ApplyPermissionFragment extends BottomSheetDialogFragment implements EasyPermissions.PermissionCallbacks {
 
-    private static final int RC_CAMERA_AND_LOCATION = 1;
     private onApplyPermissionCompleted mOnApplyPermissionCompleted;
     private Activity mActivity = null;
     private Unbinder unbinder;
 
-    @BindView(R.id.iv_perms_camera)
-    ImageView iv_perms_camera;
 
     @BindView(R.id.iv_perms_storage)
     ImageView iv_perms_storage;
-
-    @BindView(R.id.iv_perms_sms)
-    ImageView iv_perms_sms;
 
     @BindView(R.id.iv_perms_net)
     ImageView iv_perms_net;
@@ -103,18 +97,12 @@ public class ApplyPermissionFragment extends BottomSheetDialogFragment implement
 
         mImageViewList.clear();
         mPermsList.clear();
-
-        mImageViewList.add(iv_perms_camera);
         mImageViewList.add(iv_perms_storage);
-        mImageViewList.add(iv_perms_sms);
         mImageViewList.add(iv_perms_net);
-        //拍照权限
-        mPermsList.add(new String[]{Manifest.permission.CAMERA});
-        //读取sdk权限
+        //读取sdcard权限
         mPermsList.add(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE});
-        //读取短信的权限
-        mPermsList.add(new String[]{Manifest.permission.READ_SMS, Manifest.permission.RECEIVE_SMS});
-
+        // 获取位置信息的权限
+        mPermsList.add(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION});
 
     }
 
@@ -132,17 +120,15 @@ public class ApplyPermissionFragment extends BottomSheetDialogFragment implement
             if (EasyPermissions.hasPermissions(mActivity, mPermsList.get(i))) {
 
                 Log.i("w2k", "已有权限");
-                mImageViewList.get(i).setVisibility(View.VISIBLE);
+
 
             } else {
 
-                mImageViewList.get(i).setVisibility(View.INVISIBLE);
-
                 if (isRequest) {
                     //申请权限
-                    EasyPermissions.requestPermissions(this, tips[i]
+                    EasyPermissions.requestPermissions(this, "申请权限"
                             , i, mPermsList.get(i));
-                }
+            }
             }
         }
     }
@@ -249,7 +235,7 @@ public class ApplyPermissionFragment extends BottomSheetDialogFragment implement
 
                     if (mImageViewList.get(0).getVisibility() == View.INVISIBLE) {
 
-                        mImageViewList.get(0).setVisibility(View.VISIBLE);
+//                        mImageViewList.get(0).setVisibility(View.VISIBLE);
                     }
 
                 }
@@ -262,19 +248,13 @@ public class ApplyPermissionFragment extends BottomSheetDialogFragment implement
 
                     if (mImageViewList.get(1).getVisibility() == View.INVISIBLE) {
 
-                        mImageViewList.get(1).setVisibility(View.VISIBLE);
+//                        mImageViewList.get(1).setVisibility(View.VISIBLE);
                     }
                 }
                 break;
             case 2:
 
-                if (isGranted) {
 
-                    if (mImageViewList.get(2).getVisibility() == View.INVISIBLE) {
-
-                        mImageViewList.get(2).setVisibility(View.VISIBLE);
-                    }
-                }
                 break;
 
 
@@ -308,5 +288,7 @@ public class ApplyPermissionFragment extends BottomSheetDialogFragment implement
         unbinder.unbind();
         super.onDestroy();
     }
+
+    // TODO: 2018/1/26 权限获取的代码有待优化
 
 }

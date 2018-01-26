@@ -72,33 +72,22 @@ public class ReceiveActivity extends AppCompatActivity {
      */
     private void initEvent() {
 
-
         if (mReceivePeerFragment != null) {
             mReceivePeerFragment.setOnReceivePairActionListener(new ReceivePeerFragment.OnReceivePairActionListener() {
-
-
-
                 @Override
                 public void onRequestSendFileAction() {
-
                     // 开启一个Socket服务
                     ReceiverManager receiverManager = ReceiverManager.getInstance();
                     new Thread(receiverManager).start();
-
                     Log.i("w2k", "开启一个ServerScoket等待设备接入");
                 }
-
                 @Override
                 public void onAgreeSendFileAction() {
-
                     Log.i("w2k", "同意对端发送文件");
-
                     FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                     mTransferReceiveFragment = new TransferReceiveFragment();
                     transaction.replace(R.id.frame_content,mTransferReceiveFragment);
                     transaction.commit();
-
-
                 }
             });
         }

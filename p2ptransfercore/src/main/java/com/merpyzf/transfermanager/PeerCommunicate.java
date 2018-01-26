@@ -68,6 +68,7 @@ public class PeerCommunicate extends Thread {
                     byte[] buffer = new byte[Constant.BUFFER_LENGTH];
                     DatagramPacket receivePacket = new DatagramPacket(buffer, 0, Constant.BUFFER_LENGTH);
 
+                    Log.i("w2k", "阻塞中等待接入");
                     //block
                     mUdpSocket.receive(receivePacket);
 
@@ -103,7 +104,8 @@ public class PeerCommunicate extends Thread {
 
     /**
      * 发送UDP数据
-     * @param msg 消息内容
+     *
+     * @param msg  消息内容
      * @param dest 目标地址
      * @param port 端口号
      */
@@ -128,6 +130,7 @@ public class PeerCommunicate extends Thread {
         }
     }
 
+
     /**
      * 发送广播信息
      */
@@ -142,6 +145,23 @@ public class PeerCommunicate extends Thread {
         String sinMsg = signMessage.convertProtocolStr();
         sendUdpData(sinMsg, broadcastAddress, Constant.UDP_PORT);
     }
+
+    /**
+     * 发送广播信息
+     */
+    public void sendBroadcast(String dest, SignMessage signMessage) {
+
+
+        InetAddress broadcastAddress = null;
+        try {
+            broadcastAddress = InetAddress.getByName(dest);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        String sinMsg = signMessage.convertProtocolStr();
+        sendUdpData(sinMsg, broadcastAddress, Constant.UDP_PORT);
+    }
+
 
     /**
      * 将当前设备的信息回复给对端

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -11,9 +12,11 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.merpyzf.httpcoreserver.ui.HttpServerActivity;
-import com.merpyzf.transfermanager.util.ApManager;
+import com.merpyzf.transfermanager.util.NetworkUtil;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Constant;
+import com.merpyzf.xmshare.ui.test.APActivity;
+import com.merpyzf.xmshare.ui.test.HostActivity;
 import com.merpyzf.xmshare.ui.view.activity.ReceiveActivity;
 import com.merpyzf.xmshare.ui.view.activity.SelectFilesActivity;
 import com.merpyzf.xmshare.ui.view.activity.SettingActivity;
@@ -34,10 +37,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button btnStarSc;
     @BindView(R.id.btn_save)
     Button btnSave;
+    @BindView(R.id.btn_ap)
+    Button btnAp;
+    @BindView(R.id.btn_host)
+    Button btnHost;
+
     @BindView(R.id.edt_nickname)
     EditText edtNickName;
+
+
     @BindView(R.id.tool_bar)
     Toolbar mToolbar;
+
 
     private String TAG = MainActivity.class.getSimpleName();
     private Context mContext = null;
@@ -52,7 +63,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initUI();
         initEvent();
         // 关闭AP
-        ApManager.configApState(mContext);
+//        ApManager.configApState(mContext);
+        String localIp = NetworkUtil.getLocalIp(mContext);
+        Log.i("w2k", "本机地址: " + localIp);
 
 
     }
@@ -78,6 +91,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnReceive.setOnClickListener(this);
         btnSave.setOnClickListener(this);
         btnStarSc.setOnClickListener(this);
+        btnAp.setOnClickListener(this);
+        btnHost.setOnClickListener(this);
+
 
         mToolbar.setOnMenuItemClickListener(item -> {
 
@@ -132,6 +148,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 break;
 
+            case R.id.btn_ap:
+
+                APActivity.start(mContext);
+
+                break;
+
+            case R.id.btn_host:
+                HostActivity.start(mContext);
+
+                break;
             default:
                 break;
         }

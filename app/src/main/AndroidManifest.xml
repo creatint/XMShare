@@ -2,28 +2,23 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.merpyzf.xmshare">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-    <!-- 文件读取 -->
+
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <!-- 文件读取 需要动态申请-->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!-- 拍照 -->
-    <uses-permission android:name="android.permission.CAMERA" />
-    <!-- 短信相关权限 -->
-    <uses-permission android:name="android.permission.READ_SMS" />
-    <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <uses-permission android:name="android.provider.Telephony.SMS_RECEIVED" />
 
     <!-- 网络状态相关的权限 -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-    <!-- 读取手机联系人的权限 -->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.GET_TASKS" />
+
     <!-- 获取位置信息的权限 -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
 
     <application
         android:name=".common.base.App"
@@ -47,7 +42,7 @@
         <activity
             android:name=".ui.view.activity.SendActivity"
             android:label="发送文件" />
-        <activity android:name=".ui.view.activity.SelectFilesActivity"></activity>
+        <activity android:name=".ui.view.activity.SelectFilesActivity" />
         <activity android:name=".ui.test.BottomSheetDialogActivity" />
         <activity android:name=".ui.test.TestRadarViewActivity" />
         <activity android:name=".ui.test.ScanVideoActivity" />
@@ -57,7 +52,18 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".ui.view.activity.SettingActivity"></activity>
+        <activity android:name=".ui.view.activity.SettingActivity" />
+        <activity android:name=".ui.test.APActivity" />
+        <activity android:name=".ui.test.HostActivity" />
+
+        <receiver
+            android:name=".receiver.APChangedReceiver"
+            android:enabled="true"
+            android:exported="true" />
+        <receiver
+            android:name=".receiver.WifiChangedReceiver"
+            android:enabled="true"
+            android:exported="true"></receiver>
     </application>
 
 </manifest>

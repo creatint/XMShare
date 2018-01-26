@@ -5,6 +5,7 @@ import android.net.DhcpInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -23,15 +24,16 @@ public class NetworkUtil {
 
     /**
      * 获取本机ip地址
+     *
      * @param context
      * @return
      */
-    public static String getLocalIp(Context context){
+    public static String getLocalIp(Context context) {
 
         WifiManager wifiManager = (WifiManager) context.getSystemService(context.WIFI_SERVICE);
 
         // 检查wifi是否开启
-        if(!wifiManager.isWifiEnabled()){
+        if (!wifiManager.isWifiEnabled()) {
 
             return null;
 
@@ -64,8 +66,7 @@ public class NetworkUtil {
             throws UnknownHostException {
         WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         DhcpInfo dhcp = wifi.getDhcpInfo();
-        if (dhcp == null)
-        {
+        if (dhcp == null) {
             return InetAddress.getByName("255.255.255.255");
         }
         int broadcast = (dhcp.ipAddress & dhcp.netmask) | ~dhcp.netmask;
@@ -77,16 +78,17 @@ public class NetworkUtil {
 
     /**
      * 判断传入的ip地址是否为本机ip
+     *
      * @param ip
      * @return
      */
-    public static boolean isLocal(String ip){
+    public static boolean isLocal(String ip) {
 
         String[] localIP = getLocalAllIP();
 
         for (String s : localIP) {
 
-            if (ip.equals(s)){
+            if (ip.equals(s)) {
                 return true;
             }
 
@@ -97,34 +99,29 @@ public class NetworkUtil {
 
     /**
      * 获取本机硬件设备绑定的所有IP地址
+     *
      * @return
      */
     private static String[] getLocalAllIP() {
         ArrayList<String> IPs = new ArrayList<String>();
 
-        try
-        {
+        try {
             Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces();
             // 遍历所用的网络接口
-            while (en.hasMoreElements())
-            {
+            while (en.hasMoreElements()) {
                 NetworkInterface nif = en.nextElement();// 得到每一个网络接口绑定的所有ip
                 Enumeration<InetAddress> inet = nif.getInetAddresses();
                 // 遍历每一个接口绑定的所有ip
-                while (inet.hasMoreElements())
-                {
+                while (inet.hasMoreElements()) {
                     InetAddress ip = inet.nextElement();
                     if (!ip.isLoopbackAddress()
-                            && isIpv4Address(ip.getHostAddress()))
-                    {
+                            && isIpv4Address(ip.getHostAddress())) {
                         IPs.add(ip.getHostAddress());
                     }
                 }
 
             }
-        }
-        catch (SocketException e)
-        {
+        } catch (SocketException e) {
             e.printStackTrace();
         }
 
@@ -134,24 +131,25 @@ public class NetworkUtil {
 
     /**
      * 判断ip地址的格式是否为
+     *
      * @param ipAddress
      * @return
      */
-    public static boolean isIpv4Address(String ipAddress){
-        if(ipAddress==null || ipAddress.length()==0){
+    public static boolean isIpv4Address(String ipAddress) {
+        if (ipAddress == null || ipAddress.length() == 0) {
             return false;//字符串为空或者空串
         }
-        String[] parts=ipAddress.split("\\.");//因为java doc里已经说明, split的参数是reg, 即正则表达式, 如果用"|"分割, 则需使用"\\|"
-        if(parts.length!=4){
+        String[] parts = ipAddress.split("\\.");//因为java doc里已经说明, split的参数是reg, 即正则表达式, 如果用"|"分割, 则需使用"\\|"
+        if (parts.length != 4) {
             return false;//分割开的数组根本就不是4个数字
         }
-        for(int i=0;i<parts.length;i++){
-            try{
-                int n=Integer.parseInt(parts[i]);
-                if(n<0 || n>255){
+        for (int i = 0; i < parts.length; i++) {
+            try {
+                int n = Integer.parseInt(parts[i]);
+                if (n < 0 || n > 255) {
                     return false;//数字不在正确范围内
                 }
-            }catch (NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 return false;//转换数字不正确
             }
         }
@@ -161,6 +159,7 @@ public class NetworkUtil {
 
     /**
      * 获取MAC地址
+     *
      * @param mContext
      * @return
      */
@@ -176,6 +175,60 @@ public class NetworkUtil {
         }
 
         return macStr;
+    }
+
+    /**
+     * 判断指定的ipAddress是否可以ping
+     *
+     * @param ipAddress
+     * @return
+     */
+    public static boolean pingIpAddress(String ipAddress) {
+        try {
+            Process process = Runtime.getRuntime().exec("/system/bin/ping -c 1 -w 100 " + ipAddress);
+            int status = process.waitFor();
+            if (status == 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * 获取ssid
+     *
+     * @param nickName
+     * @param avatar
+     * @return
+     */
+    public static String getSSID(String nickName, int avatar) {
+        String ssid = "XM" + (FormatUtils.string2Unicode(avatar + "") + "-" + FormatUtils.string2Unicode(nickName)).replaceAll("\\\\u", "T");
+        return ssid;
+    }
+
+    /**
+     * 从AP名中获取用户名和头像
+     *
+     * @return
+     */
+    public static String[] getApNickAndAvatar(String ssid) {
+
+        String ApInfo[] = new String[2];
+        String[] split = ssid.split("-");
+        // 头像
+        String avatar = FormatUtils.unicode2String((split[0].substring(2)));
+        // 用户名
+        String nickName = FormatUtils.unicode2String(split[1]);
+        ApInfo[0] = avatar;
+        ApInfo[1] = nickName;
+        return ApInfo;
+
     }
 
 }

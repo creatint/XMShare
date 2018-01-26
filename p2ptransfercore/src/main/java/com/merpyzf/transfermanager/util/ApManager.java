@@ -17,7 +17,7 @@ public class ApManager {
      *
      * @return
      */
-    public static boolean getApStatus(Context context) {
+    public static boolean isApOn(Context context) {
 
         WifiManager wifimanager = (WifiManager) context.getSystemService(context.WIFI_SERVICE);
         try {
@@ -56,7 +56,7 @@ public class ApManager {
             }
 
             Method method = wifimanager.getClass().getMethod("setWifiApEnabled", WifiConfiguration.class, boolean.class);
-            method.invoke(wifimanager, wificonfiguration, !getApStatus(context));
+            method.invoke(wifimanager, wificonfiguration, !isApOn(context));
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -66,22 +66,23 @@ public class ApManager {
 
 
     // toggle wifi hotspot on or off, and specify the hotspot name
-    public static boolean configApState(Context context, String apName) {
+    public static boolean configApState(Context context, String apName, String nickName, int avatar) {
         WifiManager wifimanager = (WifiManager) context.getSystemService(context.WIFI_SERVICE);
         WifiConfiguration wificonfiguration = null;
         try {
             wificonfiguration = new WifiConfiguration();
-            wificonfiguration.SSID = apName;
+            wificonfiguration.SSID = NetworkUtil.getSSID(nickName, avatar);
+
             // if WiFi is on, turn it off
             if (wifimanager.isWifiEnabled()) {
                 wifimanager.setWifiEnabled(false);
                 // if ap is on and then disable ap
-                if(getApStatus(context)){
+                if (isApOn(context)) {
                     turnOffAp(context);
                 }
             }
             Method method = wifimanager.getClass().getMethod("setWifiApEnabled", WifiConfiguration.class, boolean.class);
-            method.invoke(wifimanager, wificonfiguration, !getApStatus(context));
+            method.invoke(wifimanager, wificonfiguration, !isApOn(context));
             return true;
         } catch (Exception e) {
             e.printStackTrace();

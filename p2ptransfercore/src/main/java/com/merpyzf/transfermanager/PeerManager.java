@@ -6,6 +6,7 @@ import android.util.Log;
 import com.merpyzf.transfermanager.entity.SignMessage;
 import com.merpyzf.transfermanager.interfaces.PeerCommunCallback;
 import com.merpyzf.transfermanager.util.NetworkUtil;
+import com.merpyzf.transfermanager.util.WifiMgr;
 import com.merpyzf.transfermanager.util.timer.OSTimer;
 import com.merpyzf.transfermanager.util.timer.Timeout;
 
@@ -97,6 +98,60 @@ public class PeerManager {
                         signMessage.setNickName(nickName);
 //                        Log.i("w2k", "发送上线广播");
                         sendBroadcastMsg(signMessage);
+
+                    }
+                }).start();
+            }
+        };
+
+        timeout.onTimeOut();
+        //发送两个广播消息
+        OSTimer osTimer = new OSTimer(null, timeout, 100, isCycle);
+        osTimer.start();
+
+        return osTimer;
+
+    }
+
+
+    /**
+     * 发送设备上线广播
+     */
+    public OSTimer sendOnLineBroadcast(final String destAddress, boolean isCycle) {
+
+
+        Timeout timeout = new Timeout() {
+            @Override
+            public void onTimeOut() {
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        int count = 0;
+
+                        while (!NetworkUtil.pingIpAddress(destAddress) && count < 10) {
+
+                            try {
+                                Thread.sleep(500);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            count+=1;
+
+                        }
+
+
+                        String name = Thread.currentThread().getName();
+                        SignMessage signMessage = new SignMessage();
+
+                        signMessage.setHostAddress(WifiMgr.getInstance(mContext).getHotspotLocalIpAddress());
+                        signMessage.setMsgContent("ON_LINE");
+                        signMessage.setCmd(SignMessage.cmd.ON_LINE);
+                        signMessage.setNickName(nickName);
+//                        Log.i("w2k", "发送上线广播");
+                        sendBroadcastMsg(destAddress, signMessage);
+
 
                     }
                 }).start();
@@ -209,9 +264,11 @@ public class PeerManager {
      * @param signMessage
      */
     public void sendBroadcastMsg(SignMessage signMessage) {
-
-
         mPeerCommunicate.sendBroadcast(signMessage);
+    }
+
+    public void sendBroadcastMsg(String dest, SignMessage signMessage) {
+        mPeerCommunicate.sendBroadcast(dest, signMessage);
     }
 }
 

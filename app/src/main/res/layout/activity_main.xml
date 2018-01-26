@@ -55,5 +55,17 @@
         android:layout_height="wrap_content"
         android:text="接收文件" />
 
+    <Button
+        android:id="@+id/btn_ap"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="建立热点" />
+
+    <Button
+        android:id="@+id/btn_host"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="连接热点" />
+
 
 </LinearLayout>

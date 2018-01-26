@@ -213,7 +213,6 @@ public class WifiMgr {
      */
     public String getIpAddressFromHotspot() {
         // WifiAP ip address is hardcoded in Android.
-        /* IP/netmask: 192.168.43.1/255.255.255.0 */
         String ipAddress = "192.168.43.1";
         DhcpInfo dhcpInfo = mWifiManager.getDhcpInfo();
         int address = dhcpInfo.gateway;

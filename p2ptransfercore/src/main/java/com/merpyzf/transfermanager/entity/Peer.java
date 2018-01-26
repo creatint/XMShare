@@ -12,6 +12,8 @@ public class Peer {
     // 主机地址
     private String hostAddress;
 
+    private String ssid;
+
 
     public Peer() {
     }
@@ -37,6 +39,14 @@ public class Peer {
         this.hostAddress = hostAddress;
     }
 
+
+    public String getSsid() {
+        return ssid;
+    }
+
+    public void setSsid(String ssid) {
+        this.ssid = ssid;
+    }
 
     @Override
     public boolean equals(Object o) {
