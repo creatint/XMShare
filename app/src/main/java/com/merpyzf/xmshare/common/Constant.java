@@ -6,11 +6,13 @@ package com.merpyzf.xmshare.common;
 
 public class Constant {
 
-    // 存放歌曲封面的路径
-    public static final String THUMB_MUSIC = "/xmshare/img/music_thumb";
-    public static final String THUMB_VIDEO = "/xmshare/img/video_thumb";
-    // sp文件, 存储用户信息//
+    // sp文件, 存储用户信息和用户设置的信息
     public static final String SP_USER = "sp_user_info";
+    // 传输模式
+    public static final String KEY_TRANSFER_MODE = "transfer_mode";
 
-
+    // 使用已连接的局域网传输
+    public static final int TRANSFER_MODE_LAN = -1;
+    // 通过建立热点组件局域网的方式传输
+    public static final int TRANSFER_MODE_AP = 1;
 }

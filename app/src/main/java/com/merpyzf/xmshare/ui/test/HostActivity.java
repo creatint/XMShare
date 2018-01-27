@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.send.SenderManager;
@@ -38,6 +39,7 @@ public class HostActivity extends AppCompatActivity {
 
     private Context mContext;
     private WifiChangedReceiver mWifiChangedReceiver;
+    private static final String TAG = HostActivity.class.getSimpleName();
     // 扫描WIFI
     private static final int TYPE_SCAN_WIFI = 1;
     // 发送文件
@@ -49,7 +51,7 @@ public class HostActivity extends AppCompatActivity {
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
-
+    private int mCountPing = 0;
 
     private Handler mHandler = new Handler() {
         @Override
@@ -59,6 +61,7 @@ public class HostActivity extends AppCompatActivity {
             switch (msg.what) {
 
                 case TYPE_SCAN_WIFI:
+
                     scanWifi();
                     break;
 
@@ -68,8 +71,30 @@ public class HostActivity extends AppCompatActivity {
                     Log.i("w2k", "向 " + peer.getHostAddress() + " 发送文件");
 
                     SenderManager senderManager = SenderManager.getInstance(mContext);
-                    // 发送文件
-                    senderManager.send(peer.getHostAddress(), App.getSendFileList());
+
+                    if (mCountPing < 10) {
+
+                        if (NetworkUtil.pingIpAddress(peer.getHostAddress())) {
+                            // 发送文件
+                            senderManager.send(peer.getHostAddress(), App.getSendFileList());
+                            break;
+                        }
+                        Log.i("w2k", peer.getHostAddress() + " ping...");
+                        mCountPing++;
+
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                    // wifi已经建立连接，但是局域网不通
+                    if (mCountPing == 10) {
+                        Toast.makeText(mContext, "网络未连通通，请点击好友头像重试！", Toast.LENGTH_SHORT).show();
+                    }
+
 
                     break;
 
@@ -142,9 +167,9 @@ public class HostActivity extends AppCompatActivity {
             public void onApDisAbleAction() {
                 // 热点不可用被关闭时候的回调
                 mWifiMgr.openWifi();
-                Log.i("w2k", "热点被关闭了");
+                Log.i(TAG, "热点被关闭了，等待三秒钟扫描附近的wifi");
                 Message message = mHandler.obtainMessage(TYPE_SCAN_WIFI);
-                mHandler.sendMessageDelayed(message, 2000);
+                mHandler.sendMessageDelayed(message, 3000);
             }
 
         };
@@ -165,11 +190,13 @@ public class HostActivity extends AppCompatActivity {
                 // wifi关闭 && 热点关闭
                 // 直接开启wifi
                 mWifiMgr.openWifi(); // wifi开启需要等待一段时间，因此延时1秒中进行局域网内的wifi热点的扫描
+                Log.i(TAG, "wifi关闭，热点也是关闭状态,等待1秒钟扫描WIFI");
                 Message message = mHandler.obtainMessage(TYPE_SCAN_WIFI);
                 mHandler.sendMessageDelayed(message, 1000);
             }
 
         } else {
+            Log.i(TAG, "wifi已开启，直接扫描");
             Message message = mHandler.obtainMessage(TYPE_SCAN_WIFI);
             mHandler.sendMessage(message);
         }
@@ -180,6 +207,8 @@ public class HostActivity extends AppCompatActivity {
      * 扫描WIFI
      */
     public void scanWifi() {
+
+        Log.i(TAG, "扫描附近的wifi。。。");
 
         mWifiMgr.startScan();
 
@@ -219,6 +248,7 @@ public class HostActivity extends AppCompatActivity {
     public void connectWifiAndTransfer(Peer peer) {
 
         if (peer.getSsid().contains("XM")) {
+
             Log.i("w2k", "连接wifi " + peer.getSsid());
             WifiConfiguration wifiCfg = WifiMgr.createWifiCfg(peer.getSsid(), null, WifiMgr.WIFICIPHER_NOPASS);
             // 连接没有密码的热点
@@ -226,57 +256,34 @@ public class HostActivity extends AppCompatActivity {
             // 获取远端建立热点设备的ip地址
             String ipAddressFromHotspot = WifiMgr.getInstance(mContext).getIpAddressFromHotspot();
 
-            Log.i("w2k", "接收端的IP地址 -》 " + ipAddressFromHotspot);
-
-
+            Log.i("w2k", "尝试第一次获取接收端的IP地址: " + ipAddressFromHotspot);
             localAddress = WifiMgr.getInstance(mContext).getIpAddressFromHotspot();
 
-
             App.getSingleThreadPool().execute(() -> {
-
                 // 当连接上wifi后立即获取对端主机地址，有可能获取不到，需要多次获取才能拿到
                 int count = 0;
-                int count_ping = 0;
                 while (count < 10) {
 
+                    localAddress = WifiMgr.getInstance(mContext).getIpAddressFromHotspot();
+
+                    Log.i(TAG, "第 " + count + " 次尝试获取接收端IP 获取结果->  " + localAddress);
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    localAddress = WifiMgr.getInstance(mContext).getIpAddressFromHotspot();
-
-                    // 设置主机地址
-                    peer.setHostAddress(localAddress);
-
                     // 获取到主机地址，发送消息到Handler进行文件的发送
                     if (!localAddress.equals("0.0.0.0")) {
 
-                        if(count_ping<10){
-
-                            if(NetworkUtil.pingIpAddress(peer.getHostAddress())){
-                                Message message = mHandler.obtainMessage();
-                                message.obj = peer;
-                                message.what = TYPE_SEND_FILE;
-                                mHandler.sendMessage(message);
-
-                               break;
-                            }
-
-                            Log.i("w2k", peer.getHostAddress()+ " ping...");
-                            count_ping++;
-
-                            try {
-                                Thread.sleep(500);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-
-                        }
-
+                        // 设置主机地址
+                        peer.setHostAddress(localAddress);
+                        Message message = mHandler.obtainMessage();
+                        message.obj = peer;
+                        message.what = TYPE_SEND_FILE;
+                        mHandler.sendMessage(message);
                         break;
-
                     }
+
                     count++;
                 }
 

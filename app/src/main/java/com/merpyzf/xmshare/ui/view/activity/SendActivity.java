@@ -62,6 +62,7 @@ public class SendActivity extends AppCompatActivity implements ScanPeerFragment.
     private TransferSendFragment mTransferSendFragment;
     private PeerManager mPeerManager;
     private SenderManager mSenderManager;
+    private static final String TAG = SendActivity.class.getSimpleName();
 
 
     public static void start(Context context) {
@@ -125,45 +126,53 @@ public class SendActivity extends AppCompatActivity implements ScanPeerFragment.
     public void onPeerPairSuccessAction(Peer peer) {
 
 
-        // 跳转到文件发送的界面
-        mSenderManager = SenderManager.getInstance(mContext);
-        mSenderManager.send(peer.getHostAddress(), App.getSendFileList());
+        if (peer.isHotsPot()) {
+
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            mTransferSendFragment = new TransferSendFragment();
+            transaction.replace(R.id.frame_content, mTransferSendFragment);
+            transaction.commit();
+
+        } else {
+
+            // 跳转到文件发送的界面
+            mSenderManager = SenderManager.getInstance(mContext);
+            mSenderManager.send(peer.getHostAddress(), App.getSendFileList());
 
 
-        // 开始进行文件的发送，并添加动画
-        ObjectAnimator animator = ObjectAnimator.ofFloat(mLinearRocket, "translationY", 0.0f - 1000f);
-        animator.setInterpolator(new AccelerateInterpolator());
-        animator.setDuration(500);
-        animator.addListener(new Animator.AnimatorListener() {
+            // 开始进行文件的发送，并添加动画
+            ObjectAnimator animator = ObjectAnimator.ofFloat(mLinearRocket, "translationY", 0.0f - 1000f);
+            animator.setInterpolator(new AccelerateInterpolator());
+            animator.setDuration(500);
+            animator.addListener(new Animator.AnimatorListener() {
 
 
+                @Override
+                public void onAnimationStart(Animator animation) {
 
-            @Override
-            public void onAnimationStart(Animator animation) {
+                }
 
-            }
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mLinearRocket.setVisibility(View.INVISIBLE);
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                    mTransferSendFragment = new TransferSendFragment();
+                    transaction.replace(R.id.frame_content, mTransferSendFragment);
+                    transaction.commit();
+                }
 
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                mLinearRocket.setVisibility(View.INVISIBLE);
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                mTransferSendFragment = new TransferSendFragment();
-                transaction.replace(R.id.frame_content, mTransferSendFragment);
-                transaction.commit();
-            }
+                @Override
+                public void onAnimationCancel(Animator animation) {
 
-            @Override
-            public void onAnimationCancel(Animator animation) {
+                }
 
-            }
+                @Override
+                public void onAnimationRepeat(Animator animation) {
 
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
-        animator.start();
-
+                }
+            });
+            animator.start();
+        }
     }
 
     @Override
@@ -175,7 +184,7 @@ public class SendActivity extends AppCompatActivity implements ScanPeerFragment.
 
     @Override
     public void onBackPressed() {
-        if(mTransferSendFragment!=null){
+        if (mTransferSendFragment != null) {
             mTransferSendFragment.onBackPressed();
         }
         super.onBackPressed();

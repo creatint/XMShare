@@ -26,4 +26,21 @@ public class SharedPreUtils {
     }
 
 
+    public static void putInteger(Context context, String spName, String key, int value) {
+        context.getSharedPreferences(spName, Context.MODE_PRIVATE)
+                .edit()
+                .putInt(key, value)
+                .commit();
+    }
+
+
+    public static int getInteger(Context context, String spName, String key, int defaultValue) {
+
+        return context.getSharedPreferences(spName, Context.MODE_PRIVATE)
+                .getInt(key, defaultValue);
+
+
+    }
+
+
 }

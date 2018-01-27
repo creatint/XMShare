@@ -8,10 +8,10 @@ public class Constant {
 
 
     // 存放歌曲封面的路径
-    public static final String THUMB_MUSIC = "/xmshare/img/music_thumb";
-    public static final String THUMB_VIDEO = "/xmshare/img/video_thumb";
+    public static final String THUMB_MUSIC = "/xmshare/music_thumb";
+    public static final String THUMB_VIDEO = "/xmshare/video_thumb";
     // 文件接收列表中显示的被压缩的缩略图
-    public static final String THUMB_RECEIVE = "/xmshare/img/receive_thumb";
+    public static final String THUMB_RECEIVE = "/xmshare/receive_thumb";
 
 
     // 接收apk文件的保存路径

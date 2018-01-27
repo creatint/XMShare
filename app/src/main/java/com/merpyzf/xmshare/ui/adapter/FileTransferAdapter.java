@@ -65,7 +65,7 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
         } else if (item instanceof MusicFile) {
 
             MusicFile musicFile = (MusicFile) item;
-            String musicThumbPath = Environment.getExternalStorageDirectory().getPath() + com.merpyzf.xmshare.common.Constant.THUMB_MUSIC + "/" + String.valueOf(musicFile.getAlbumId());
+            String musicThumbPath = Environment.getExternalStorageDirectory().getPath() + Constant.THUMB_MUSIC + "/" + String.valueOf(musicFile.getAlbumId());
             bitmap = BitmapFactory.decodeFile(musicThumbPath);
 
 
@@ -90,7 +90,7 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
 
             VideoFile videoFile = (VideoFile) item;
             String videoThumbPath = Environment.getExternalStorageDirectory()
-                    + com.merpyzf.xmshare.common.Constant.THUMB_VIDEO + "/" + videoFile.getName();
+                    + Constant.THUMB_VIDEO + "/" + videoFile.getName();
 
             bitmap = BitmapFactory.decodeFile(videoThumbPath);
 

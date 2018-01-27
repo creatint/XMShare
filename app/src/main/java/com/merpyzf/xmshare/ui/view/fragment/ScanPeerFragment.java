@@ -2,7 +2,11 @@ package com.merpyzf.xmshare.ui.view.fragment;
 
 
 import android.content.Context;
+import android.net.wifi.ScanResult;
+import android.net.wifi.WifiConfiguration;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,8 +22,12 @@ import com.merpyzf.transfermanager.PeerManager;
 import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.entity.SignMessage;
 import com.merpyzf.transfermanager.interfaces.PeerCommunCallback;
+import com.merpyzf.transfermanager.send.SenderManager;
+import com.merpyzf.transfermanager.util.WifiMgr;
+import com.merpyzf.transfermanager.util.timer.OSTimer;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Constant;
+import com.merpyzf.xmshare.common.base.App;
 import com.merpyzf.xmshare.ui.adapter.PeerAdapter;
 import com.merpyzf.xmshare.util.SharedPreUtils;
 
@@ -45,6 +53,20 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
 
     // 要建立连接的对端设备
     private Peer mPeerRequestConn;
+    private WifiMgr mWifiMgr;
+    private String mLocalAddress;
+    private MyHandler mHandler;
+    // 扫描WIFI
+    private static final int TYPE_SCAN_WIFI = 1;
+    // 发送文件
+    private static final int TYPE_SEND_FILE = 2;
+
+    private int mCountPing = 0;
+
+    private static final String TAG = ScanPeerFragment.class.getSimpleName();
+    // 用于定时扫描wifi的定时器
+    private OSTimer mScanWifiTimer;
+
 
     public ScanPeerFragment() {
     }
@@ -66,12 +88,20 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
         initUI();
         mPeerAdapter = new PeerAdapter(R.layout.item_rv_send_peer, mPeerList);
         mRvPeerList.setAdapter(mPeerAdapter);
-
         mPeerAdapter.setOnItemClickListener(this);
+        mWifiMgr = WifiMgr.getInstance(mContext);
+        mHandler = new MyHandler();
+
+
+        // 如果wifi关闭就去开启wifi
+        if (!mWifiMgr.isWifiEnable()) {
+            mWifiMgr.openWifi();
+
+        }
 
 
         String nickName = SharedPreUtils.getString(mContext, Constant.SP_USER, "nickName", "");
-
+        // 这里只需要建立一次
         mPeerManager = new PeerManager(mContext, nickName, new PeerCommunCallback() {
             @Override
             public void onDeviceOnLine(Peer peer) {
@@ -137,11 +167,15 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
 
             }
         });
-
         /**
          * 此处建立的是一个接收UDP信息的服务端
          */
         mPeerManager.listenBroadcast();
+
+
+        new OSTimer(null, () -> mHandler.sendEmptyMessage(TYPE_SCAN_WIFI), 0, false).start();
+        mScanWifiTimer = new OSTimer(null, () -> mHandler.sendEmptyMessage(TYPE_SCAN_WIFI), 5000, true);
+        mScanWifiTimer.start();
 
         return rootView;
     }
@@ -164,33 +198,149 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
 
 
-        mPeerRequestConn = (Peer) adapter.getItem(position);
-        // 构造UDP消息的内容
-        SignMessage signMessage = new SignMessage();
-        signMessage.setHostAddress(NetworkUtil.getLocalIp(mContext));
-        signMessage.setNickName(SharedPreUtils.getNickName(mContext));
-        signMessage.setMsgContent("建立连接请求");
-        signMessage.setCmd(SignMessage.cmd.REQUEST_CONN);
-        String msg = signMessage.convertProtocolStr();
+        Peer peer = (Peer) adapter.getItem(position);
+
+        // 用户点击的是开启热点的用户
+        if (peer.isHotsPot()) {
+
+            // 连接并传输wifi
+            connectWifiAndTransfer(peer);
 
 
-        InetAddress dest = null;
-        try {
-            dest = InetAddress.getByName(mPeerRequestConn.getHostAddress());
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
+        } else {
+            // 点击的是局域网内的用户
+            // 需要在peer上加一个标记
+            mPeerRequestConn = peer;
+            // 构造UDP消息的内容
+            SignMessage signMessage = new SignMessage();
+            signMessage.setHostAddress(NetworkUtil.getLocalIp(mContext));
+            signMessage.setNickName(SharedPreUtils.getNickName(mContext));
+            signMessage.setMsgContent("建立连接请求");
+            signMessage.setCmd(SignMessage.cmd.REQUEST_CONN);
+            String msg = signMessage.convertProtocolStr();
+
+
+            InetAddress dest = null;
+            try {
+                dest = InetAddress.getByName(mPeerRequestConn.getHostAddress());
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+
+            // 将消息发送给对端
+            mPeerManager.send2Peer(msg, dest, com.merpyzf.transfermanager.constant.Constant.UDP_PORT);
+            if (mOnPairActionListener != null) {
+                mOnPairActionListener.onSendConnRequestAction();
+            }
+            Toast.makeText(mContext, "发送建立请求连接", Toast.LENGTH_SHORT).show();
+
+            // 在屏幕中间显示一个火箭的图标
+            // 将这个事件回调给Activity
         }
 
-        // 将消息发送给对端
-        mPeerManager.send2Peer(msg, dest, com.merpyzf.transfermanager.constant.Constant.UDP_PORT);
-        if(mOnPairActionListener !=null){
-            mOnPairActionListener.onSendConnRequestAction();
+
+    }
+
+
+    /**
+     * 连接wifi并传输文件
+     *
+     * @param peer
+     */
+    public void connectWifiAndTransfer(Peer peer) {
+
+
+        if (peer.getSsid().contains("XM")) {
+
+            Log.i("w2k", "连接wifi " + peer.getSsid());
+            WifiConfiguration wifiCfg = WifiMgr.createWifiCfg(peer.getSsid(), null, WifiMgr.WIFICIPHER_NOPASS);
+            // 连接没有密码的热点
+            mWifiMgr.connectNewWifi(wifiCfg);
+            // 获取远端建立热点设备的ip地址
+            String ipAddressFromHotspot = WifiMgr.getInstance(mContext).getIpAddressFromHotspot();
+
+            Log.i("w2k", "尝试第一次获取接收端的IP地址: " + ipAddressFromHotspot);
+            mLocalAddress = WifiMgr.getInstance(mContext).getIpAddressFromHotspot();
+
+            App.getSingleThreadPool().execute(() -> {
+                // 当连接上wifi后立即获取对端主机地址，有可能获取不到，需要多次获取才能拿到
+                int count = 0;
+                while (count < 10) {
+
+                    mLocalAddress = WifiMgr.getInstance(mContext).getIpAddressFromHotspot();
+
+                    Log.i(TAG, "第 " + count + " 次尝试获取接收端IP 获取结果->  " + mLocalAddress);
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    // 获取到主机地址，发送消息到Handler进行文件的发送
+                    if (!mLocalAddress.equals("0.0.0.0")) {
+
+                        // 设置主机地址
+                        peer.setHostAddress(mLocalAddress);
+                        Message message = mHandler.obtainMessage();
+                        message.obj = peer;
+                        message.what = TYPE_SEND_FILE;
+                        mHandler.sendMessage(message);
+                        break;
+                    }
+
+                    count++;
+                }
+
+
+                Log.i("w2k", "receiver get local Ip ----->>>" + mLocalAddress);
+
+            });
+
+
         }
-        Toast.makeText(mContext, "发送建立请求连接", Toast.LENGTH_SHORT).show();
+    }
 
-        // 在屏幕中间显示一个火箭的图标
-        // 将这个事件回调给Activity
+    /**
+     * 扫描WIFI
+     */
+    public void scanWifi() {
 
+        mWifiMgr.startScan();
+
+        List<ScanResult> scanResults = mWifiMgr.getScanResults();
+
+        if (scanResults == null) {
+            return;
+        }
+
+
+        for (Peer peer1 : mPeerList) {
+            if(peer1.isHotsPot()){
+                mPeerList.remove(peer1);
+            }
+        }
+
+
+        for (ScanResult scanResult : scanResults) {
+
+            if (scanResult.SSID.startsWith("XM")) {
+
+                Log.i("w2k", "符合要求的WIFI SSID -> " + scanResult.SSID);
+                String[] apNickAndAvatar = com.merpyzf.transfermanager.util.NetworkUtil.getApNickAndAvatar(scanResult.SSID);
+
+                Peer peer = new Peer();
+                peer.setHostAddress("未知");
+                peer.setSsid(scanResult.SSID);
+                // 设置用户名
+                peer.setNickName(apNickAndAvatar[1]);
+                peer.setHotsPot(true);
+
+                mPeerList.add(peer);
+
+                Log.i("w2k", "头像 -> " + apNickAndAvatar[0]);
+                Log.i("w2k", "用户名 -> " + apNickAndAvatar[1]);
+            }
+        }
+        mPeerAdapter.notifyDataSetChanged();
 
     }
 
@@ -232,5 +382,66 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
 
     public void setOnPeerActionListener(OnPairActionListener onPairActionListener) {
         this.mOnPairActionListener = onPairActionListener;
+    }
+
+
+    class MyHandler extends Handler {
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+
+            switch (msg.what) {
+
+                case TYPE_SCAN_WIFI:
+
+                    scanWifi();
+                    break;
+
+                case TYPE_SEND_FILE:
+
+                    Peer peer = (Peer) msg.obj;
+                    Log.i("w2k", "向 " + peer.getHostAddress() + " 发送文件");
+
+                    SenderManager senderManager = SenderManager.getInstance(mContext);
+
+                    if (mCountPing < 10) {
+
+                        if (com.merpyzf.transfermanager.util.NetworkUtil.pingIpAddress(peer.getHostAddress())) {
+
+
+                            if(mOnPairActionListener!=null){
+                                // 发送文件
+                                senderManager.send(peer.getHostAddress(), App.getSendFileList());
+                                mOnPairActionListener.onPeerPairSuccessAction(peer);
+                            }
+
+                            break;
+                        }
+                        Log.i("w2k", peer.getHostAddress() + " ping...");
+                        mCountPing++;
+
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                    // wifi已经建立连接，但是局域网不通
+                    if (mCountPing == 10) {
+                        Toast.makeText(mContext, "网络未连通通，请点击好友头像重试！", Toast.LENGTH_SHORT).show();
+                    }
+
+
+                    break;
+
+                default:
+                    break;
+            }
+
+        }
+
     }
 }

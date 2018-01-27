@@ -18,14 +18,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.merpyzf.transfermanager.PeerManager;
 import com.merpyzf.transfermanager.entity.FileInfo;
-import com.merpyzf.transfermanager.entity.Peer;
-import com.merpyzf.transfermanager.interfaces.PeerCommunCallback;
 import com.merpyzf.transfermanager.interfaces.TransferObserver;
 import com.merpyzf.transfermanager.receive.ReceiverManager;
 import com.merpyzf.transfermanager.util.ApManager;
-import com.merpyzf.transfermanager.util.WifiMgr;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.base.App;
 import com.merpyzf.xmshare.receiver.APChangedReceiver;
@@ -51,16 +47,15 @@ public class APActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ap);
         mContext = this;
-        initAP();
-        requestPermission();
+        requestPermissionAndInitAp();
 
 
     }
 
     /**
-     * 申请创建热点时所需要的权限r
+     * 申请并初始化AP
      */
-    private void requestPermission() {
+    private void requestPermissionAndInitAp() {
         // 检查是否具备修改系统设置的权限
         boolean permission = false;
         // 获取当前设备的SDK的版本
@@ -72,8 +67,6 @@ public class APActivity extends AppCompatActivity {
             permission = ContextCompat.checkSelfPermission(mContext,
                     Manifest.permission.WRITE_SETTINGS) == PackageManager.PERMISSION_GRANTED;
         }
-
-
         if (permission) {
 
             // 拥有权限直接建立热点
@@ -81,7 +74,6 @@ public class APActivity extends AppCompatActivity {
 
         } else {
             // 没有权限则去进行申请
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
                 // 6.0以上设备的权限申请方式
@@ -142,9 +134,8 @@ public class APActivity extends AppCompatActivity {
             public void onApEnableAction() {
 
                 Toast.makeText(mContext, "Ap初始化成功", Toast.LENGTH_SHORT).show();
-
-
                 ReceiverManager receiverManager = ReceiverManager.getInstance();
+
                 receiverManager.register(new TransferObserver() {
                     @Override
                     public void onTransferProgress(FileInfo fileInfo) {
@@ -166,65 +157,6 @@ public class APActivity extends AppCompatActivity {
 
                 App.mSingleThreadPool.execute(receiverManager);
 
-
-                // 获取当前设备的ip
-                App.getSingleThreadPool().execute(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        //网络连接上，无法获取IP的问题
-                        int count = 0;
-                        String localAddress = WifiMgr.getInstance(mContext).getIpAddressFromHotspot();
-                        Log.i(TAG, "receiver get local Ip ----->>>" + localAddress);
-                        while (localAddress.equals("0.0.0.0") && count < 10) {
-                            try {
-
-                                String currentIpAddress = WifiMgr.getInstance(mContext).getCurrentIpAddress();
-                                Log.i("w2k", "currentIpAddress-> " + currentIpAddress);
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            localAddress = WifiMgr.getInstance(mContext).getIpAddressFromHotspot();
-                            Log.i(TAG, "receiver get local Ip ----->>>" + localAddress);
-                            count++;
-                        }
-
-                    }
-                });
-
-
-                PeerManager peerManager = new PeerManager(mContext, "春水碧于天，画船听雨眠", new PeerCommunCallback() {
-                    @Override
-                    public void onDeviceOnLine(Peer peer) {
-
-                        Log.i("w2k", "有设备上线: " + peer.getHostAddress() + " - " + peer.getNickName());
-
-                    }
-
-                    @Override
-                    public void onDeviceOffLine(Peer peer) {
-
-                    }
-
-                    @Override
-                    public void onRequestConnect(Peer peer) {
-
-                    }
-
-                    @Override
-                    public void onAnswerRequestConnect(Peer peer) {
-
-                    }
-
-                    @Override
-                    public void onTransferBreak(Peer peer) {
-
-                    }
-                });
-
-                // 侦听
-                peerManager.listenBroadcast();
             }
 
             @Override
@@ -234,6 +166,8 @@ public class APActivity extends AppCompatActivity {
 
             }
         };
+
+
 
         IntentFilter intentFilter = new IntentFilter(APChangedReceiver.ACTION_WIFI_AP_STATE_CHANGED);
         registerReceiver(mApChangedReceiver, intentFilter);

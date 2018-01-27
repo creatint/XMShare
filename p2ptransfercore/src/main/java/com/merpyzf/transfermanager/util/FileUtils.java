@@ -213,6 +213,8 @@ public class FileUtils {
         try {
             bos = new BufferedOutputStream(new FileOutputStream(file));
 
+            if(bos == null)return;
+
             byte[] buffer = new byte[Constant.BUFFER_LENGTH];
             // 读取文件
             while (length > 0) {

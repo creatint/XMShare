@@ -13,8 +13,8 @@ import android.util.Log;
  */
 public abstract class APChangedReceiver extends BroadcastReceiver {
     public static final String TAG = APChangedReceiver.class.getSimpleName();
-
     public static final String ACTION_WIFI_AP_STATE_CHANGED = "android.net.wifi.WIFI_AP_STATE_CHANGED";
+    private boolean flag = false;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -25,20 +25,25 @@ public abstract class APChangedReceiver extends BroadcastReceiver {
             int state = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, 0);
             Log.i(TAG, "Wifi Ap state--->>>" + state);
             if (WifiManager.WIFI_STATE_ENABLED == state % 10) {
-                // wifi 不可用
+                Log.i(TAG, "AP 可用状态...");
                 onApEnableAction();
             } else if (WifiManager.WIFI_STATE_ENABLING == state % 10) {
 
                 // wifi 正在开启
-
+                Log.i(TAG, "AP 正在开启状态...");
             } else if (WifiManager.WIFI_STATE_DISABLED == state % 10) {
-                onApDisAbleAction();
-
+                if (flag) {
+                    onApDisAbleAction();
+                    flag = false;
+                }
                 // wifi 已不可用
 
-            } else if (WifiManager.WIFI_STATE_DISABLING == state % 10) {
+                Log.i(TAG, "AP 已不可用状态...");
 
+            } else if (WifiManager.WIFI_STATE_DISABLING == state % 10) {
+                flag = true;
                 // wifi 关闭中
+                Log.i(TAG, "AP 正在关闭状态...");
             }
         }
     }

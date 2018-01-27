@@ -14,6 +14,9 @@ public class Peer {
 
     private String ssid;
 
+    // 标记是否是无线热点
+    private boolean isHotsPot = false;
+
 
     public Peer() {
     }
@@ -46,6 +49,14 @@ public class Peer {
 
     public void setSsid(String ssid) {
         this.ssid = ssid;
+    }
+
+    public boolean isHotsPot() {
+        return isHotsPot;
+    }
+
+    public void setHotsPot(boolean hotsPot) {
+        isHotsPot = hotsPot;
     }
 
     @Override

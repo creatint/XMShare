@@ -16,7 +16,6 @@ import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.transfermanager.util.FormatUtils;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.Constant;
 import com.merpyzf.xmshare.common.base.App;
 
 import java.io.File;
@@ -55,7 +54,7 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
             helper.setText(R.id.tv_size, "size:" + FormatUtils.convert2Mb(musicFile.getLength()) + " MB");
 
             File albumFile = new File(Environment.getExternalStorageDirectory().getPath()
-                    + Constant.THUMB_MUSIC, String.valueOf(musicFile.getAlbumId()));
+                    + com.merpyzf.transfermanager.constant.Constant.THUMB_MUSIC, String.valueOf(musicFile.getAlbumId()));
             if (albumFile.exists()) {
                 //设置封面图片
                 Glide.with(mContext)
@@ -83,7 +82,7 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
             helper.setText(R.id.tv_size, "文件大小:" + FormatUtils.convert2Mb(videoFile.getLength()) + " MB");
             helper.setText(R.id.tv_duration, "文件时长:"+FormatUtils.convertMS2Str(videoFile.getDuration()));
             ImageView ivVideoThumb = helper.getView(R.id.iv_video_album);
-            String videoThumbPath = Environment.getExternalStorageDirectory() + Constant.THUMB_VIDEO + "/" + videoFile.getName();
+            String videoThumbPath = Environment.getExternalStorageDirectory() + com.merpyzf.transfermanager.constant.Constant.THUMB_VIDEO + "/" + videoFile.getName();
 
             Glide.with(mContext)
                     .load(new File(videoThumbPath))

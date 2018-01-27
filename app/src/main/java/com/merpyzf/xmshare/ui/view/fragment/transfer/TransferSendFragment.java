@@ -16,6 +16,7 @@ import com.merpyzf.transfermanager.PeerManager;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.interfaces.PeerCommunCallback;
+import com.merpyzf.transfermanager.util.WifiMgr;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.base.App;
 import com.merpyzf.xmshare.ui.adapter.FileTransferAdapter;
@@ -40,7 +41,8 @@ public class TransferSendFragment extends Fragment implements PeerCommunCallback
     private FileTransferAdapter<FileInfo> mFileTransferAdapter;
     private String mNickName;
     private PeerManager mPeerManager;
-
+    private WifiMgr mWifiMgr;
+    private static final String TAG = TransferSendFragment.class.getSimpleName();
 
     public TransferSendFragment() {
 
@@ -57,10 +59,14 @@ public class TransferSendFragment extends Fragment implements PeerCommunCallback
 
         mNickName = SharedPreUtils.getNickName(mContext);
         mPeerManager = new PeerManager(mContext, mNickName, this);
+
         mPeerManager.listenBroadcast();
         mFileTransferAdapter = new FileTransferAdapter<>(R.layout.item_rv_transfer,
                 FileTransferAdapter.TYPE_SEND, App.getSendFileList());
         mRvSendList.setAdapter(mFileTransferAdapter);
+
+
+
 
         return rootView;
     }

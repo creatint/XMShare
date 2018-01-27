@@ -9,15 +9,14 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.merpyzf.transfermanager.entity.FileInfo;
-import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.Constant;
-import com.merpyzf.xmshare.common.base.App;
-import com.merpyzf.xmshare.receiver.FileSelectedListChangedReceiver;
 import com.merpyzf.transfermanager.entity.ApkFile;
+import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.transfermanager.entity.VideoFile;
+import com.merpyzf.xmshare.R;
+import com.merpyzf.xmshare.common.base.App;
+import com.merpyzf.xmshare.receiver.FileSelectedListChangedReceiver;
 import com.merpyzf.xmshare.ui.view.activity.SelectFilesActivity;
 
 import java.io.File;
@@ -61,7 +60,7 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
 
             MusicFile musicFile = (MusicFile) item;
             File albumFile = new File(Environment.getExternalStorageDirectory().getPath()
-                    + Constant.THUMB_MUSIC, String.valueOf(musicFile.getAlbumId()));
+                    + com.merpyzf.transfermanager.constant.Constant.THUMB_MUSIC, String.valueOf(musicFile.getAlbumId()));
             if (albumFile.exists()) {
                 //设置封面图片
                 Glide.with(mContext)
@@ -88,7 +87,7 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
 
             VideoFile videoFile = (VideoFile) item;
             ImageView ivVideoThumb = helper.getView(R.id.iv_file_thumb);
-            String videoThumbPath = Environment.getExternalStorageDirectory() + Constant.THUMB_VIDEO + "/" + videoFile.getName();
+            String videoThumbPath = Environment.getExternalStorageDirectory() + com.merpyzf.transfermanager.constant.Constant.THUMB_VIDEO + "/" + videoFile.getName();
             Glide.with(mContext)
                     .load(new File(videoThumbPath))
                     .crossFade()
@@ -96,7 +95,6 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
                     .into(ivVideoThumb);
 
         }
-
 
         ImageView ivRemove = helper.getView(R.id.iv_remove);
 

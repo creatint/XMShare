@@ -9,9 +9,8 @@ import android.net.Uri;
 import android.os.Environment;
 
 import com.merpyzf.transfermanager.entity.FileInfo;
-import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.Constant;
 import com.merpyzf.transfermanager.entity.MusicFile;
+import com.merpyzf.xmshare.R;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -142,7 +141,7 @@ public class MusicUtils {
         File mParentAlbumFile = null;
 
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            mParentAlbumFile = new File(Environment.getExternalStorageDirectory(), Constant.THUMB_MUSIC);
+            mParentAlbumFile = new File(Environment.getExternalStorageDirectory(), com.merpyzf.transfermanager.constant.Constant.THUMB_MUSIC);
             if (!mParentAlbumFile.exists()) {
                 mParentAlbumFile.mkdirs();
             }

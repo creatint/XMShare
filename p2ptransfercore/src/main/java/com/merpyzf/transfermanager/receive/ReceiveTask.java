@@ -83,9 +83,15 @@ public class ReceiveTask implements Runnable, IReceiveTask {
                 if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                     File parentfile = new File(Environment.getExternalStorageDirectory() + Constant.THUMB_RECEIVE);
                     if (!parentfile.exists()) {
-
                         parentfile.mkdirs();
                     }
+
+
+                    // TODO: 2018/1/27 解决文件名中包含/的问题
+                    if(name.contains("/")){
+                        name.replaceAll("/", " ");
+                    }
+
 
                     File file = new File(parentfile, name);
                     FileUtils.writeStream2SdCard(file, mInputStream, thumbLength);

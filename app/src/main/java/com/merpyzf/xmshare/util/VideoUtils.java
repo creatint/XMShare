@@ -8,9 +8,8 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.merpyzf.transfermanager.entity.FileInfo;
-import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.Constant;
 import com.merpyzf.transfermanager.entity.VideoFile;
+import com.merpyzf.xmshare.R;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -57,7 +56,7 @@ public class VideoUtils {
 
 
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            File videoThumbDir = new File(Environment.getExternalStorageDirectory(), Constant.THUMB_VIDEO);
+            File videoThumbDir = new File(Environment.getExternalStorageDirectory(), com.merpyzf.transfermanager.constant.Constant.THUMB_VIDEO);
             if (!videoThumbDir.exists()) {
                 videoThumbDir.mkdirs();
             }
@@ -76,6 +75,10 @@ public class VideoUtils {
                 .filter(videoFile -> {
 
                     if (videoFile instanceof VideoFile) {
+
+                        if(!parent.exists()){
+                            parent.mkdirs();
+                        }
 
                         if (parent.canWrite() && !isContain(parent, (VideoFile) videoFile)) {
                             return true;
