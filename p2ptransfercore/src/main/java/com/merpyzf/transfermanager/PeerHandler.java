@@ -8,6 +8,7 @@ import android.os.Message;
 import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.entity.SignMessage;
 import com.merpyzf.transfermanager.interfaces.PeerCommunCallback;
+import com.merpyzf.transfermanager.interfaces.PeerTransferBreakCallBack;
 
 /**
  * Created by wangke on 2017/12/16.
@@ -17,6 +18,7 @@ public class PeerHandler extends Handler {
     private Context mContext = null;
     private PeerCommunicate mPeerCommunicate;
     private PeerCommunCallback mPeerCommunCallback = null;
+    private PeerTransferBreakCallBack mPeerTransferBreakCallback = null;
 
     public PeerHandler(Context mContext, PeerCommunCallback peerCommunCallback) {
         this.mContext = mContext;
@@ -95,12 +97,10 @@ public class PeerHandler extends Handler {
 
                 break;
             case SignMessage.cmd.TRANSFER_BREAK:
-                if(mPeerCommunCallback!=null){
 
-                    mPeerCommunCallback.onTransferBreak(peer);
+                if(mPeerTransferBreakCallback!=null){
+                    mPeerTransferBreakCallback.onTransferBreak(peer);
                 }
-
-
 
             default:
                 break;
@@ -111,7 +111,11 @@ public class PeerHandler extends Handler {
     }
 
 
+    public void setTransferBreakListener(PeerTransferBreakCallBack transferBreakListener) {
+        this.mPeerTransferBreakCallback = transferBreakListener;
+    }
 }
+
 
 
 

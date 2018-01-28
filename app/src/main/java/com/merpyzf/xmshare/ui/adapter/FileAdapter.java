@@ -2,7 +2,9 @@ package com.merpyzf.xmshare.ui.adapter;
 
 import android.content.Context;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -17,6 +19,7 @@ import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.transfermanager.util.FormatUtils;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.base.App;
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.io.File;
 import java.util.List;
@@ -25,12 +28,16 @@ import java.util.List;
  * Created by wangke on 2017/12/24.
  */
 
-public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
+public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implements FastScrollRecyclerView.SectionedAdapter {
+
     private Context mContext;
+    private List<T> mFileList;
+    private static final String TAG = FileAdapter.class.getSimpleName();
 
     public FileAdapter(Context context, int layoutResId, @Nullable List<T> data) {
         super(layoutResId, data);
         this.mContext = context;
+        this.mFileList = data;
     }
 
     @Override
@@ -43,6 +50,9 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
             ImageView imageView = helper.getView(R.id.iv_apk_ico);
             helper.setText(R.id.tv_apk_name, apkFile.getName());
             imageView.setImageDrawable(apkFile.getApkDrawable());
+            int length = apkFile.getLength();
+            helper.setText(R.id.tv_apk_size, FormatUtils.convert2Mb(length) + "MB");
+
 
         } else if (item instanceof MusicFile) {
 
@@ -50,8 +60,8 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
             MusicFile musicFile = (MusicFile) item;
 
             helper.setText(R.id.tv_title, musicFile.getName());
-            helper.setText(R.id.tv_artist, "artist: " + musicFile.getArtist());
-            helper.setText(R.id.tv_size, "size:" + FormatUtils.convert2Mb(musicFile.getLength()) + " MB");
+            helper.setText(R.id.tv_artist, musicFile.getArtist());
+            helper.setText(R.id.tv_size, FormatUtils.convert2Mb(musicFile.getLength()) + " MB");
 
             File albumFile = new File(Environment.getExternalStorageDirectory().getPath()
                     + com.merpyzf.transfermanager.constant.Constant.THUMB_MUSIC, String.valueOf(musicFile.getAlbumId()));
@@ -78,9 +88,9 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
         } else if (item instanceof VideoFile) {
 
             VideoFile videoFile = (VideoFile) item;
-            helper.setText(R.id.tv_title, "视频名:" + videoFile.getName());
-            helper.setText(R.id.tv_size, "文件大小:" + FormatUtils.convert2Mb(videoFile.getLength()) + " MB");
-            helper.setText(R.id.tv_duration, "文件时长:"+FormatUtils.convertMS2Str(videoFile.getDuration()));
+            helper.setText(R.id.tv_title, videoFile.getName());
+            helper.setText(R.id.tv_size, FormatUtils.convert2Mb(videoFile.getLength()) + " MB");
+            helper.setText(R.id.tv_duration, FormatUtils.convertMS2Str(videoFile.getDuration()));
             ImageView ivVideoThumb = helper.getView(R.id.iv_video_album);
             String videoThumbPath = Environment.getExternalStorageDirectory() + com.merpyzf.transfermanager.constant.Constant.THUMB_VIDEO + "/" + videoFile.getName();
 
@@ -102,8 +112,25 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
             ivSelect.setVisibility(View.INVISIBLE);
         }
 
-
     }
 
 
+    @NonNull
+    @Override
+    public String getSectionName(int position) {
+
+        T fileInfo = mFileList.get(position);
+
+        if (fileInfo instanceof MusicFile) {
+            String firstName = ((MusicFile) fileInfo).getName().substring(0, 1);
+            Log.i(TAG, "firstName-> " + firstName);
+            return firstName;
+        } else if (fileInfo instanceof VideoFile) {
+            String firstName = ((VideoFile) fileInfo).getName().substring(0, 1);
+            Log.i(TAG, "firstName-> " + firstName);
+            return firstName;
+        }
+
+        return "^_^";
+    }
 }

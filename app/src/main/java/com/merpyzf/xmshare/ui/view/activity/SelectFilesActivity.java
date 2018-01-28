@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -75,7 +76,7 @@ public class SelectFilesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_select_file);
         mUnbinder = ButterKnife.bind(this);
         mContext = this;
-        setSupportActionBar(mToolBar);
+
         initUI();
         initEvent();
 
@@ -128,13 +129,14 @@ public class SelectFilesActivity extends AppCompatActivity {
     private void initUI() {
 
         updateBottomTitle();
+        setSupportActionBar(mToolBar);
+        getSupportActionBar().setTitle("文件选择");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mRvSelectedList.setLayoutManager(new LinearLayoutManager(mContext));
 
         mFileSelectAdapter = new FileSelectAdapter<>(mContext, R.layout.item_rv_select, App.getSendFileList());
 
-        //        mFileSelectAdapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
-//        mFileSelectAdapter.isFirstOnly(false);
         mRvSelectedList.setAdapter(mFileSelectAdapter);
 
 
@@ -149,7 +151,11 @@ public class SelectFilesActivity extends AppCompatActivity {
      */
     public void updateBottomTitle() {
 
-        mTvBottomTitle.setText("选择文件的个数: " + App.getSendFileList().size());
+        if (App.getSendFileList().size() == 0) {
+            mTvBottomTitle.setText("请选择要传输的文件");
+            return;
+        }
+        mTvBottomTitle.setText("已选文件个数: " + App.getSendFileList().size());
     }
 
     /**
@@ -212,12 +218,27 @@ public class SelectFilesActivity extends AppCompatActivity {
 
             Log.i("w2k", "开始发送文件");
             SendActivity.start(mContext);
-//            HostActivity.start(mContext);
 
         });
 
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int itemId = item.getItemId();
+
+        switch (itemId) {
+            case android.R.id.home:
+                onBackPressed();
+                break;
+            default:
+                break;
+        }
+
+
+        return super.onOptionsItemSelected(item);
+    }
 
     // TODO: 2018/1/9  Fragment的适配器需要抽离到外部
     class MyFragmentPagerAdapter extends FragmentStatePagerAdapter {

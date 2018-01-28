@@ -8,18 +8,24 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.merpyzf.transfermanager.PeerManager;
+import com.merpyzf.transfermanager.constant.Constant;
+import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.Peer;
+import com.merpyzf.transfermanager.interfaces.TransferObserver;
 import com.merpyzf.transfermanager.send.SenderManager;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.base.App;
 import com.merpyzf.xmshare.ui.view.fragment.ScanPeerFragment;
 import com.merpyzf.xmshare.ui.view.fragment.transfer.TransferSendFragment;
+import com.merpyzf.xmshare.util.SharedPreUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +68,7 @@ public class SendActivity extends AppCompatActivity implements ScanPeerFragment.
     private TransferSendFragment mTransferSendFragment;
     private PeerManager mPeerManager;
     private SenderManager mSenderManager;
+    private boolean isTransfering = false;
     private static final String TAG = SendActivity.class.getSimpleName();
 
 
@@ -81,8 +88,16 @@ public class SendActivity extends AppCompatActivity implements ScanPeerFragment.
         initEvent();
 
 
+        String mNickName = SharedPreUtils.getNickName(mContext);
+        mPeerManager = new PeerManager(mContext, mNickName, null);
+        mPeerManager.setPeerTransferBreakListener(peer -> {
+            if (isTransfering) {
+                Toast.makeText(mContext, "对端 " + peer.getNickName() + "退出了，即将关闭", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        });
+        mPeerManager.listenBroadcast();
     }
-
 
     /**
      * 初始化UI
@@ -91,6 +106,7 @@ public class SendActivity extends AppCompatActivity implements ScanPeerFragment.
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("我要发送");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         // 加载好友扫描的Fragment
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         mScanPeerFragment = new ScanPeerFragment();
@@ -126,53 +142,60 @@ public class SendActivity extends AppCompatActivity implements ScanPeerFragment.
     public void onPeerPairSuccessAction(Peer peer) {
 
 
-        if (peer.isHotsPot()) {
+        // 跳转到文件发送的界面
+        mSenderManager = SenderManager.getInstance(mContext);
+        mSenderManager.send(peer.getHostAddress(), App.getSendFileList());
+        mSenderManager.register(new TransferObserver() {
+            @Override
+            public void onTransferProgress(FileInfo fileInfo) {
 
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            mTransferSendFragment = new TransferSendFragment();
-            transaction.replace(R.id.frame_content, mTransferSendFragment);
-            transaction.commit();
+            }
 
-        } else {
-
-            // 跳转到文件发送的界面
-            mSenderManager = SenderManager.getInstance(mContext);
-            mSenderManager.send(peer.getHostAddress(), App.getSendFileList());
-
-
-            // 开始进行文件的发送，并添加动画
-            ObjectAnimator animator = ObjectAnimator.ofFloat(mLinearRocket, "translationY", 0.0f - 1000f);
-            animator.setInterpolator(new AccelerateInterpolator());
-            animator.setDuration(500);
-            animator.addListener(new Animator.AnimatorListener() {
-
-
-                @Override
-                public void onAnimationStart(Animator animation) {
-
+            // 局域网内的文件发送
+            @Override
+            public void onTransferStatus(FileInfo fileInfo) {
+                // 如果当前传输的是最后一个文件，并且传输成功后重置标记
+                if (fileInfo.getIsLast() == 1 && fileInfo.getFileTransferStatus() == Constant.TransferStatus.TRANSFER_SUCCESS) {
+                    isTransfering = false;
                 }
+            }
+        });
 
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLinearRocket.setVisibility(View.INVISIBLE);
-                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                    mTransferSendFragment = new TransferSendFragment();
-                    transaction.replace(R.id.frame_content, mTransferSendFragment);
-                    transaction.commit();
-                }
 
-                @Override
-                public void onAnimationCancel(Animator animation) {
+        // 开始进行文件的发送，并添加动画
+        ObjectAnimator animator = ObjectAnimator.ofFloat(mLinearRocket, "translationY", 0.0f - 1000f);
+        animator.setInterpolator(new AccelerateInterpolator());
+        animator.setDuration(500);
+        animator.addListener(new Animator.AnimatorListener() {
 
-                }
 
-                @Override
-                public void onAnimationRepeat(Animator animation) {
+            @Override
+            public void onAnimationStart(Animator animation) {
 
-                }
-            });
-            animator.start();
-        }
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mLinearRocket.setVisibility(View.INVISIBLE);
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                mTransferSendFragment = new TransferSendFragment();
+                transaction.replace(R.id.frame_content, mTransferSendFragment);
+                transaction.commit();
+                isTransfering = true;
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        animator.start();
+
     }
 
     @Override
@@ -183,16 +206,55 @@ public class SendActivity extends AppCompatActivity implements ScanPeerFragment.
     }
 
     @Override
+    public void onSendToHotspotAction(Peer peer, List<FileInfo> fileInfoLis) {
+        SenderManager senderManager = SenderManager.getInstance(mContext);
+        // 发送文件
+        senderManager.send(peer.getHostAddress(), App.getSendFileList());
+
+        // 加载显示发送文件进度的fragment
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        mTransferSendFragment = new TransferSendFragment();
+        transaction.replace(R.id.frame_content, mTransferSendFragment);
+        transaction.commit();
+
+    }
+
+    @Override
     public void onBackPressed() {
-        if (mTransferSendFragment != null) {
-            mTransferSendFragment.onBackPressed();
+
+        if (mPeerManager != null) {
+            // 发送传输中断退出的广播
+            mPeerManager.sendTransferBreakBroadcast();
         }
+
         super.onBackPressed();
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int itemId = item.getItemId();
+
+        switch (itemId) {
+            case android.R.id.home:
+                onBackPressed();
+                break;
+            default:
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
     protected void onDestroy() {
         mUnbinder.unbind();
+
+        if (mPeerManager != null) {
+            mPeerManager.stopUdpServer();
+        }
+
         if (mSenderManager != null) {
             mSenderManager.release();
             mSenderManager = null;

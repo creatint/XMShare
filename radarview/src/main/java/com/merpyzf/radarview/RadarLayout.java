@@ -27,7 +27,7 @@ public class RadarLayout extends FrameLayout {
 
 
     private static final int DEFAULT_DURATION_TIME = 3000;
-    private static final int DEFAULT_RADAR_COLOR = Color.BLUE;
+    private static final int DEFAULT_RADAR_COLOR = Color.WHITE;
     private static final int DEFAULT_RADAR_COUNT = 4;
     private static final int DEFAULT_RADAR_STROKE_WIDTH = 2;
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -66,7 +67,7 @@ public class ApManager {
 
 
     // toggle wifi hotspot on or off, and specify the hotspot name
-    public static boolean configApState(Context context, String apName, String nickName, int avatar) {
+    public static boolean configApState(Context context, String nickName, int avatar) {
         WifiManager wifimanager = (WifiManager) context.getSystemService(context.WIFI_SERVICE);
         WifiConfiguration wificonfiguration = null;
         try {
@@ -89,4 +90,31 @@ public class ApManager {
         }
         return false;
     }
+
+    /**
+     * 获取热点的ssid
+     */
+    public static String getApSSID(Context mContext) {
+
+        String ssid = null;
+
+        try {
+            WifiManager manager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
+            //拿到getWifiApConfiguration()方法
+            Method method = manager.getClass().getDeclaredMethod("getWifiApConfiguration");
+            //调用getWifiApConfiguration()方法，获取到 热点的WifiConfiguration
+            WifiConfiguration configuration = (WifiConfiguration) method.invoke(manager);
+            ssid = configuration.SSID;
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        return ssid;
+    }
+
+
 }

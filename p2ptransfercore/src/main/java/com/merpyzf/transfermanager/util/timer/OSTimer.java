@@ -17,8 +17,7 @@ public class OSTimer implements Runnable
     private boolean isCycle = true;
     private boolean isCancel = false;
 
-    public OSTimer(Handler handler, Timeout timeout, int interval, boolean isCycle)
-    {
+    public OSTimer(Handler handler, Timeout timeout, int interval, boolean isCycle) {
         mTimeout = timeout;
         mInterval = interval;
         this.isCycle = isCycle;
@@ -28,8 +27,7 @@ public class OSTimer implements Runnable
             mHandler = new Handler();
     }
 
-    public void start()
-    {
+    public void start() {
         if (mHandler != null)
             mHandler.postDelayed(this, mInterval);
     }
@@ -40,8 +38,7 @@ public class OSTimer implements Runnable
     }
 
     @Override
-    public void run()
-    {
+    public void run() {
         if (!isCancel)
         {
             if (mTimeout != null)

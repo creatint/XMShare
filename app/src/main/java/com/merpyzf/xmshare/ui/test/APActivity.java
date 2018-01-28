@@ -171,12 +171,11 @@ public class APActivity extends AppCompatActivity {
 
         IntentFilter intentFilter = new IntentFilter(APChangedReceiver.ACTION_WIFI_AP_STATE_CHANGED);
         registerReceiver(mApChangedReceiver, intentFilter);
-        String ssid = "merpyzf_share1";
         // 设置一个昵称
         String nickName = "macbook";
         int avatar = 1;
         // 开启一个热点
-        ApManager.configApState(this, ssid, nickName, avatar);
+        ApManager.configApState(this, nickName, avatar);
     }
 
     @Override

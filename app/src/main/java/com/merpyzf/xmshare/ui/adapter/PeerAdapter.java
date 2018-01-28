@@ -29,7 +29,7 @@ public class PeerAdapter extends BaseQuickAdapter<Peer, BaseViewHolder>{
 
         CircleImageView mCivPeerHeader =  helper.getView(R.id.civ_peer_header);
         Glide.with(mContext)
-                .load(R.drawable.ic_header_1)
+                .load(R.drawable.ic_thumb_empty)
                 .crossFade()
                 .centerCrop()
                 .into(mCivPeerHeader);

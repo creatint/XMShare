@@ -15,7 +15,6 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,18 +24,19 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.MusicFile;
+import com.merpyzf.transfermanager.entity.PicFile;
+import com.merpyzf.transfermanager.entity.VideoFile;
+import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.base.App;
 import com.merpyzf.xmshare.receiver.FileSelectedListChangedReceiver;
 import com.merpyzf.xmshare.ui.adapter.FileAdapter;
-import com.merpyzf.transfermanager.entity.MusicFile;
-import com.merpyzf.transfermanager.entity.PicFile;
-import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.xmshare.ui.view.activity.OnFileSelectListener;
 import com.merpyzf.xmshare.util.ApkUtils;
-import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.xmshare.util.MusicUtils;
 import com.merpyzf.xmshare.util.VideoUtils;
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ import butterknife.Unbinder;
 public class FileListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     @BindView(R.id.rv_music_list)
-    RecyclerView mRvFileList;
+    FastScrollRecyclerView mRvFileList;
     @BindView(R.id.pb_music_waiting)
     ProgressBar mProgressBar;
 

@@ -36,8 +36,5 @@ public interface PeerCommunCallback {
      */
     void onAnswerRequestConnect(Peer peer);
 
-    /**
-     * 中断传输
-     */
-    void onTransferBreak(Peer peer);
+
 }

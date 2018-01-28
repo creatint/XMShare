@@ -29,11 +29,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".ui.view.MainActivity">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
         <activity android:name=".ui.view.SplashActivity" />
         <activity
@@ -44,7 +46,11 @@
             android:label="发送文件" />
         <activity android:name=".ui.view.activity.SelectFilesActivity" />
         <activity android:name=".ui.test.BottomSheetDialogActivity" />
-        <activity android:name=".ui.test.TestRadarViewActivity" />
+        <activity android:name=".ui.test.TestRadarViewActivity" >
+
+
+
+        </activity>
         <activity android:name=".ui.test.ScanVideoActivity" />
 
         <receiver

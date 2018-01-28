@@ -44,7 +44,7 @@ public class P2pTransferHandler extends Handler {
 
                 if (mTransferFileListListener != null && mReceiveFileList.size() > 0) {
                     // 当接收到待传输文件列表时的回调
-                    mTransferFileListListener.onReceiveListCompleted(mReceiveFileList);
+                    mTransferFileListListener.onReceiveCompleted(mReceiveFileList);
 
                 }
 

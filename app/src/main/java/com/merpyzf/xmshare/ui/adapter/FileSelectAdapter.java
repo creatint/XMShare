@@ -3,6 +3,7 @@ package com.merpyzf.xmshare.ui.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.widget.ImageView;
 
@@ -18,6 +19,7 @@ import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.base.App;
 import com.merpyzf.xmshare.receiver.FileSelectedListChangedReceiver;
 import com.merpyzf.xmshare.ui.view.activity.SelectFilesActivity;
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -27,12 +29,14 @@ import java.util.List;
  * Created by wangke on 2017/12/24.
  */
 
-public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
+public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implements FastScrollRecyclerView.SectionedAdapter {
     private Context mContext;
+    private List<T> mFileInfoList;
 
     public FileSelectAdapter(Context context, int layoutResId, @Nullable List<T> data) {
         super(layoutResId, data);
         this.mContext = context;
+        this.mFileInfoList = data;
     }
 
     @Override
@@ -47,13 +51,13 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
         helper.setText(R.id.tv_title, fileInfo.getName());
         helper.setText(R.id.tv_path, fileInfo.getPath());
         helper.setText(R.id.tv_size, "文件大小:" + formatSize + " MB");
-
+        ImageView imageView = helper.getView(R.id.iv_file_thumb);
 
         if (item instanceof ApkFile) {
 
             ApkFile apkFile = (ApkFile) item;
-            ImageView imageView = helper.getView(R.id.iv_file_thumb);
             imageView.setImageDrawable(apkFile.getApkDrawable());
+
 
         } else if (item instanceof MusicFile) {
 
@@ -67,7 +71,7 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
                         .load(albumFile)
                         .crossFade()
                         .centerCrop()
-                        .into((ImageView) helper.getView(R.id.iv_file_thumb));
+                        .into(imageView);
             }
 
 
@@ -79,20 +83,19 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
                     .load(picFile.getPath())
                     .crossFade()
                     .centerCrop()
-                    .into((ImageView) helper.getView(R.id.iv_file_thumb));
+                    .into(imageView);
 
 
         } else if (item instanceof VideoFile) {
 
 
             VideoFile videoFile = (VideoFile) item;
-            ImageView ivVideoThumb = helper.getView(R.id.iv_file_thumb);
             String videoThumbPath = Environment.getExternalStorageDirectory() + com.merpyzf.transfermanager.constant.Constant.THUMB_VIDEO + "/" + videoFile.getName();
             Glide.with(mContext)
                     .load(new File(videoThumbPath))
                     .crossFade()
                     .centerCrop()
-                    .into(ivVideoThumb);
+                    .into(imageView);
 
         }
 
@@ -111,4 +114,10 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
     }
 
 
+    @NonNull
+    @Override
+    public String getSectionName(int position) {
+
+        return ((FileInfo)(mFileInfoList.get(position))).getName().substring(0,1);
+    }
 }

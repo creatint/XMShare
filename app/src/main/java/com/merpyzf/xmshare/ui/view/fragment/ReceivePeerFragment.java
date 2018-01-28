@@ -1,6 +1,8 @@
 package com.merpyzf.xmshare.ui.view.fragment;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +10,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
+import android.net.wifi.WifiInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -28,19 +31,15 @@ import android.widget.Toast;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.merpyzf.radarview.RadarLayout;
 import com.merpyzf.transfermanager.PeerManager;
-import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.entity.SignMessage;
 import com.merpyzf.transfermanager.interfaces.PeerCommunCallback;
-import com.merpyzf.transfermanager.interfaces.TransferObserver;
-import com.merpyzf.transfermanager.receive.ReceiverManager;
 import com.merpyzf.transfermanager.util.ApManager;
 import com.merpyzf.transfermanager.util.NetworkUtil;
 import com.merpyzf.transfermanager.util.WifiMgr;
 import com.merpyzf.transfermanager.util.timer.OSTimer;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Constant;
-import com.merpyzf.xmshare.common.base.App;
 import com.merpyzf.xmshare.receiver.APChangedReceiver;
 import com.merpyzf.xmshare.ui.adapter.PeerAdapter;
 import com.merpyzf.xmshare.util.SharedPreUtils;
@@ -74,6 +73,11 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
     // 切换到热点传输模式
     @BindView(R.id.btn_change_ap)
     Button mBtnChangedAp;
+    @BindView(R.id.tv_net_name)
+    TextView mTvNetName;
+    // 网络模式
+    @BindView(R.id.tv_mode)
+    TextView mTvNetMode;
 
     private OSTimer mOsTimer;
     private PeerAdapter mPeerAdapter;
@@ -157,6 +161,8 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
                 // 隐藏切换到热点模式按钮
                 mBtnChangedAp.setVisibility(View.INVISIBLE);
 
+                Toast.makeText(mContext, "正在拼命开启热点中，请等待...",Toast.LENGTH_SHORT).show();
+
             }
         });
     }
@@ -216,10 +222,6 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
 
             }
 
-            @Override
-            public void onTransferBreak(Peer peer) {
-
-            }
         });
         mPeerManager.listenBroadcast();
         /**
@@ -317,34 +319,16 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
             public void onApEnableAction() {
 
                 Toast.makeText(mContext, "Ap初始化成功", Toast.LENGTH_SHORT).show();
-                // 创建SocketServer
-                ReceiverManager receiverManager = ReceiverManager.getInstance();
-                receiverManager.register(new TransferObserver() {
-                    @Override
-                    public void onTransferProgress(FileInfo fileInfo) {
-                        Log.i("w2k", "传输进度: " + (int) (fileInfo.getProgress() * 100));
-                        String[] transferSpeed = fileInfo.getTransferSpeed();
+                //
+                String apSSID = ApManager.getApSSID(mContext);
+                mTvNetName.setText(apSSID);
 
-                        if (transferSpeed != null) {
-                            Log.i("w2k", "传输速度: " + transferSpeed[0] + transferSpeed[1] + " /s");
-                        }
-                    }
-
-                    @Override
-                    public void onTransferStatus(FileInfo fileInfo) {
-
-                        Log.i("w2k", "传输状态->  " + fileInfo.getName());
-
-                    }
-                });
-                App.mSingleThreadPool.execute(receiverManager);
-
-                if(mOnReceivePairActionListener!=null){
-                    mOnReceivePairActionListener.onAgreeSendFileAction();
+                if (mOnReceivePairActionListener != null) {
+                    mOnReceivePairActionListener.onApEnableAction();
                 }
 
-
             }
+
 
             @Override
             public void onApDisAbleAction() {
@@ -357,17 +341,17 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
 
         IntentFilter intentFilter = new IntentFilter(APChangedReceiver.ACTION_WIFI_AP_STATE_CHANGED);
         mContext.registerReceiver(mApChangedReceiver, intentFilter);
-        String ssid = "merpyzf_share1";
         // 设置一个昵称
         String nickName = "macbook";
         int avatar = 1;
         // 开启一个热点
-        ApManager.configApState(mContext, ssid, nickName, avatar);
+        ApManager.configApState(mContext, nickName, avatar);
 
     }
 
 
     private void checkIsHide() {
+        if (mTvTip == null) return;
 
         if (mPeerList.size() > 0) {
             mTvTip.setVisibility(View.VISIBLE);
@@ -383,9 +367,54 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
      */
     private void initUI() {
 
+        if (NetworkUtil.isWifi(mContext)) {
+
+            WifiInfo currConnWifiInfo = WifiMgr.getInstance(mContext).getCurrConnWifiInfo();
+            String ssid = currConnWifiInfo.getSSID();
+            mTvNetName.setText(ssid);
+            mTvNetMode.setVisibility(View.VISIBLE);
+
+            new OSTimer(null, () -> {
+                getActivity().runOnUiThread(() -> {
+
+                    ObjectAnimator animator = ObjectAnimator.ofFloat(mTvNetMode, "alpha", 1f, 0f);
+                    animator.setDuration(1000);//时间1s
+                    animator.addListener(new Animator.AnimatorListener() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+
+                            mTvNetMode.setVisibility(View.INVISIBLE);
+
+                        }
+
+                        @Override
+                        public void onAnimationCancel(Animator animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animator animation) {
+
+                        }
+                    });
+                    animator.start();
+                });
+
+            },3000, false).start();
+        }else {
+
+            mTvNetMode.setVisibility(View.INVISIBLE);
+        }
+
+
         radar.setDuration(2000);
-        radar.setStyleIsFILL(true);
-        radar.setRadarColor(Color.GRAY);
+        radar.setStyleIsFILL(false);
+        radar.setRadarColor(Color.WHITE);
         radar.start();
 
         mRvPeerList.setLayoutManager(new LinearLayoutManager(mContext));
@@ -411,10 +440,6 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-
-        if (mOnReceivePairActionListener != null) {
-            mOnReceivePairActionListener.onAgreeSendFileAction();
-        }
     }
 
 
@@ -424,7 +449,7 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
 
         releaseUdpListener();
         // 释放ServerSocket资源
-        ReceiverManager.getInstance().release();
+//        ReceiverManager.getInstance().release();
         super.onDestroy();
     }
 
@@ -460,9 +485,9 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
         void onRequestSendFileAction();
 
         /**
-         * 同意对方发送文件的回调
+         * AP建立成功的回调
          */
-        void onAgreeSendFileAction();
+        void onApEnableAction();
 
 
     }

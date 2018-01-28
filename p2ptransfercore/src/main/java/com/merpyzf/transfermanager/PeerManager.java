@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.merpyzf.transfermanager.entity.SignMessage;
 import com.merpyzf.transfermanager.interfaces.PeerCommunCallback;
+import com.merpyzf.transfermanager.interfaces.PeerTransferBreakCallBack;
 import com.merpyzf.transfermanager.util.NetworkUtil;
 import com.merpyzf.transfermanager.util.WifiMgr;
 import com.merpyzf.transfermanager.util.timer.OSTimer;
@@ -24,6 +25,7 @@ public class PeerManager {
     private PeerCommunCallback mPeerCallback = null;
     private OSTimer mOsTimer;
     private PeerCommunicate mPeerCommunicate;
+    private PeerTransferBreakCallBack mTransferBreakCallback = null;
     private String nickName;
     private OSTimer mOnLineTimer;
     private Timer mTimer;
@@ -221,10 +223,7 @@ public class PeerManager {
      * 停止广播监听
      */
     public void stopUdpServer() {
-
         mPeerCommunicate.release();
-
-
     }
 
 
@@ -269,6 +268,10 @@ public class PeerManager {
 
     public void sendBroadcastMsg(String dest, SignMessage signMessage) {
         mPeerCommunicate.sendBroadcast(dest, signMessage);
+    }
+
+    public void setPeerTransferBreakListener(PeerTransferBreakCallBack transferBreakListener) {
+        mPeerHandler.setTransferBreakListener(transferBreakListener);
     }
 }
 

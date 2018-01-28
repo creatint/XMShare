@@ -43,12 +43,11 @@
 
         <android.support.v4.view.ViewPager
             android:id="@+id/viewpager"
-            android:layout_marginBottom="50dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true">
-        </android.support.v4.view.ViewPager>
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="50dp"></android.support.v4.view.ViewPager>
 
     </RelativeLayout>
 
@@ -56,13 +55,13 @@
         android:id="@+id/fab_send"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_anchor="@+id/bottom_sheet"
         android:clickable="true"
         android:focusable="true"
-        app:rippleColor="@color/white"
         android:src="@drawable/ic_send"
         android:tint="@color/white"
-        app:layout_anchorGravity="right|top" />
+        app:layout_anchor="@+id/bottom_sheet"
+        app:layout_anchorGravity="right|top"
+        app:rippleColor="@color/white" />
 
 
     <LinearLayout
@@ -90,20 +89,27 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/colorPrimary"
-                    android:gravity="center_vertical"
                     android:clickable="true"
                     android:focusable="true"
+                    android:gravity="center_vertical"
                     android:padding="10dp"
                     android:text="这是一个标题"
                     android:textColor="#ffffff" />
 
             </android.support.design.widget.AppBarLayout>
 
-            <android.support.v7.widget.RecyclerView
+            <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
                 android:id="@+id/rv_selected"
                 android:layout_width="match_parent"
                 android:layout_height="400dp"
-                android:background="@color/colorBackground" />
+                android:background="@color/colorBackground"
+                app:fastScrollPopupBgColor="@color/colorAccent"
+                app:fastScrollPopupTextColor="@color/white"
+                app:fastScrollThumbColor="@color/colorAccent">
+
+
+            </com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView>
+
 
         </LinearLayout>
     </LinearLayout>

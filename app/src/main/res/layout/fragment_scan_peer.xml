@@ -5,30 +5,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/md_material_blue_600"
     tools:context="com.merpyzf.xmshare.ui.view.activity.SendActivity">
 
 
-    <ProgressBar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginTop="40dp"
-        />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:gravity="center_horizontal"
-        android:padding="10dp"
-        android:text="扫描好友中...."
-        />
+   <com.merpyzf.xmshare.ui.widget.ScanView
+       android:layout_margin="20dp"
+       android:layout_width="200dp"
+       android:layout_height="200dp"
+       android:layout_gravity="center"
+       />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:textSize="18sp"
-        android:text="好友列表:"
+        android:textSize="16sp"
+        android:textColor="@color/white"
+        android:padding="10dp"
+        android:text="附近可连接的设备:"
         />
 
     <android.support.v7.widget.RecyclerView

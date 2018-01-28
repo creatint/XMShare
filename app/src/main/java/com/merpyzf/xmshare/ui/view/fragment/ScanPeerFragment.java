@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.merpyzf.httpcoreserver.util.NetworkUtil;
 import com.merpyzf.transfermanager.PeerManager;
+import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.entity.SignMessage;
 import com.merpyzf.transfermanager.interfaces.PeerCommunCallback;
@@ -162,10 +163,6 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
                 // 将界面切换到文件传输的Fragment，根据peer中的主机地址连接到指定的那个主机
             }
 
-            @Override
-            public void onTransferBreak(Peer peer) {
-
-            }
         });
         /**
          * 此处建立的是一个接收UDP信息的服务端
@@ -314,7 +311,7 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
 
 
         for (Peer peer1 : mPeerList) {
-            if(peer1.isHotsPot()){
+            if (peer1.isHotsPot()) {
                 mPeerList.remove(peer1);
             }
         }
@@ -377,6 +374,14 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
          */
         void onPeerPairFailedAction(Peer peer);
 
+        /**
+         * 向接收端发送文件
+         *
+         * @param peer        对端的主机信息
+         * @param fileInfoLis 待发送的文件列表
+         */
+        void onSendToHotspotAction(Peer peer, List<FileInfo> fileInfoLis);
+
 
     }
 
@@ -408,14 +413,11 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
                     if (mCountPing < 10) {
 
                         if (com.merpyzf.transfermanager.util.NetworkUtil.pingIpAddress(peer.getHostAddress())) {
-
-
-                            if(mOnPairActionListener!=null){
-                                // 发送文件
-                                senderManager.send(peer.getHostAddress(), App.getSendFileList());
-                                mOnPairActionListener.onPeerPairSuccessAction(peer);
+                            if (mOnPairActionListener != null) {
+                                // 取消wifi扫描
+                                mScanWifiTimer.cancel();
+                                mOnPairActionListener.onSendToHotspotAction(peer, App.getSendFileList());
                             }
-
                             break;
                         }
                         Log.i("w2k", peer.getHostAddress() + " ping...");

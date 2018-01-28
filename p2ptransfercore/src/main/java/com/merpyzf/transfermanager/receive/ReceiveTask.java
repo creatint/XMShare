@@ -156,12 +156,14 @@ public class ReceiveTask implements Runnable, IReceiveTask {
         Message message = mP2pTransferHandler.obtainMessage();
         // 通知待接收文件列表传输完成
         message.what = Constant.TransferStatus.TRANSFER_FILE_LIST_SUCCESS;
+        Log.i(TAG, "待传输的文件列表长度-> "+mReceiveFileList.size());
         message.obj = mReceiveFileList;
         mP2pTransferHandler.sendMessage(message);
     }
 
     @Override
     public void run() {
+
         receiveTransferFileList();
         // 用于计算传输的速度
         start_cal_speed = System.currentTimeMillis();

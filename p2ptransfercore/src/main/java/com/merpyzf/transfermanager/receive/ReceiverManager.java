@@ -127,9 +127,9 @@ public class ReceiverManager implements Runnable {
         /**
          * 接收待传输文件列表完成的回调
          *
-         * @param receiveFileList
+         * @param transferFileList
          */
-        void onReceiveListCompleted(List<FileInfo> receiveFileList);
+        void onReceiveCompleted(List<FileInfo> transferFileList);
 
 
     }
