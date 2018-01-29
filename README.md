@@ -8,17 +8,7 @@
 <img src="http://otdmrup4y.bkt.clouddn.com/9D9BBC35-536D-483A-BBDD-DB99E1A5E8F0.png" width="40%"></img>
 
 ## 运行截图
-<img src="http://otdmrup4y.bkt.clouddn.com/Screenshot_2018-01-29-18-34-13-888_%E5%B0%8F%E9%A9%AC%E5%BF%AB%E4%BC%A0.png" width="30%"/>
-
-<img src="http://otdmrup4y.bkt.clouddn.com/Screenshot_2018-01-29-18-33-57-849_%E5%B0%8F%E9%A9%AC%E5%BF%AB%E4%BC%A0.png" width="30%"/>
-
-<img src="http://otdmrup4y.bkt.clouddn.com/Screenshot_2018-01-29-18-34-28-894_%E5%B0%8F%E9%A9%AC%E5%BF%AB%E4%BC%A0.png" width="30%"/>
-
-<img src="http://otdmrup4y.bkt.clouddn.com/Screenshot_2018-01-29-18-37-36-191_%E5%B0%8F%E9%A9%AC%E5%BF%AB%E4%BC%A0.png" width="30%"/>
-
-<img src="http://otdmrup4y.bkt.clouddn.com/Screenshot_2018-01-29-18-37-54-739_%E5%B0%8F%E9%A9%AC%E5%BF%AB%E4%BC%A0.png" width="30%"/>
-
-<img src="http://otdmrup4y.bkt.clouddn.com/Screenshot_2018-01-29-18-38-23-198_%E5%B0%8F%E9%A9%AC%E5%BF%AB%E4%BC%A0.png" width="30%"/>
+<img src="http://otdmrup4y.bkt.clouddn.com/Screenshot_2018-01-29-18-34-13-888_%E5%B0%8F%E9%A9%AC%E5%BF%AB%E4%BC%A0.png" width="30%"><img src="http://otdmrup4y.bkt.clouddn.com/Screenshot_2018-01-29-18-33-57-849_%E5%B0%8F%E9%A9%AC%E5%BF%AB%E4%BC%A0.png" width="30%"/><img src="http://otdmrup4y.bkt.clouddn.com/Screenshot_2018-01-29-18-34-28-894_%E5%B0%8F%E9%A9%AC%E5%BF%AB%E4%BC%A0.png" width="30%"/><img src="http://otdmrup4y.bkt.clouddn.com/Screenshot_2018-01-29-18-37-36-191_%E5%B0%8F%E9%A9%AC%E5%BF%AB%E4%BC%A0.png" width="30%"/><img src="http://otdmrup4y.bkt.clouddn.com/Screenshot_2018-01-29-18-37-54-739_%E5%B0%8F%E9%A9%AC%E5%BF%AB%E4%BC%A0.png" width="30%"/><img src="http://otdmrup4y.bkt.clouddn.com/Screenshot_2018-01-29-18-38-23-198_%E5%B0%8F%E9%A9%AC%E5%BF%AB%E4%BC%A0.png" width="30%"/>
 
 
 
@@ -104,7 +94,7 @@
     
 ## 最后说两句
 
-这个项目我将会一直维护下去，尽量把代码优化的简洁明了易读。如果你有好的功能建议欢迎给我提意见！或者直接fork本项目直接撸起袖子为其添加新的功能。如果你喜欢本项目欢迎star ♥️。
+这个项目我将会一直开发并维护下去，尽量把代码优化的简洁明了易读。如果你有好的功能建议欢迎提意见给我！或者直接fork撸起袖子为其添加新功能。假如你喜欢本项目欢迎给个star ♥️。
 
 
 ## License
