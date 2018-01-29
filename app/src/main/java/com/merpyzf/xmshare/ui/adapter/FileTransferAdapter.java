@@ -3,8 +3,8 @@ package com.merpyzf.xmshare.ui.adapter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -24,6 +24,8 @@ import com.merpyzf.transfermanager.receive.ReceiverManager;
 import com.merpyzf.transfermanager.send.SenderManager;
 import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.xmshare.R;
+import com.merpyzf.xmshare.common.base.App;
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.io.File;
 import java.util.List;
@@ -33,7 +35,7 @@ import java.util.List;
  * 文件传输列表
  */
 
-public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> {
+public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implements FastScrollRecyclerView.SectionedAdapter {
 
     private List<FileInfo> mFileLists;
     private ImageView mIvThumb;
@@ -54,6 +56,14 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
         FileInfo file = (FileInfo) item;
         String fileName = file.getName();
         ImageView ivThumb = helper.getView(R.id.iv_file_thumb);
+        ImageView ivDone = helper.getView(R.id.iv_done);
+        // 设置传输的文件的大小
+        TextView tvSize = helper.getView(R.id.tv_size);
+        int length = file.getLength();
+        String[] fileSizeArrayStr = FileUtils.getFileSizeArrayStr(length);
+        tvSize.setText(fileSizeArrayStr[0] + fileSizeArrayStr[1]);
+
+
         Bitmap bitmap = null;
 
         if (item instanceof ApkFile) {
@@ -135,11 +145,13 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
 
         TextView tvSpeed = helper.getView(R.id.tv_speed);
 
+
         if (file.getFileTransferStatus() == Constant.TransferStatus.TRANSFER_WAITING) {
 
             progressBar.setProgress(0);
             tvProgress.setText("等待中");
             tvSpeed.setVisibility(View.INVISIBLE);
+            ivDone.setVisibility(View.INVISIBLE);
         }
 
         if (type == TYPE_RECEIVE) {
@@ -151,28 +163,47 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
 
                     if (file.getFileTransferStatus() == Constant.TransferStatus.TRANSFING) {
 
-//                        Log.i("w2k", fileInfo.getName() + "传输中");
                         if (fileName.equals(fileInfo.getName())) {
 
+                            // 如果可见设置为不可见
+                            if (ivDone.getVisibility() == View.VISIBLE) {
+                                ivDone.setVisibility(View.INVISIBLE);
+                            }
+
+                            // 如果进度条不可见则设置为可见
+                            if (progressBar.getVisibility() == View.INVISIBLE) {
+                                progressBar.setVisibility(View.VISIBLE);
+                            }
                             int currentProgress = (int) (file.getProgress() * 100);
                             progressBar.setProgress(currentProgress);
                             tvProgress.setText("传输进度:" + currentProgress + " %");
                             String[] transferSpeed = file.getTransferSpeed();
                             if (transferSpeed != null && transferSpeed.length > 0) {
-                                tvSpeed.setVisibility(View.VISIBLE);
+
+                                if (tvSpeed.getVisibility() == View.INVISIBLE) {
+                                    tvSpeed.setVisibility(View.VISIBLE);
+                                }
+
+
                                 tvSpeed.setText("速度: " + transferSpeed[0] + transferSpeed[1] + " /s");
                             }
                         }
 
                     } else if (file.getFileTransferStatus() == Constant.TransferStatus.TRANSFER_WAITING) {
 
+                        progressBar.setVisibility(View.INVISIBLE);
                         progressBar.setProgress(0);
                         tvProgress.setText("等待中");
+                        ivDone.setVisibility(View.INVISIBLE);
                         tvSpeed.setVisibility(View.INVISIBLE);
 
                     } else if (file.getFileTransferStatus() == Constant.TransferStatus.TRANSFER_SUCCESS) {
                         progressBar.setProgress(100);
+                        progressBar.setVisibility(View.INVISIBLE);
+                        ivDone.setVisibility(View.VISIBLE);
+                        tvSpeed.setVisibility(View.INVISIBLE);
                         tvProgress.setText("传输完毕");
+
 
                     }
 
@@ -188,7 +219,9 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
 
                             tvProgress.setText("传输成功");
                             progressBar.setProgress(100);
+                            progressBar.setVisibility(View.INVISIBLE);
                             tvSpeed.setVisibility(View.INVISIBLE);
+                            ivDone.setVisibility(View.VISIBLE);
 
                         } else if (fileInfo.getFileTransferStatus() == Constant.TransferStatus.TRANSFER_FAILED) {
 
@@ -204,33 +237,50 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
                 @Override
                 public void onTransferProgress(FileInfo fileInfo) {
 
-                    if (file.getFileTransferStatus() == Constant.TransferStatus.TRANSFING) {
 
+                    if (file.getFileTransferStatus() == Constant.TransferStatus.TRANSFING) {
 
                         if (fileName.equals(fileInfo.getName())) {
 
+                            // 如果可见设置为不可见
+                            if (ivDone.getVisibility() == View.VISIBLE) {
+                                ivDone.setVisibility(View.INVISIBLE);
+                            }
+
+                            // 如果进度条不可见则设置为可见
+                            if (progressBar.getVisibility() == View.INVISIBLE) {
+                                progressBar.setVisibility(View.VISIBLE);
+                            }
                             int currentProgress = (int) (file.getProgress() * 100);
-
-                            Log.i("w2k", "传输进度: " + currentProgress);
-
                             progressBar.setProgress(currentProgress);
                             tvProgress.setText("传输进度:" + currentProgress + " %");
                             String[] transferSpeed = file.getTransferSpeed();
                             if (transferSpeed != null && transferSpeed.length > 0) {
-                                tvSpeed.setVisibility(View.VISIBLE);
+
+                                if (tvSpeed.getVisibility() == View.INVISIBLE) {
+                                    tvSpeed.setVisibility(View.VISIBLE);
+                                }
+
+
                                 tvSpeed.setText("速度: " + transferSpeed[0] + transferSpeed[1] + " /s");
                             }
                         }
 
                     } else if (file.getFileTransferStatus() == Constant.TransferStatus.TRANSFER_WAITING) {
 
+                        progressBar.setVisibility(View.INVISIBLE);
                         progressBar.setProgress(0);
                         tvProgress.setText("等待中");
+                        ivDone.setVisibility(View.INVISIBLE);
                         tvSpeed.setVisibility(View.INVISIBLE);
 
                     } else if (file.getFileTransferStatus() == Constant.TransferStatus.TRANSFER_SUCCESS) {
                         progressBar.setProgress(100);
+                        progressBar.setVisibility(View.INVISIBLE);
+                        ivDone.setVisibility(View.VISIBLE);
+                        tvSpeed.setVisibility(View.INVISIBLE);
                         tvProgress.setText("传输完毕");
+
 
                     }
 
@@ -246,7 +296,14 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
 
                             tvProgress.setText("传输成功");
                             progressBar.setProgress(100);
+                            progressBar.setVisibility(View.INVISIBLE);
                             tvSpeed.setVisibility(View.INVISIBLE);
+                            ivDone.setVisibility(View.VISIBLE);
+
+                            // 文件全部传输成功之后重置待传输文件的状态
+                            if (fileInfo.getIsLast() == 1) {
+                                App.resetSendFileList();
+                            }
 
                         } else if (fileInfo.getFileTransferStatus() == Constant.TransferStatus.TRANSFER_FAILED) {
 
@@ -256,9 +313,17 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
                     }
                 }
 
+
             });
         }
+
+
     }
 
 
+    @NonNull
+    @Override
+    public String getSectionName(int position) {
+        return mFileLists.get(position).getName().substring(0, 1);
+    }
 }

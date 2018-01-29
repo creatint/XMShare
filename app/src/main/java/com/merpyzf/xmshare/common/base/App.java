@@ -69,7 +69,20 @@ public class App extends Application {
     public static List<FileInfo> getSendFileList() {
 
         return mSendFileList;
+
     }
+
+    /**
+     * 重置待发送文件集合的状态
+     */
+    public static void resetSendFileList() {
+
+        for(int i=0;i<mSendFileList.size();i++){
+            FileInfo fileInfo = mSendFileList.get(i);
+            fileInfo.reset();
+        }
+    }
+
 
     public static ExecutorService getSingleThreadPool() {
         return mSingleThreadPool;

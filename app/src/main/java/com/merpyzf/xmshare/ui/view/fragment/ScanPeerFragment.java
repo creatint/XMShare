@@ -2,6 +2,7 @@ package com.merpyzf.xmshare.ui.view.fragment;
 
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -24,6 +26,7 @@ import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.entity.SignMessage;
 import com.merpyzf.transfermanager.interfaces.PeerCommunCallback;
 import com.merpyzf.transfermanager.send.SenderManager;
+import com.merpyzf.transfermanager.util.ApManager;
 import com.merpyzf.transfermanager.util.WifiMgr;
 import com.merpyzf.transfermanager.util.timer.OSTimer;
 import com.merpyzf.xmshare.R;
@@ -49,6 +52,9 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
     private List<Peer> mPeerList = new ArrayList<>();
     @BindView(R.id.rv_peers)
     RecyclerView mRvPeerList;
+    @BindView(R.id.tv_tip)
+    TextView mTvTip;
+
     private PeerAdapter mPeerAdapter;
     private OnPairActionListener mOnPairActionListener;
 
@@ -62,7 +68,12 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
     // 发送文件
     private static final int TYPE_SEND_FILE = 2;
 
-    private int mCountPing = 0;
+    private static final int TYPE_GET_IP = 3;
+
+    // 获取接收端ip失败
+    private static final int TYPE_GET_IP_FAILED = 4;
+
+    private int mCountPing = 10;
 
     private static final String TAG = ScanPeerFragment.class.getSimpleName();
     // 用于定时扫描wifi的定时器
@@ -92,6 +103,11 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
         mPeerAdapter.setOnItemClickListener(this);
         mWifiMgr = WifiMgr.getInstance(mContext);
         mHandler = new MyHandler();
+
+        // 如果热点开启将将其关闭
+        if (ApManager.isApOn(mContext)) {
+            ApManager.turnOffAp(mContext);
+        }
 
 
         // 如果wifi关闭就去开启wifi
@@ -181,6 +197,9 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
      * 初始化UI
      */
     private void initUI() {
+
+        mTvTip.setTextColor(Color.WHITE);
+        mTvTip.setText("正在扫描周围的接收者...");
         mRvPeerList.setLayoutManager(new LinearLayoutManager(mContext));
     }
 
@@ -200,6 +219,8 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
         // 用户点击的是开启热点的用户
         if (peer.isHotsPot()) {
 
+            mTvTip.setTextColor(Color.WHITE);
+            mTvTip.setText("正在努力连接到该网络...");
             // 连接并传输wifi
             connectWifiAndTransfer(peer);
 
@@ -266,6 +287,12 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
 
                     mLocalAddress = WifiMgr.getInstance(mContext).getIpAddressFromHotspot();
 
+                    Message msg = mHandler.obtainMessage();
+                    msg.what = TYPE_GET_IP;
+                    msg.arg1 = count;
+                    mHandler.sendMessage(msg);
+
+
                     Log.i(TAG, "第 " + count + " 次尝试获取接收端IP 获取结果->  " + mLocalAddress);
                     try {
                         Thread.sleep(1000);
@@ -285,6 +312,11 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
                     }
 
                     count++;
+                }
+
+                // 没有获取到接收端的ip
+                if (mLocalAddress.equals("0.0.0.0")) {
+                    mHandler.sendEmptyMessage(TYPE_GET_IP_FAILED);
                 }
 
 
@@ -309,14 +341,12 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
             return;
         }
 
-
-        for (Peer peer1 : mPeerList) {
-            if (peer1.isHotsPot()) {
-                mPeerList.remove(peer1);
+        // 扫描之前先移除上一次扫描到的热点信号
+        for (int i = 0; i < mPeerList.size(); i++) {
+            if (mPeerList.get(i).isHotsPot()) {
+                mPeerList.remove(i);
             }
         }
-
-
         for (ScanResult scanResult : scanResults) {
 
             if (scanResult.SSID.startsWith("XM")) {
@@ -410,7 +440,8 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
 
                     SenderManager senderManager = SenderManager.getInstance(mContext);
 
-                    if (mCountPing < 10) {
+
+                    for (int i = 0; i < mCountPing; i++) {
 
                         if (com.merpyzf.transfermanager.util.NetworkUtil.pingIpAddress(peer.getHostAddress())) {
                             if (mOnPairActionListener != null) {
@@ -420,9 +451,9 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
                             }
                             break;
                         }
+                        mTvTip.setTextColor(Color.WHITE);
+                        mTvTip.setText("正在检查网络连通性...");
                         Log.i("w2k", peer.getHostAddress() + " ping...");
-                        mCountPing++;
-
                         try {
                             Thread.sleep(500);
                         } catch (InterruptedException e) {
@@ -430,12 +461,24 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
                         }
 
                     }
+                    mTvTip.setTextColor(Color.RED);
+                    mTvTip.setText("网络未连通，请点击好友头像重连!");
+                    Toast.makeText(mContext, "网络未连通通，请点击好友头像重试！", Toast.LENGTH_SHORT).show();
 
-                    // wifi已经建立连接，但是局域网不通
-                    if (mCountPing == 10) {
-                        Toast.makeText(mContext, "网络未连通通，请点击好友头像重试！", Toast.LENGTH_SHORT).show();
-                    }
 
+                    break;
+
+                case TYPE_GET_IP_FAILED:
+
+                    mTvTip.setTextColor(Color.RED);
+                    mTvTip.setText("获取接收端IP地址失败，请点击好友头像重试...");
+
+                    break;
+
+                case TYPE_GET_IP:
+
+                    int count = msg.arg1;
+                    mTvTip.setText("正在第" + count + "次尝试获取接收端IP地址...");
 
                     break;
 

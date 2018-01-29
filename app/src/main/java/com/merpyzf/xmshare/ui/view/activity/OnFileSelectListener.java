@@ -19,5 +19,7 @@ public interface OnFileSelectListener<T> {
      */
     void onCancelSelected(T fileInfo);
 
+    void onCheckedAll();
+
 
 }

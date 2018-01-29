@@ -71,14 +71,17 @@ public class ReceiveTask implements Runnable, IReceiveTask {
                 String str = new String(buffer, Constant.S_CHARSET);
                 // 拆分前面的数据部分
                 String strHeader = str.substring(0, str.indexOf(Constant.S_END));
+                Log.i(TAG, "strHeader-> "+strHeader);
                 String[] split = strHeader.split(":");
                 // 文件类型
                 int fileType = Integer.valueOf(split[0]);
                 // 文件名
                 String name = split[1];
-                int thumbLength = Integer.valueOf(split[2]);
+                // 文件大小
+                int fileLength = Integer.valueOf(split[2]);
+                int thumbLength = Integer.valueOf(split[3]);
                 // 标记是否是最后一个待接收的文件
-                int isLast = Integer.valueOf(split[3]);
+                int isLast = Integer.valueOf(split[4]);
 
                 if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                     File parentfile = new File(Environment.getExternalStorageDirectory() + Constant.THUMB_RECEIVE);
@@ -88,7 +91,7 @@ public class ReceiveTask implements Runnable, IReceiveTask {
 
 
                     // TODO: 2018/1/27 解决文件名中包含/的问题
-                    if(name.contains("/")){
+                    if (name.contains("/")) {
                         name.replaceAll("/", " ");
                     }
 
@@ -105,6 +108,7 @@ public class ReceiveTask implements Runnable, IReceiveTask {
                         ApkFile apkFile = new ApkFile();
                         apkFile.setName(name);
                         apkFile.setType(FileInfo.FILE_TYPE_APP);
+                        apkFile.setLength(fileLength);
                         mReceiveFileList.add(apkFile);
 
                         break;
@@ -115,6 +119,7 @@ public class ReceiveTask implements Runnable, IReceiveTask {
                         PicFile picFile = new PicFile();
                         picFile.setName(name);
                         picFile.setType(FileInfo.FILE_TYPE_IMAGE);
+                        picFile.setLength(fileLength);
                         mReceiveFileList.add(picFile);
 
                         break;
@@ -125,6 +130,7 @@ public class ReceiveTask implements Runnable, IReceiveTask {
                         MusicFile musicFile = new MusicFile();
                         musicFile.setName(name);
                         musicFile.setType(FileInfo.FILE_TYPE_MUSIC);
+                        musicFile.setLength(fileLength);
                         mReceiveFileList.add(musicFile);
 
 
@@ -136,6 +142,7 @@ public class ReceiveTask implements Runnable, IReceiveTask {
                         VideoFile videoFile = new VideoFile();
                         videoFile.setName(name);
                         videoFile.setType(FileInfo.FILE_TYPE_VIDEO);
+                        videoFile.setLength(fileLength);
                         mReceiveFileList.add(videoFile);
 
                         break;
@@ -156,7 +163,7 @@ public class ReceiveTask implements Runnable, IReceiveTask {
         Message message = mP2pTransferHandler.obtainMessage();
         // 通知待接收文件列表传输完成
         message.what = Constant.TransferStatus.TRANSFER_FILE_LIST_SUCCESS;
-        Log.i(TAG, "待传输的文件列表长度-> "+mReceiveFileList.size());
+        Log.i(TAG, "待传输的文件列表长度-> " + mReceiveFileList.size());
         message.obj = mReceiveFileList;
         mP2pTransferHandler.sendMessage(message);
     }
@@ -171,7 +178,7 @@ public class ReceiveTask implements Runnable, IReceiveTask {
         while (!isStop) {
 
             FileInfo fileInfo = parseHeader();
-            if(fileInfo == null){
+            if (fileInfo == null) {
                 return;
             }
 
@@ -254,7 +261,7 @@ public class ReceiveTask implements Runnable, IReceiveTask {
     @Override
     public synchronized void readBody(FileInfo fileInfo) {
 
-        if(fileInfo == null){
+        if (fileInfo == null) {
             return;
         }
         // 读取文件的总长度

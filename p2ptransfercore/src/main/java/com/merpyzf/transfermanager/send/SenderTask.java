@@ -86,7 +86,9 @@ public class SenderTask implements ISendTask, Runnable {
             //文件名
             sb.append(file.getName());
             sb.append(":");
-
+            // 文件大小
+            sb.append(file.getLength());
+            sb.append(":");
             // 缩略图大小
             FileThumbArray = FileUtils.getFileThumbByteArray(mContext, file);
 
@@ -121,8 +123,8 @@ public class SenderTask implements ISendTask, Runnable {
                 Log.i("w2k", "写出待发送文件列表:  \n文件名: " + file.getName() + "\n"
                         + "缩略图大小: " + FileThumbArray.length);
 
-                if(mOutputStream==null) {
-                   return;
+                if (mOutputStream == null) {
+                    return;
                 }
                 // 写出头信息
                 mOutputStream.write(sb.toString().getBytes());

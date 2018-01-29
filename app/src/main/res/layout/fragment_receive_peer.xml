@@ -109,7 +109,7 @@
             android:textColor="@color/white"
             android:layout_above="@id/btn_change_ap"
             android:layout_centerHorizontal="true"
-            android:text="您正在使用同网模式"
+            android:text="tip：您正在使用同网模式"
             />
 
         <Button
@@ -120,11 +120,12 @@
             android:layout_centerHorizontal="true"
             android:layout_margin="10dp"
             android:background="@drawable/btn_shape"
-            android:padding="5dp"
+            android:padding="10dp"
+            android:gravity="center"
             android:stateListAnimator="@drawable/btn_state_list_animator"
             android:text="切换到热点模式"
             android:textColor="@color/white"
-            android:textSize="14sp"
+            android:textSize="13sp"
 
             />
 

@@ -145,6 +145,8 @@ public class SendActivity extends AppCompatActivity implements ScanPeerFragment.
         // 跳转到文件发送的界面
         mSenderManager = SenderManager.getInstance(mContext);
         mSenderManager.send(peer.getHostAddress(), App.getSendFileList());
+
+
         mSenderManager.register(new TransferObserver() {
             @Override
             public void onTransferProgress(FileInfo fileInfo) {

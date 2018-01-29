@@ -101,6 +101,16 @@ public class SelectFilesActivity extends AppCompatActivity {
                 updateBottomTitle();
 
             }
+
+            /**
+             * 全选/取消全选的回调
+             */
+            @Override
+            public void onCheckedAll() {
+                mFileSelectAdapter.notifyDataSetChanged();
+                updateBottomTitle();
+
+            }
         };
 
 
@@ -280,5 +290,6 @@ public class SelectFilesActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         mUnbinder.unbind();
+        App.getSendFileList().clear();
     }
 }

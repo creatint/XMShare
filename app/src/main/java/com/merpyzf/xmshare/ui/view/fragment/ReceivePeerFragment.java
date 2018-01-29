@@ -86,6 +86,7 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
     private WifiMgr mWifiMgr;
     private APChangedReceiver mApChangedReceiver;
     private static final int REQUEST_CODE_WRITE_SETTINGS = 1;
+    private OSTimer mHideTipTimer;
 
 
     public ReceivePeerFragment() {
@@ -374,7 +375,8 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
             mTvNetName.setText(ssid);
             mTvNetMode.setVisibility(View.VISIBLE);
 
-            new OSTimer(null, () -> {
+            //时间1s
+            mHideTipTimer = new OSTimer(null, () -> {
                 getActivity().runOnUiThread(() -> {
 
                     ObjectAnimator animator = ObjectAnimator.ofFloat(mTvNetMode, "alpha", 1f, 0f);
@@ -405,7 +407,8 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
                     animator.start();
                 });
 
-            },3000, false).start();
+            }, 3000, false);
+            mHideTipTimer.start();
         }else {
 
             mTvNetMode.setVisibility(View.INVISIBLE);
@@ -446,6 +449,11 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
     @Override
     public void onDestroy() {
         mUnbinder.unbind();
+
+        if(mHideTipTimer!=null){
+            mHideTipTimer.cancel();
+            mHideTipTimer = null;
+        }
 
         releaseUdpListener();
         // 释放ServerSocket资源

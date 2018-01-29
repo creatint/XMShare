@@ -19,8 +19,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.merpyzf.transfermanager.entity.FileInfo;
@@ -52,6 +54,11 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
     FastScrollRecyclerView mRvFileList;
     @BindView(R.id.pb_music_waiting)
     ProgressBar mProgressBar;
+    @BindView(R.id.tv_title)
+    TextView mTvTitle;
+    // 全选
+    @BindView(R.id.checkbox_all)
+    CheckBox checkBoxAll;
 
     private Context mContext;
     private Unbinder mUnbinder;
@@ -67,7 +74,6 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
     private Handler mHandler;
     private OnFileSelectListener<FileInfo> mFileSelectListener;
     private FileSelectedListChangedReceiver mFslcReceiver;
-
 
     @SuppressLint("ValidFragment")
     public FileListFragment() {
@@ -152,6 +158,38 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(FileSelectedListChangedReceiver.ACTION);
         getActivity().registerReceiver(mFslcReceiver, intentFilter);
+
+
+        checkBoxAll.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            // 全选
+            if (isChecked) {
+
+                for (int i = 0; i < mFileLists.size(); i++) {
+                    if (!App.getSendFileList().contains(mFileLists.get(i))) {
+                        App.getSendFileList().add(mFileLists.get(i));
+                    }
+                }
+                mFileListAdapter.notifyDataSetChanged();
+                if (mFileSelectListener != null) {
+                    mFileSelectListener.onCheckedAll();
+                }
+
+
+            } else {
+                // 取消全选
+                for (int i = 0; i < mFileLists.size(); i++) {
+                    if (App.getSendFileList().contains(mFileLists.get(i))) {
+                        App.getSendFileList().remove(mFileLists.get(i));
+                    }
+                }
+                mFileListAdapter.notifyDataSetChanged();
+                if (mFileSelectListener != null) {
+                    mFileSelectListener.onCheckedAll();
+                }
+
+            }
+
+        });
 
 
         return rootView;
@@ -306,7 +344,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
 
                 }
 
-
+                setTitle("音乐");
                 // 数据加载完成后隐藏进进度提示
                 mProgressBar.setVisibility(View.INVISIBLE);
                 // 在线程中更新音乐封面图片
@@ -349,7 +387,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                     }
 
                 }
-
+                setTitle("图片");
                 // 数据加载完成后隐藏进进度提示
                 mProgressBar.setVisibility(View.INVISIBLE);
             } else {
@@ -388,7 +426,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                     mFileLists.add(videoFile);
 
                 }
-
+                setTitle("视频");
                 mProgressBar.setVisibility(View.INVISIBLE);
                 VideoUtils.updateThumbImg(mContext, mFileLists);
 
@@ -420,11 +458,15 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-
-//            Log.i("wk", "扫描到的应用的长度:" + mFileLists.size());
+            setTitle("应用");
             mFileListAdapter.notifyDataSetChanged();
             mProgressBar.setVisibility(View.INVISIBLE);
         }
+    }
+
+
+    public void setTitle(String type) {
+        mTvTitle.setText(type + "(" + mFileLists.size() + ")");
     }
 
 

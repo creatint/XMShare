@@ -5,12 +5,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.merpyzf.xmshare.ui.view.fragment.transfer.TransferSendFragment">
 
-    <android.support.v7.widget.RecyclerView
+    <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
         android:id="@+id/rv_send_list"
+        app:fastScrollPopupBgColor="@color/colorAccent"
+        app:fastScrollPopupTextColor="@color/white"
+        app:fastScrollThumbColor="@color/colorAccent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"></android.support.v7.widget.RecyclerView>
-
+        android:layout_height="match_parent"></com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView>
 
 
 </FrameLayout>
