@@ -1,67 +1,66 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorBackground"
     tools:context="com.merpyzf.xmshare.ui.view.fragment.FileListFragment">
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/card_top"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:elevation="10dp"
-        >
-    <RelativeLayout
 
+    <RelativeLayout
+        android:id="@+id/rl_top"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@color/white"
-        android:padding="10dp"
-        >
-    <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/colorSecondaryText"
-        android:textSize="16sp"
-        android:layout_centerVertical="true"
-        android:text="应用(20)"
-        />
-    <CheckBox
-        android:id="@+id/checkbox_all"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:button="@drawable/selector_rb_check"
-        android:buttonTint="@color/colorAccent"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        />
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:padding="10dp"
+            android:text="应用(0)"
+            android:textColor="@color/colorSecondaryText"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/tv_checked"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/checkbox_all"
+            android:padding="10dp"
+            android:text="全选"
+            android:textColor="@color/colorSecondaryText"
+            android:textSize="13sp" />
+
+        <CheckBox
+            android:id="@+id/checkbox_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="5dp"
+            android:button="@drawable/selector_rb_check"
+            android:buttonTint="@color/colorAccent" />
 
     </RelativeLayout>
-    </android.support.v7.widget.CardView>
 
 
     <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
         android:id="@+id/rv_music_list"
-        app:fastScrollPopupBgColor="@color/colorAccent"
-        android:layout_below="@id/card_top"
-        app:fastScrollPopupTextColor="@color/white"
-        app:fastScrollThumbColor="@color/colorAccent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView>
-
+        android:layout_height="match_parent"
+        android:layout_below="@id/rl_top"
+        app:fastScrollPopupBgColor="@color/colorAccent"
+        app:fastScrollPopupTextColor="@color/white"
+        app:fastScrollThumbColor="@color/colorAccent"></com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView>
 
     <ProgressBar
         android:id="@+id/pb_music_waiting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        />
-
-
+        android:layout_centerInParent="true" />
 
 
 </RelativeLayout>

@@ -8,11 +8,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,8 +23,11 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.merpyzf.httpcoreserver.ui.HttpServerActivity;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.base.App;
@@ -53,6 +59,12 @@ public class SelectFilesActivity extends AppCompatActivity {
     RecyclerView mRvSelectedList;
     @BindView(R.id.fab_send)
     FloatingActionButton mFabSend;
+    @BindView(R.id.linear_menu)
+    LinearLayout mLinearMenu;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout mDrawerLayout;
+    @BindView(R.id.nav_view)
+    NavigationView mNavigationView;
 
     private Context mContext;
     private Unbinder mUnbinder;
@@ -139,9 +151,6 @@ public class SelectFilesActivity extends AppCompatActivity {
     private void initUI() {
 
         updateBottomTitle();
-        setSupportActionBar(mToolBar);
-        getSupportActionBar().setTitle("文件选择");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mRvSelectedList.setLayoutManager(new LinearLayoutManager(mContext));
 
@@ -214,8 +223,11 @@ public class SelectFilesActivity extends AppCompatActivity {
         mSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                // 禁止BotttomSheet滑动
-                // mSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+                // 如果为选择文件则进制BottomSheet的滑动
+                if (App.getSendFileList().size() == 0) {
+                    mSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                }
             }
 
             @Override
@@ -226,9 +238,73 @@ public class SelectFilesActivity extends AppCompatActivity {
 
         mFabSend.setOnClickListener(v -> {
 
-            Log.i("w2k", "开始发送文件");
-            SendActivity.start(mContext);
+            if (App.getSendFileList().size() > 0) {
+                Log.i("w2k", "开始发送文件");
+                SendActivity.start(mContext);
+            } else {
+                Toast.makeText(mContext, "请选择文件", Toast.LENGTH_SHORT).show();
+            }
 
+        });
+
+        // 顶部menu按钮
+        mLinearMenu.setOnClickListener(v -> {
+
+            if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+                mDrawerLayout.closeDrawer(GravityCompat.END);
+            } else {
+                mDrawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+
+        // 导航栏菜单的点击事件
+        mNavigationView.setNavigationItemSelectedListener(item -> {
+
+            int id = item.getItemId();
+
+            switch (id){
+
+                // 接收文件
+                case R.id.nav_receive:
+                    ReceiveActivity.start(mContext);
+                    break;
+                // 电脑传
+                case R.id.nav_transfer2pc:
+
+                    HttpServerActivity.start(mContext);
+
+                    break;
+
+                // 邀请安装
+                case R.id.nav_invite:
+
+                    break;
+
+                // 设置
+                case R.id.nav_setting:
+
+                    break;
+
+                // 分享
+                case R.id.nav_share:
+                    break;
+
+
+                // 检查新版本
+                case R.id.nav_update:
+
+                    break;
+
+                // 反馈
+                case R.id.nav_feedback:
+
+
+                    break;
+
+            }
+
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+            return true;
         });
 
     }
@@ -248,6 +324,19 @@ public class SelectFilesActivity extends AppCompatActivity {
 
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    @Override
+    public void onBackPressed() {
+
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+
+
     }
 
     // TODO: 2018/1/9  Fragment的适配器需要抽离到外部

@@ -58,7 +58,9 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
     TextView mTvTitle;
     // 全选
     @BindView(R.id.checkbox_all)
-    CheckBox checkBoxAll;
+    CheckBox mCheckBoxAll;
+    @BindView(R.id.tv_checked)
+    TextView mTvChecked;
 
     private Context mContext;
     private Unbinder mUnbinder;
@@ -160,10 +162,11 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
         getActivity().registerReceiver(mFslcReceiver, intentFilter);
 
 
-        checkBoxAll.setOnCheckedChangeListener((buttonView, isChecked) -> {
+        mCheckBoxAll.setOnCheckedChangeListener((buttonView, isChecked) -> {
             // 全选
             if (isChecked) {
 
+                mTvChecked.setText("取消全选");
                 for (int i = 0; i < mFileLists.size(); i++) {
                     if (!App.getSendFileList().contains(mFileLists.get(i))) {
                         App.getSendFileList().add(mFileLists.get(i));
@@ -174,8 +177,11 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                     mFileSelectListener.onCheckedAll();
                 }
 
+                mTvChecked.setText("取消全选");
+
 
             } else {
+
                 // 取消全选
                 for (int i = 0; i < mFileLists.size(); i++) {
                     if (App.getSendFileList().contains(mFileLists.get(i))) {
@@ -186,6 +192,8 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                 if (mFileSelectListener != null) {
                     mFileSelectListener.onCheckedAll();
                 }
+
+                mTvChecked.setText("全选");
 
             }
 
@@ -200,6 +208,13 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
      * 初始化UI
      */
     private void initUI() {
+
+        if (mCheckBoxAll.isChecked()) {
+            mTvChecked.setText("取消全选");
+        } else {
+            mTvChecked.setText("全选");
+        }
+
 
         mFileLists = new ArrayList<>();
 
