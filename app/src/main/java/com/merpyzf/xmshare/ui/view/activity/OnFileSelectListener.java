@@ -8,17 +8,22 @@ package com.merpyzf.xmshare.ui.view.activity;
 public interface OnFileSelectListener<T> {
 
     /**
-     * 文件被选中时的回调
+     * 文件选择
+     *
      * @param fileInfo
      */
     void onSelected(T fileInfo);
 
     /**
-     * 文件取消选中时的回调
+     * 文件取消选择
+     *
      * @param fileInfo
      */
     void onCancelSelected(T fileInfo);
 
+    /**
+     * 文件全选
+     */
     void onCheckedAll();
 
 

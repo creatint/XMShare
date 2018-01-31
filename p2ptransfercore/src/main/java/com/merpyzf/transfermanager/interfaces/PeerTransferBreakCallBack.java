@@ -4,6 +4,7 @@ import com.merpyzf.transfermanager.entity.Peer;
 
 /**
  * Created by wangke on 2018/1/28.
+ * 接收到提前中断传输的回调
  */
 
 public interface PeerTransferBreakCallBack {

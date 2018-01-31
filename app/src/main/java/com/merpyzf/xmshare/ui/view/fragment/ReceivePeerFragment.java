@@ -53,17 +53,12 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 /**
- * 我要接收-搜索好友的界面
+ * 接收端 - 搜索好友的界面
  * 1 -  局域网内设备发现
  * 2 - AP热点模式
  */
 public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.OnItemClickListener {
 
-    private PeerManager mPeerManager;
-    private Context mContext;
-    private ArrayList<Peer> mPeerList;
-    private Unbinder mUnbinder;
-    private static final String TAG = ReceivePeerFragment.class.getSimpleName();
     @BindView(R.id.radar)
     RadarLayout radar;
     @BindView(R.id.rv_peers)
@@ -79,6 +74,11 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
     @BindView(R.id.tv_mode)
     TextView mTvNetMode;
 
+    private PeerManager mPeerManager;
+    private Context mContext;
+    private ArrayList<Peer> mPeerList;
+    private Unbinder mUnbinder;
+
     private OSTimer mOsTimer;
     private PeerAdapter mPeerAdapter;
     private OnReceivePairActionListener mOnReceivePairActionListener;
@@ -87,7 +87,7 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
     private APChangedReceiver mApChangedReceiver;
     private static final int REQUEST_CODE_WRITE_SETTINGS = 1;
     private OSTimer mHideTipTimer;
-
+    private static final String TAG = ReceivePeerFragment.class.getSimpleName();
 
     public ReceivePeerFragment() {
     }
@@ -339,17 +339,14 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
             }
         };
 
-
         IntentFilter intentFilter = new IntentFilter(APChangedReceiver.ACTION_WIFI_AP_STATE_CHANGED);
         mContext.registerReceiver(mApChangedReceiver, intentFilter);
         // 设置一个昵称
-        String nickName = "macbook";
         int avatar = 1;
         // 开启一个热点
-        ApManager.configApState(mContext, nickName, avatar);
+        ApManager.configApState(mContext, SharedPreUtils.getNickName(mContext), avatar);
 
     }
-
 
     private void checkIsHide() {
         if (mTvTip == null) return;
@@ -375,7 +372,7 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
             mTvNetName.setText(ssid);
             mTvNetMode.setVisibility(View.VISIBLE);
 
-            //时间1s
+            //时间3s
             mHideTipTimer = new OSTimer(null, () -> {
                 getActivity().runOnUiThread(() -> {
 
@@ -390,6 +387,9 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
                         @Override
                         public void onAnimationEnd(Animator animation) {
 
+                            if(mTvNetMode == null){
+                                return;
+                            }
                             mTvNetMode.setVisibility(View.INVISIBLE);
 
                         }

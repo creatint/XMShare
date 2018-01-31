@@ -4,6 +4,7 @@ import com.merpyzf.transfermanager.entity.FileInfo;
 
 /**
  * Created by wangke on 2018/1/22.
+ * 文件传输过程中的观察者的回调事件
  */
 
 public interface TransferObserver {

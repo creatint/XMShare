@@ -30,10 +30,13 @@ import android.widget.Toast;
 import com.merpyzf.httpcoreserver.ui.HttpServerActivity;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.xmshare.R;
+import com.merpyzf.xmshare.common.Constant;
 import com.merpyzf.xmshare.common.base.App;
 import com.merpyzf.xmshare.ui.adapter.FileSelectAdapter;
 import com.merpyzf.xmshare.ui.view.fragment.FileListFragment;
 import com.merpyzf.xmshare.ui.widget.ApplyPermissionFragment;
+import com.merpyzf.xmshare.util.DeviceUtils;
+import com.merpyzf.xmshare.util.SharedPreUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +76,7 @@ public class SelectFilesActivity extends AppCompatActivity {
     private BottomSheetBehavior<View> mSheetBehavior;
     private OnFileSelectListener<FileInfo> mFileSelectListener;
     private FileSelectAdapter<FileInfo> mFileSelectAdapter;
-
+    private String TAG = SelectFilesActivity.class.getSimpleName();
 
     public static void start(Context context) {
 
@@ -182,6 +185,13 @@ public class SelectFilesActivity extends AppCompatActivity {
      */
     private void init() {
 
+        String nickName = SharedPreUtils.getNickName(mContext);
+        if ("".equals(nickName)) {
+            String deviceName = DeviceUtils.getDeviceName();
+            Log.i(TAG, "deviceName -> "+deviceName);
+            SharedPreUtils.putString(mContext, Constant.SP_USER, "nickName", deviceName);
+        }
+
         mFragmentList = new ArrayList<>();
         mTabTitles = new String[4];
 
@@ -262,7 +272,7 @@ public class SelectFilesActivity extends AppCompatActivity {
 
             int id = item.getItemId();
 
-            switch (id){
+            switch (id) {
 
                 // 接收文件
                 case R.id.nav_receive:
@@ -282,6 +292,8 @@ public class SelectFilesActivity extends AppCompatActivity {
 
                 // 设置
                 case R.id.nav_setting:
+
+                    SettingActivity.start(mContext);
 
                     break;
 

@@ -202,7 +202,7 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
                         progressBar.setVisibility(View.INVISIBLE);
                         ivDone.setVisibility(View.VISIBLE);
                         tvSpeed.setVisibility(View.INVISIBLE);
-                        tvProgress.setText("传输完毕");
+                        tvProgress.setText("传输完毕，" + getOpenTypeText(fileInfo));
 
 
                     }
@@ -217,7 +217,7 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
 
                         if (fileInfo.getFileTransferStatus() == Constant.TransferStatus.TRANSFER_SUCCESS) {
 
-                            tvProgress.setText("传输成功");
+                            tvProgress.setText("传输完毕，" + getOpenTypeText(fileInfo));
                             progressBar.setProgress(100);
                             progressBar.setVisibility(View.INVISIBLE);
                             tvSpeed.setVisibility(View.INVISIBLE);
@@ -294,7 +294,7 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
 
                         if (fileInfo.getFileTransferStatus() == Constant.TransferStatus.TRANSFER_SUCCESS) {
 
-                            tvProgress.setText("传输成功");
+                            tvProgress.setText("传输完毕");
                             progressBar.setProgress(100);
                             progressBar.setVisibility(View.INVISIBLE);
                             tvSpeed.setVisibility(View.INVISIBLE);
@@ -325,5 +325,30 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
     @Override
     public String getSectionName(int position) {
         return mFileLists.get(position).getName().substring(0, 1);
+    }
+
+
+    public String getOpenTypeText(FileInfo fileInfo) {
+
+        String typeText = null;
+
+        switch (fileInfo.getType()) {
+            case FileInfo.FILE_TYPE_APP:
+                typeText = "点击安装";
+                break;
+            case FileInfo.FILE_TYPE_MUSIC:
+            case FileInfo.FILE_TYPE_VIDEO:
+                typeText = "点击播放";
+                break;
+            case FileInfo.FILE_TYPE_IMAGE:
+                typeText = "点击查看";
+                break;
+            default:
+                break;
+
+        }
+
+        return typeText;
+
     }
 }

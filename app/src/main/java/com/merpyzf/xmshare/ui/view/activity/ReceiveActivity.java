@@ -17,6 +17,7 @@ import com.merpyzf.transfermanager.interfaces.TransferObserver;
 import com.merpyzf.transfermanager.receive.ReceiverManager;
 import com.merpyzf.transfermanager.util.ApManager;
 import com.merpyzf.xmshare.R;
+import com.merpyzf.xmshare.common.base.App;
 import com.merpyzf.xmshare.ui.view.fragment.ReceivePeerFragment;
 import com.merpyzf.xmshare.ui.view.fragment.transfer.TransferReceiveFragment;
 import com.merpyzf.xmshare.util.SharedPreUtils;
@@ -34,6 +35,7 @@ import butterknife.Unbinder;
  */
 public class ReceiveActivity extends AppCompatActivity {
 
+
     @BindView(R.id.tool_bar)
     Toolbar mToolbar;
     private Context mContext;
@@ -45,6 +47,11 @@ public class ReceiveActivity extends AppCompatActivity {
     private boolean isTransfering = false;
     private static final String TAG = ReceiveActivity.class.getSimpleName();
 
+    /**
+     * 打开这个页面
+     *
+     * @param context
+     */
     public static void start(Context context) {
 
         context.startActivity(new Intent(context, ReceiveActivity.class));
@@ -56,25 +63,21 @@ public class ReceiveActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_receive);
         this.mContext = this;
-        mUnbinder = ButterKnife.bind(this);
+
+        init();
         initUI();
         initEvent();
 
-        String mNickName = SharedPreUtils.getNickName(mContext);
-        mPeerManager = new PeerManager(mContext, mNickName, null);
-        mPeerManager.setPeerTransferBreakListener(peer -> {
 
-            Log.i(TAG, "收到中断的广播了");
+    }
 
-            if (isTransfering) {
-                Toast.makeText(mContext, "对端 " + peer.getNickName() + "退出了，即将关闭", Toast.LENGTH_SHORT).show();
-                finish();
-            }
-
-        });
-        // 开启一个UDPServer
+    /**
+     * 初始化对象
+     */
+    private void init() {
+        mPeerManager = new PeerManager(mContext, SharedPreUtils.getNickName(mContext), null);
+        // 开启一个UDP消息的监听
         mPeerManager.listenBroadcast();
-
     }
 
 
@@ -82,18 +85,15 @@ public class ReceiveActivity extends AppCompatActivity {
      * 初始化UI
      */
     private void initUI() {
-
-
+        mUnbinder = ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("我要接收");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
-        // 扫描附近待发送文件的设备
+        // 跳转到扫描附近设备的界面
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         mReceivePeerFragment = new ReceivePeerFragment();
         transaction.replace(R.id.frame_content, mReceivePeerFragment);
-
         transaction.commit();
     }
 
@@ -103,9 +103,11 @@ public class ReceiveActivity extends AppCompatActivity {
     private void initEvent() {
 
         if (mReceivePeerFragment != null) {
+
             mReceivePeerFragment.setOnReceivePairActionListener(new ReceivePeerFragment.OnReceivePairActionListener() {
                 @Override
                 public void onRequestSendFileAction() {
+                    // 收到对端请求发送文件的请求
 
                     // 开启一个Socket服务
                     ReceiverManager receiverManager = ReceiverManager.getInstance();
@@ -124,8 +126,11 @@ public class ReceiveActivity extends AppCompatActivity {
                             }
                         }
                     });
-                    new Thread(receiverManager).start();
+//                    new Thread(receiverManager).start();
+                    App.getSingleThreadPool().execute(receiverManager);
                     Log.i("w2k", "开启一个ServerScoket等待设备接入");
+
+                    // 当接收到待传输的文件列表时，跳转到文件传输的界面
                     receiverManager.setOnTransferFileListListener(transferFileList -> {
 
                         Log.i("w2k", "同意对端发送文件");
@@ -141,11 +146,12 @@ public class ReceiveActivity extends AppCompatActivity {
 
                 }
 
+
                 @Override
                 public void onApEnableAction() {
 
                     ReceiverManager receiverManager = ReceiverManager.getInstance();
-                    new Thread(receiverManager).start();
+                    App.getSingleThreadPool().execute(receiverManager);
                     // 监听待传输的文件列表是否发送成功
                     receiverManager.setOnTransferFileListListener(transferFileList -> {
 
@@ -158,6 +164,21 @@ public class ReceiveActivity extends AppCompatActivity {
                 }
             });
         }
+
+        if (mPeerManager != null) {
+
+            mPeerManager.setPeerTransferBreakListener(peer -> {
+
+                Log.i(TAG, "收到中断的广播了");
+
+                if (isTransfering) {
+                    Toast.makeText(mContext, "对端 " + peer.getNickName() + "退出了，即将关闭", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+
+            });
+        }
+
 
     }
 
@@ -181,7 +202,7 @@ public class ReceiveActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        // 发送传输中断的广播
+        // 当接收页面关闭时发送传输中断的广播
         mPeerManager.sendTransferBreakBroadcast();
         super.onBackPressed();
     }
@@ -189,14 +210,14 @@ public class ReceiveActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         mUnbinder.unbind();
-
+        // 释放资源
         if (ApManager.isApOn(mContext)) {
             ApManager.turnOffAp(mContext);
         }
-
-        // 释放ServerSocket资源
+        if (mPeerManager != null) {
+            mPeerManager.stopUdpServer();
+        }
         ReceiverManager.getInstance().release();
-
 
         super.onDestroy();
     }

@@ -71,18 +71,20 @@ public class ReceiveTask implements Runnable, IReceiveTask {
                 String str = new String(buffer, Constant.S_CHARSET);
                 // 拆分前面的数据部分
                 String strHeader = str.substring(0, str.indexOf(Constant.S_END));
-                Log.i(TAG, "strHeader-> "+strHeader);
+                Log.i(TAG, "strHeader-> " + strHeader);
                 String[] split = strHeader.split(":");
+
                 // 文件类型
                 int fileType = Integer.valueOf(split[0]);
                 // 文件名
                 String name = split[1];
+                // 文件后缀名
+                String suffix = split[2];
                 // 文件大小
-                int fileLength = Integer.valueOf(split[2]);
-                int thumbLength = Integer.valueOf(split[3]);
+                int fileLength = Integer.valueOf(split[3]);
+                int thumbLength = Integer.valueOf(split[4]);
                 // 标记是否是最后一个待接收的文件
-                int isLast = Integer.valueOf(split[4]);
-
+                int isLast = Integer.valueOf(split[5]);
                 if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                     File parentfile = new File(Environment.getExternalStorageDirectory() + Constant.THUMB_RECEIVE);
                     if (!parentfile.exists()) {
@@ -109,6 +111,7 @@ public class ReceiveTask implements Runnable, IReceiveTask {
                         apkFile.setName(name);
                         apkFile.setType(FileInfo.FILE_TYPE_APP);
                         apkFile.setLength(fileLength);
+                        apkFile.setPath(Constant.SAVE_APK_PATH + "/" + name + "." + suffix);
                         mReceiveFileList.add(apkFile);
 
                         break;
@@ -120,6 +123,7 @@ public class ReceiveTask implements Runnable, IReceiveTask {
                         picFile.setName(name);
                         picFile.setType(FileInfo.FILE_TYPE_IMAGE);
                         picFile.setLength(fileLength);
+                        picFile.setPath(Constant.SAVE_APK_PATH + "/" + name + "." + suffix);
                         mReceiveFileList.add(picFile);
 
                         break;
@@ -131,6 +135,7 @@ public class ReceiveTask implements Runnable, IReceiveTask {
                         musicFile.setName(name);
                         musicFile.setType(FileInfo.FILE_TYPE_MUSIC);
                         musicFile.setLength(fileLength);
+                        musicFile.setPath(Constant.SAVE_APK_PATH + "/" + name + "." + suffix);
                         mReceiveFileList.add(musicFile);
 
 
@@ -143,6 +148,7 @@ public class ReceiveTask implements Runnable, IReceiveTask {
                         videoFile.setName(name);
                         videoFile.setType(FileInfo.FILE_TYPE_VIDEO);
                         videoFile.setLength(fileLength);
+                        videoFile.setPath(Constant.SAVE_APK_PATH + "/" + name + "." + suffix);
                         mReceiveFileList.add(videoFile);
 
                         break;

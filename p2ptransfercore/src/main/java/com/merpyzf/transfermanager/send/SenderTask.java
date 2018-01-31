@@ -83,19 +83,22 @@ public class SenderTask implements ISendTask, Runnable {
             //文件类型
             sb.append(file.getType());
             sb.append(":");
+
             //文件名
             sb.append(file.getName());
             sb.append(":");
+
+            // 后缀名
+            sb.append(file.getSuffix());
+            sb.append(":");
+
             // 文件大小
             sb.append(file.getLength());
             sb.append(":");
             // 缩略图大小
             FileThumbArray = FileUtils.getFileThumbByteArray(mContext, file);
-
-            Log.i("w2k", "缩略图大小:" + FileThumbArray.length);
             sb.append(FileThumbArray.length);
             sb.append(":");
-
 
             //最后一个文件
             if (i == mSendFileList.size() - 1) {
