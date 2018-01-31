@@ -48,6 +48,7 @@ public class PeerHandler extends Handler {
         Peer peer = new Peer();
         peer.setHostAddress(signMessage.getHostAddress());
         peer.setNickName(signMessage.getNickName());
+        peer.setAvatarPosition(signMessage.getAvatarPosition());
 
         // 将事件的处理拆分到不同的类中进行处理
         // 1. PeerManager处理设备的上线下线
@@ -98,7 +99,7 @@ public class PeerHandler extends Handler {
                 break;
             case SignMessage.cmd.TRANSFER_BREAK:
 
-                if(mPeerTransferBreakCallback!=null){
+                if (mPeerTransferBreakCallback != null) {
                     mPeerTransferBreakCallback.onTransferBreak(peer);
                 }
 

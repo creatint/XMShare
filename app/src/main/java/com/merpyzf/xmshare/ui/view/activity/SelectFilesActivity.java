@@ -27,6 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.merpyzf.httpcoreserver.ui.HttpServerActivity;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.xmshare.R;
@@ -34,8 +35,9 @@ import com.merpyzf.xmshare.common.Constant;
 import com.merpyzf.xmshare.common.base.App;
 import com.merpyzf.xmshare.ui.adapter.FileSelectAdapter;
 import com.merpyzf.xmshare.ui.view.fragment.FileListFragment;
+import com.merpyzf.xmshare.ui.view.interfaces.PersonalObservable;
+import com.merpyzf.xmshare.ui.view.interfaces.PersonalObserver;
 import com.merpyzf.xmshare.ui.widget.ApplyPermissionFragment;
-import com.merpyzf.xmshare.util.DeviceUtils;
 import com.merpyzf.xmshare.util.SharedPreUtils;
 
 import java.util.ArrayList;
@@ -44,8 +46,9 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import de.hdodenhof.circleimageview.CircleImageView;
 
-public class SelectFilesActivity extends AppCompatActivity {
+public class SelectFilesActivity extends AppCompatActivity implements PersonalObserver {
 
 
     @BindView(R.id.viewpager)
@@ -66,8 +69,21 @@ public class SelectFilesActivity extends AppCompatActivity {
     LinearLayout mLinearMenu;
     @BindView(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
+
+    // toolbar上的昵称
+    @BindView(R.id.tv_nickname)
+    TextView mTvNickname;
+    // toolbar上的头像
+    @BindView(R.id.civ_avatar)
+    CircleImageView mCivAvatar;
+
+
     @BindView(R.id.nav_view)
     NavigationView mNavigationView;
+    CircleImageView mNavCivAvatar;
+    // 昵称
+    TextView mNavTvNickname;
+
 
     private Context mContext;
     private Unbinder mUnbinder;
@@ -91,6 +107,8 @@ public class SelectFilesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_select_file);
         mUnbinder = ButterKnife.bind(this);
         mContext = this;
+
+
 
         initUI();
         initEvent();
@@ -153,8 +171,13 @@ public class SelectFilesActivity extends AppCompatActivity {
      */
     private void initUI() {
 
-        updateBottomTitle();
+        View headerView = mNavigationView.getHeaderView(0);
+        mNavCivAvatar = headerView.findViewById(R.id.civ_avatar);
+        mNavTvNickname = headerView.findViewById(R.id.tv_nickname);
 
+        // 更新头像和昵称
+        update();
+        updateBottomTitle();
         mRvSelectedList.setLayoutManager(new LinearLayoutManager(mContext));
 
         mFileSelectAdapter = new FileSelectAdapter<>(mContext, R.layout.item_rv_select, App.getSendFileList());
@@ -185,12 +208,6 @@ public class SelectFilesActivity extends AppCompatActivity {
      */
     private void init() {
 
-        String nickName = SharedPreUtils.getNickName(mContext);
-        if ("".equals(nickName)) {
-            String deviceName = DeviceUtils.getDeviceName();
-            Log.i(TAG, "deviceName -> "+deviceName);
-            SharedPreUtils.putString(mContext, Constant.SP_USER, "nickName", deviceName);
-        }
 
         mFragmentList = new ArrayList<>();
         mTabTitles = new String[4];
@@ -230,6 +247,7 @@ public class SelectFilesActivity extends AppCompatActivity {
      */
     private void initEvent() {
 
+        PersonalObservable.getInstance().register(this);
         mSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
@@ -244,6 +262,11 @@ public class SelectFilesActivity extends AppCompatActivity {
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
 
             }
+        });
+
+        // 头像的点击事件
+        mNavCivAvatar.setOnClickListener(v -> {
+            PersonalActivity.start(mContext);
         });
 
         mFabSend.setOnClickListener(v -> {
@@ -305,7 +328,7 @@ public class SelectFilesActivity extends AppCompatActivity {
                 // 检查新版本
                 case R.id.nav_update:
 
-                    break;
+                   break;
 
                 // 反馈
                 case R.id.nav_feedback:
@@ -351,6 +374,7 @@ public class SelectFilesActivity extends AppCompatActivity {
 
     }
 
+
     // TODO: 2018/1/9  Fragment的适配器需要抽离到外部
     class MyFragmentPagerAdapter extends FragmentStatePagerAdapter {
 
@@ -386,11 +410,36 @@ public class SelectFilesActivity extends AppCompatActivity {
         }
     }
 
+    // 头像/昵称发生变化时的回调
+    @Override
+    public void update() {
+
+        System.out.println("update执行了");
+        mNavTvNickname.setText(SharedPreUtils.getNickName(mContext));
+        setAvatar(mNavCivAvatar, Constant.AVATAR_LIST.get(SharedPreUtils.getAvatar(mContext)));
+        setAvatar(mCivAvatar, Constant.AVATAR_LIST.get(SharedPreUtils.getAvatar(mContext)));
+
+
+
+
+    }
+
+    // 设置头像
+    private void setAvatar(CircleImageView view, int avatar) {
+        // 设置头像
+        Glide.with(mContext)
+                .load(avatar)
+                .crossFade()
+                .centerCrop()
+                .into(view);
+    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         mUnbinder.unbind();
+        // 取消注册，从观察者集合中移除
+        PersonalObservable.getInstance().unRegister(this);
         App.getSendFileList().clear();
     }
 }

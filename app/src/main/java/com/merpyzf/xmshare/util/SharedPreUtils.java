@@ -53,8 +53,17 @@ public class SharedPreUtils {
      */
     public static String getNickName(Context context) {
 
-        return getString(context, Constant.SP_USER, "nickName", "");
+        return getString(context, Constant.SP_USER, "nickName", DeviceUtils.getDeviceName());
     }
 
+    /**
+     * 获取用户对应的头像
+     *
+     * @param context
+     * @return
+     */
+    public static int getAvatar(Context context) {
+        return getInteger(context, Constant.SP_USER, "avatar", 0);
+    }
 
 }

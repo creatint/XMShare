@@ -28,6 +28,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.merpyzf.radarview.RadarLayout;
 import com.merpyzf.transfermanager.PeerManager;
@@ -51,6 +52,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * 接收端 - 搜索好友的界面
@@ -73,6 +75,8 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
     // 网络模式
     @BindView(R.id.tv_mode)
     TextView mTvNetMode;
+    @BindView(R.id.civ_avatar)
+    CircleImageView mCivAvatar;
 
     private PeerManager mPeerManager;
     private Context mContext;
@@ -162,7 +166,7 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
                 // 隐藏切换到热点模式按钮
                 mBtnChangedAp.setVisibility(View.INVISIBLE);
 
-                Toast.makeText(mContext, "正在拼命开启热点中，请等待...",Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "正在拼命开启热点中，请等待...", Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -341,11 +345,8 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
 
         IntentFilter intentFilter = new IntentFilter(APChangedReceiver.ACTION_WIFI_AP_STATE_CHANGED);
         mContext.registerReceiver(mApChangedReceiver, intentFilter);
-        // 设置一个昵称
-        int avatar = 1;
         // 开启一个热点
-        ApManager.configApState(mContext, SharedPreUtils.getNickName(mContext), avatar);
-
+        ApManager.configApState(mContext, SharedPreUtils.getNickName(mContext), SharedPreUtils.getAvatar(mContext));
     }
 
     private void checkIsHide() {
@@ -364,6 +365,12 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
      * 初始化UI
      */
     private void initUI() {
+
+        Glide.with(mContext)
+                .load(Constant.AVATAR_LIST.get(SharedPreUtils.getAvatar(mContext)))
+                .crossFade()
+                .centerCrop()
+                .into(mCivAvatar);
 
         if (NetworkUtil.isWifi(mContext)) {
 
@@ -387,7 +394,7 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
                         @Override
                         public void onAnimationEnd(Animator animation) {
 
-                            if(mTvNetMode == null){
+                            if (mTvNetMode == null) {
                                 return;
                             }
                             mTvNetMode.setVisibility(View.INVISIBLE);
@@ -409,7 +416,7 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
 
             }, 3000, false);
             mHideTipTimer.start();
-        }else {
+        } else {
 
             mTvNetMode.setVisibility(View.INVISIBLE);
         }
@@ -436,6 +443,7 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
         signMessage.setCmd(SignMessage.cmd.ANSWER_REQUEST_CONN);
         signMessage.setMsgContent("回应建立连接请求");
         signMessage.setNickName(SharedPreUtils.getNickName(mContext));
+        signMessage.setAvatarPosition(SharedPreUtils.getAvatar(mContext));
         String protocolStr = signMessage.convertProtocolStr();
         try {
             InetAddress dest = InetAddress.getByName(peer.getHostAddress());
@@ -450,7 +458,7 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
     public void onDestroy() {
         mUnbinder.unbind();
 
-        if(mHideTipTimer!=null){
+        if (mHideTipTimer != null) {
             mHideTipTimer.cancel();
             mHideTipTimer = null;
         }

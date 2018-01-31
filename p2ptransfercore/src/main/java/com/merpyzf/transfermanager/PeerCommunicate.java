@@ -173,7 +173,8 @@ public class PeerCommunicate extends Thread {
         signMessage.setHostAddress(NetworkUtil.getLocalIp(mContext));
         signMessage.setMsgContent("ON_LINE");
         signMessage.setCmd(SignMessage.cmd.ON_LINE);
-        signMessage.setNickName(nickName);
+        signMessage.setNickName(SharedPreUtils.getNickName(mContext));
+        signMessage.setAvatarPosition(SharedPreUtils.getAvatar(mContext));
         sendBroadcast(signMessage);
 
     }

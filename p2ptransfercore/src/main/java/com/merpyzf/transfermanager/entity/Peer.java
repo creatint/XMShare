@@ -9,6 +9,10 @@ public class Peer {
 
     // 昵称
     private String nickName;
+
+    // 头像下标
+    private int avatarPosition;
+
     // 主机地址
     private String hostAddress;
 
@@ -57,6 +61,14 @@ public class Peer {
 
     public void setHotsPot(boolean hotsPot) {
         isHotsPot = hotsPot;
+    }
+
+    public int getAvatarPosition() {
+        return avatarPosition;
+    }
+
+    public void setAvatarPosition(int avatarPosition) {
+        this.avatarPosition = avatarPosition;
     }
 
     @Override

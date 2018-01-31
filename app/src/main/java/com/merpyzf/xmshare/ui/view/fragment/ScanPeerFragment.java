@@ -233,6 +233,7 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
             SignMessage signMessage = new SignMessage();
             signMessage.setHostAddress(NetworkUtil.getLocalIp(mContext));
             signMessage.setNickName(SharedPreUtils.getNickName(mContext));
+            signMessage.setAvatarPosition(SharedPreUtils.getAvatar(mContext));
             signMessage.setMsgContent("建立连接请求");
             signMessage.setCmd(SignMessage.cmd.REQUEST_CONN);
             String msg = signMessage.convertProtocolStr();
@@ -357,6 +358,7 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
                 Peer peer = new Peer();
                 peer.setHostAddress("未知");
                 peer.setSsid(scanResult.SSID);
+                peer.setAvatarPosition(Integer.valueOf(apNickAndAvatar[0]));
                 // 设置用户名
                 peer.setNickName(apNickAndAvatar[1]);
                 peer.setHotsPot(true);

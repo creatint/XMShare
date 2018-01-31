@@ -7,6 +7,7 @@ import com.merpyzf.transfermanager.entity.SignMessage;
 import com.merpyzf.transfermanager.interfaces.PeerCommunCallback;
 import com.merpyzf.transfermanager.interfaces.PeerTransferBreakCallBack;
 import com.merpyzf.transfermanager.util.NetworkUtil;
+import com.merpyzf.transfermanager.util.SharedPreUtils;
 import com.merpyzf.transfermanager.util.WifiMgr;
 import com.merpyzf.transfermanager.util.timer.OSTimer;
 import com.merpyzf.transfermanager.util.timer.Timeout;
@@ -62,7 +63,8 @@ public class PeerManager {
                         signMessage.setMsgContent("TRANSFER_BREAK");
                         signMessage.setCmd(SignMessage.cmd.TRANSFER_BREAK);
                         // TODO: 2018/1/24 获取已存储在本地的用户名
-                        signMessage.setNickName("merpyzf");
+                        signMessage.setNickName(SharedPreUtils.getNickName(mContext));
+                        signMessage.setAvatarPosition(SharedPreUtils.getAvatar(mContext));
                         sendBroadcastMsg(signMessage);
 
                     }
@@ -97,7 +99,8 @@ public class PeerManager {
                         signMessage.setHostAddress(NetworkUtil.getLocalIp(mContext));
                         signMessage.setMsgContent("ON_LINE");
                         signMessage.setCmd(SignMessage.cmd.ON_LINE);
-                        signMessage.setNickName(nickName);
+                        signMessage.setNickName(SharedPreUtils.getNickName(mContext));
+                        signMessage.setAvatarPosition(SharedPreUtils.getAvatar(mContext));
 //                        Log.i("w2k", "发送上线广播");
                         sendBroadcastMsg(signMessage);
 
@@ -150,7 +153,8 @@ public class PeerManager {
                         signMessage.setHostAddress(WifiMgr.getInstance(mContext).getHotspotLocalIpAddress());
                         signMessage.setMsgContent("ON_LINE");
                         signMessage.setCmd(SignMessage.cmd.ON_LINE);
-                        signMessage.setNickName(nickName);
+                        signMessage.setNickName(SharedPreUtils.getNickName(mContext));
+                        signMessage.setAvatarPosition(SharedPreUtils.getAvatar(mContext));
 //                        Log.i("w2k", "发送上线广播");
                         sendBroadcastMsg(destAddress, signMessage);
 
@@ -195,7 +199,8 @@ public class PeerManager {
                         signMessage.setMsgContent("OFF_LINE");
                         signMessage.setCmd(SignMessage.cmd.OFF_LINE);
 
-                        signMessage.setNickName("merpyzf");
+                        signMessage.setNickName(SharedPreUtils.getNickName(mContext));
+                        signMessage.setAvatarPosition(SharedPreUtils.getAvatar(mContext));
                         sendBroadcastMsg(signMessage);
 
                     }

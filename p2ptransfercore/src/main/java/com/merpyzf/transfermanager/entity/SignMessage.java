@@ -17,6 +17,10 @@ public class SignMessage {
     private String msgContent;
     //发送设备的昵称
     private String nickName;
+
+    // 头像下标
+    private int avatarPosition;
+
     // 这条消息对应的命令代号
     private int cmd;
 
@@ -89,6 +93,14 @@ public class SignMessage {
         this.nickName = nickName;
     }
 
+    public int getAvatarPosition() {
+        return avatarPosition;
+    }
+
+    public void setAvatarPosition(int avatarPosition) {
+        this.avatarPosition = avatarPosition;
+    }
+
     public int getCmd() {
         return cmd;
     }
@@ -110,6 +122,8 @@ public class SignMessage {
         protocolStr.append(hostAddress);
         protocolStr.append(Constant.S_SEPARATOR);
         protocolStr.append(nickName);
+        protocolStr.append(Constant.S_SEPARATOR);
+        protocolStr.append(avatarPosition);
         protocolStr.append(Constant.S_SEPARATOR);
         protocolStr.append(msgContent);
         protocolStr.append(Constant.S_SEPARATOR);
@@ -138,8 +152,9 @@ public class SignMessage {
             message.setPacketName(MsgProperties[0]);
             message.setHostAddress(MsgProperties[1]);
             message.setNickName(MsgProperties[2]);
-            message.setMsgContent(MsgProperties[3]);
-            message.setCmd(Integer.valueOf(MsgProperties[4]));
+            message.setAvatarPosition(Integer.valueOf(MsgProperties[3]));
+            message.setMsgContent(MsgProperties[4]);
+            message.setCmd(Integer.valueOf(MsgProperties[5]));
             return message;
 
         }

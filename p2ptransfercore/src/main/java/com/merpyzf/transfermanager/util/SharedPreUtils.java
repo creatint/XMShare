@@ -1,6 +1,10 @@
+
 package com.merpyzf.transfermanager.util;
 
 import android.content.Context;
+
+import com.merpyzf.transfermanager.constant.Constant;
+
 
 /**
  * Created by wangke on 2018/1/11.
@@ -42,5 +46,26 @@ public class SharedPreUtils {
 
     }
 
+
+    /**
+     * 获取用户设置的昵称
+     *
+     * @param context
+     * @return
+     */
+    public static String getNickName(Context context) {
+
+        return getString(context, Constant.SP_USER, "nickName", DeviceUtils.getDeviceName());
+    }
+
+    /**
+     * 获取用户对应的头像
+     *
+     * @param context
+     * @return
+     */
+    public static int getAvatar(Context context) {
+        return getInteger(context, Constant.SP_USER, "avatar", 0);
+    }
 
 }
