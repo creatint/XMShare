@@ -311,6 +311,8 @@ public class SelectFilesActivity extends AppCompatActivity implements PersonalOb
                 // 邀请安装
                 case R.id.nav_invite:
 
+                    InviteActivity.start(mContext);
+
                     break;
 
                 // 设置

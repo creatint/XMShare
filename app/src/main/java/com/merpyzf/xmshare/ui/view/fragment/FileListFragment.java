@@ -35,6 +35,8 @@ import com.merpyzf.xmshare.common.base.App;
 import com.merpyzf.xmshare.receiver.FileSelectedListChangedReceiver;
 import com.merpyzf.xmshare.ui.adapter.FileAdapter;
 import com.merpyzf.xmshare.ui.view.activity.OnFileSelectListener;
+import com.merpyzf.xmshare.ui.view.activity.SelectFilesActivity;
+import com.merpyzf.xmshare.util.AnimationUtils;
 import com.merpyzf.xmshare.util.ApkUtils;
 import com.merpyzf.xmshare.util.MusicUtils;
 import com.merpyzf.xmshare.util.VideoUtils;
@@ -76,6 +78,8 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
     private Handler mHandler;
     private OnFileSelectListener<FileInfo> mFileSelectListener;
     private FileSelectedListChangedReceiver mFslcReceiver;
+    private View bottomSheetView;
+    private static final String TAG = FileListFragment.class.getSimpleName();
 
     @SuppressLint("ValidFragment")
     public FileListFragment() {
@@ -136,6 +140,21 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                     mFileSelectListener.onSelected(fileInfo);
 
                 }
+
+
+                //2.添加任务 动画
+                View startView = null;
+                View targetView = null;
+
+                startView = view1.findViewById(R.id.iv_cover);
+                if (getActivity() != null && (getActivity() instanceof SelectFilesActivity)) {
+                    SelectFilesActivity chooseFileActivity = (SelectFilesActivity) getActivity();
+                    targetView = bottomSheetView;
+                }
+
+                AnimationUtils.setAddTaskAnimation(getActivity(), startView, targetView, null);
+
+
             } else {
                 ivSelect.setVisibility(View.INVISIBLE);
                 //移除选中的文件
@@ -208,6 +227,8 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
      * 初始化UI
      */
     private void initUI() {
+
+        bottomSheetView = getActivity().findViewById(R.id.bottom_sheet);
 
         if (mCheckBoxAll.isChecked()) {
             mTvChecked.setText("取消全选");
@@ -354,8 +375,13 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                     // 添加文件的后缀名
                     fileInfo.setSuffix(FileUtils.getFileSuffix(path));
 
+                    Log.i(TAG, "name->" + title + " extra_max_bytes->" + extra_max_bytes);
 
-                    mFileLists.add(fileInfo);
+                    // 筛选大于1MB的文件
+                    if (extra_max_bytes > 1024 * 1024) {
+
+                        mFileLists.add(fileInfo);
+                    }
 
                 }
 
@@ -427,18 +453,23 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                     String title = data.getString(data.getColumnIndex(MediaStore.Video.Media.TITLE));
                     long duration = data.getLong(data.getColumnIndex(MediaStore.Video.Media.DURATION));
                     String path = data.getString(data.getColumnIndex(MediaStore.Video.Media.DATA));
+                    long length = new File(path).length();
 
                     VideoFile videoFile = new VideoFile();
                     videoFile.setAlbumId(id);
                     videoFile.setName(title);
                     videoFile.setPath(path);
-                    videoFile.setLength((int) new File(path).length());
+                    videoFile.setLength((int) length);
                     videoFile.setDuration(duration);
                     // 设置文件后缀
                     videoFile.setSuffix(FileUtils.getFileSuffix(path));
                     // 设置文件类型
                     videoFile.setType(FileInfo.FILE_TYPE_VIDEO);
-                    mFileLists.add(videoFile);
+
+                    // 筛选大于1MB的文件
+                    if (length > 1024 * 1024) {
+                        mFileLists.add(videoFile);
+                    }
 
                 }
                 setTitle("视频");

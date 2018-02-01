@@ -76,7 +76,6 @@ public class HttpRequestListener extends Thread {
             handlerRegistry.register("*", new FileBrowserHandler());
 
             // 5.创建Http服务
-
             mHttpService = new HttpService(httpProcessor, new DefaultConnectionReuseStrategy(), new DefaultHttpResponseFactory());
             mHttpService.setParams(mHttpParams);
             mHttpService.setHandlerResolver(handlerRegistry);
@@ -106,14 +105,11 @@ public class HttpRequestListener extends Thread {
                 // 阻塞等待客户端的接入
                 try {
 
-
                     LogUtil.i(TAG, "等待客户端接入....");
                     Socket socketClient = mServerSocket.accept();
 
                     DefaultHttpServerConnection serverConnection = new DefaultHttpServerConnection();
-
                     serverConnection.bind(socketClient, mHttpParams);
-
                     // 接入客户端绑定的任务放入创建的线程池中处理
                     mExecutorPool.execute(new RequestHandleTask(mHttpService, serverConnection));
 

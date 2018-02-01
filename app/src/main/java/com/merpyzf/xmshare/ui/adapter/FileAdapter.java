@@ -47,7 +47,7 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
         if (item instanceof ApkFile) {
 
             ApkFile apkFile = (ApkFile) item;
-            ImageView imageView = helper.getView(R.id.iv_apk_ico);
+            ImageView imageView = helper.getView(R.id.iv_cover);
             helper.setText(R.id.tv_apk_name, apkFile.getName());
             imageView.setImageDrawable(apkFile.getApkDrawable());
             int length = apkFile.getLength();
@@ -71,7 +71,7 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
                         .load(albumFile)
                         .crossFade()
                         .centerCrop()
-                        .into((ImageView) helper.getView(R.id.iv_music_album));
+                        .into((ImageView) helper.getView(R.id.iv_cover));
             }
 
 
@@ -83,7 +83,7 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
                     .load(picFile.getPath())
                     .crossFade()
                     .centerCrop()
-                    .into((ImageView) helper.getView(R.id.iv_gallery));
+                    .into((ImageView) helper.getView(R.id.iv_cover));
 
         } else if (item instanceof VideoFile) {
 
@@ -91,7 +91,7 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
             helper.setText(R.id.tv_title, videoFile.getName());
             helper.setText(R.id.tv_size, FormatUtils.convert2Mb(videoFile.getLength()) + " MB");
             helper.setText(R.id.tv_duration, FormatUtils.convertMS2Str(videoFile.getDuration()));
-            ImageView ivVideoThumb = helper.getView(R.id.iv_video_album);
+            ImageView ivVideoThumb = helper.getView(R.id.iv_cover);
             String videoThumbPath = Environment.getExternalStorageDirectory() + com.merpyzf.transfermanager.constant.Constant.THUMB_VIDEO + "/" + videoFile.getName();
 
             Glide.with(mContext)

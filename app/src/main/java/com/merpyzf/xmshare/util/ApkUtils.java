@@ -1,6 +1,7 @@
 package com.merpyzf.xmshare.util;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -112,5 +113,21 @@ public class ApkUtils {
         return len;
     }
 
+
+
+    /**
+     * 通过包名获取路径/data/app/ **.apk
+     * @param packageName
+     * @return
+     */
+    public static String getApkFilePath(Context context, String packageName) {
+        try {
+            return context.getPackageManager().getApplicationInfo(packageName, 0).sourceDir;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 
 }
