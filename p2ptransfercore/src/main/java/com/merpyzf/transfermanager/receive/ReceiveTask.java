@@ -69,6 +69,8 @@ public class ReceiveTask implements Runnable, IReceiveTask {
                 // 1024个字节
                 read = mInputStream.read(buffer, 0, buffer.length);
                 String str = new String(buffer, Constant.S_CHARSET);
+
+                Log.i(TAG, "str -> "+str);
                 // 拆分前面的数据部分
                 String strHeader = str.substring(0, str.indexOf(Constant.S_END));
                 Log.i(TAG, "strHeader-> " + strHeader);

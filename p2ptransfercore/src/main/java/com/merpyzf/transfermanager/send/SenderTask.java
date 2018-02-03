@@ -34,6 +34,7 @@ public class SenderTask implements ISendTask, Runnable {
     private long end_cal_speed;
     private Context mContext;
     private String mDestAddress;
+    private String TAG = SenderTask.class.getSimpleName();
 
     /**
      * 文件发送时，先发送待传输的文件列表,紧接着传送文件的 缩略图( 各种格式 -> bitmap -> byte[])
@@ -114,6 +115,9 @@ public class SenderTask implements ISendTask, Runnable {
             sb.append(Constant.S_END);
 
             int currentLength = sb.toString().getBytes().length;
+
+            Log.i(TAG, "header->"+sb.toString());
+
 
             if (currentLength < Constant.FILE_THUMB_HEADER_LENGTH) {
                 // 少于的部分使用空格填充
