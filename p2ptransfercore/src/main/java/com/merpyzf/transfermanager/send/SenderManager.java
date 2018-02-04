@@ -1,6 +1,7 @@
 package com.merpyzf.transfermanager.send;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.merpyzf.transfermanager.P2pTransferHandler;
 import com.merpyzf.transfermanager.entity.FileInfo;
@@ -24,6 +25,8 @@ public class SenderManager {
     private P2pTransferHandler mP2pTransferHandler;
     // 观察者集合
     private List<TransferObserver> mTransferObserverLists;
+    private String TAG = SenderManager.class.getSimpleName();
+
 
     public static SenderManager getInstance(Context context) {
 
@@ -61,8 +64,11 @@ public class SenderManager {
 
     public void unRegister(TransferObserver transferObserver) {
 
+
+
         if (mTransferObserverLists.contains(transferObserver)) {
             mTransferObserverLists.remove(transferObserver);
+            Log.i(TAG, "unRegister被调用");
         }
 
     }

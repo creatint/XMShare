@@ -73,10 +73,10 @@ public class SenderTask implements ISendTask, Runnable {
         // 缩略图大小
         // 发送结束标记
         // 缩略图
-        Log.i("w2k", "发送文件，文件长度:" + mSendFileList.size());
-        for (int i = 0; i < mSendFileList.size(); i++) {
+        Log.i(TAG, "待发送文件的长度->" + mSendFileList.size());
 
-            byte[] FileThumbArray;
+        for (int i = 0; i < mSendFileList.size(); i++) {
+            byte[] FileThumbArray = null;
 
             StringBuilder sb = new StringBuilder();
             FileInfo file = mSendFileList.get(i);
@@ -116,7 +116,7 @@ public class SenderTask implements ISendTask, Runnable {
 
             int currentLength = sb.toString().getBytes().length;
 
-            Log.i(TAG, "header->"+sb.toString());
+            Log.i(TAG, "header->" + sb.toString());
 
 
             if (currentLength < Constant.FILE_THUMB_HEADER_LENGTH) {
@@ -127,12 +127,14 @@ public class SenderTask implements ISendTask, Runnable {
             }
             try {
 
-                Log.i("w2k", "写出待发送文件列表:  \n文件名: " + file.getName() + "\n"
+                Log.i(TAG, "写出待发送文件列表:  \n文件名: " + file.getName() + "\n"
                         + "缩略图大小: " + FileThumbArray.length);
 
                 if (mOutputStream == null) {
                     return;
                 }
+
+
                 // 写出头信息
                 mOutputStream.write(sb.toString().getBytes());
                 // 写出缩略图

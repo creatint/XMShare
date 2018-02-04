@@ -1,6 +1,7 @@
 package com.merpyzf.xmshare.ui.view.fragment.transfer;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.send.SenderManager;
 import com.merpyzf.transfermanager.util.WifiMgr;
 import com.merpyzf.xmshare.R;
@@ -25,6 +27,7 @@ import butterknife.Unbinder;
 /**
  * A simple {@link Fragment} subclass.
  */
+@SuppressLint("ValidFragment")
 public class TransferSendFragment extends Fragment  {
 
     @BindView(R.id.rv_send_list)
@@ -35,9 +38,10 @@ public class TransferSendFragment extends Fragment  {
     private String mNickName;
     private WifiMgr mWifiMgr;
     private static final String TAG = TransferSendFragment.class.getSimpleName();
-
-    public TransferSendFragment() {
-
+    private Peer mPeer;
+    @SuppressLint("ValidFragment")
+    public TransferSendFragment(Peer peer) {
+        this.mPeer = peer;
     }
 
     @Override
@@ -53,7 +57,7 @@ public class TransferSendFragment extends Fragment  {
                 FileTransferAdapter.TYPE_SEND, App.getSendFileList());
         mRvSendList.setAdapter(mFileTransferAdapter);
 
-
+        SenderManager.getInstance(mContext).send(mPeer.getHostAddress(), App.getSendFileList());
 
 
         return rootView;
@@ -68,6 +72,7 @@ public class TransferSendFragment extends Fragment  {
     public void onDestroy() {
         mUnbinder.unbind();
         SenderManager.getInstance(mContext).release();
+        App.resetSendFileList();
         Log.i("w2k", "onDestory");
         super.onDestroy();
     }

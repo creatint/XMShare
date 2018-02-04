@@ -190,9 +190,8 @@ public class FileInfo {
      * 重置当前对象的状态
      */
     public void reset() {
-
         progress = 0;
-        fileTransferStatus = Constant.TransferStatus.TRANSFER_WAITING;
+        setFileTransferStatus(Constant.TransferStatus.TRANSFER_WAITING);
     }
 }
 

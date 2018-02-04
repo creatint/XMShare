@@ -72,10 +72,12 @@ public class P2pTransferHandler extends Handler {
 
 
                 FileInfo fileInfo1 = (FileInfo) msg.obj;
-                for (TransferObserver transferObserver : mTransferObserverLists) {
-                    transferObserver.onTransferStatus(fileInfo1);
 
+                for(int i=0;i<mTransferObserverLists.size();i++){
+                    mTransferObserverLists.get(i).onTransferStatus(fileInfo1);
                 }
+
+
                 break;
 
             /**

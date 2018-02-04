@@ -8,6 +8,7 @@ import android.graphics.Matrix;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
+import android.util.Log;
 
 import com.merpyzf.transfermanager.R;
 import com.merpyzf.transfermanager.constant.Constant;
@@ -32,6 +33,8 @@ import java.text.DecimalFormat;
  */
 
 public class FileUtils {
+
+    private static final String TAG = FileUtils.class.getSimpleName();
 
     /**
      * 根据文件路径获取文件的后缀名
@@ -213,7 +216,7 @@ public class FileUtils {
         try {
             bos = new BufferedOutputStream(new FileOutputStream(file));
 
-            if(bos == null)return;
+            if (bos == null) return;
 
             byte[] buffer = new byte[Constant.BUFFER_LENGTH];
             // 读取文件
@@ -229,6 +232,7 @@ public class FileUtils {
                 totalSize += readLength;
                 length -= readLength;
             }
+
             System.out.println("写入到文件的字节数:" + totalSize);
 
 
@@ -261,6 +265,7 @@ public class FileUtils {
 
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
 
+
             switch (fileInfo.getType()) {
 
 
@@ -270,7 +275,10 @@ public class FileUtils {
                     if (!parent.exists()) {
                         parent.mkdirs();
                     }
-                    file = new File(parent, fileInfo.getName() + "." + fileInfo.getSuffix());
+
+                    file = new File(parent, FileUtils.removeFileSeparator(fileInfo.getName()) + "." + fileInfo.getSuffix());
+
+
                     break;
 
                 case FileInfo.FILE_TYPE_IMAGE:
@@ -279,7 +287,9 @@ public class FileUtils {
                     if (!parent.exists()) {
                         parent.mkdirs();
                     }
-                    file = new File(parent, fileInfo.getName() + "." + fileInfo.getSuffix());
+
+                    file = new File(parent, FileUtils.removeFileSeparator(fileInfo.getName()) + "." + fileInfo.getSuffix());
+
                     return file;
 
                 case FileInfo.FILE_TYPE_MUSIC:
@@ -288,7 +298,9 @@ public class FileUtils {
                     if (!parent.exists()) {
                         parent.mkdirs();
                     }
-                    file = new File(parent, fileInfo.getName() + "." + fileInfo.getSuffix());
+
+                    file = new File(parent, FileUtils.removeFileSeparator(fileInfo.getName()) + "." + fileInfo.getSuffix());
+
                     return file;
 
                 case FileInfo.FILE_TYPE_VIDEO:
@@ -297,7 +309,9 @@ public class FileUtils {
                     if (!parent.exists()) {
                         parent.mkdirs();
                     }
-                    file = new File(parent, fileInfo.getName() + "." + fileInfo.getSuffix());
+
+                    file = new File(parent, FileUtils.removeFileSeparator(fileInfo.getName()) + "." + fileInfo.getSuffix());
+
                     return file;
 
             }
@@ -351,6 +365,25 @@ public class FileUtils {
         return result;
     }
 
+
+    /**
+     * 去除文件名中包含的文件分隔符。使用空格代替
+     *
+     * @param fileName
+     * @return
+     */
+    public static String removeFileSeparator(String fileName) {
+
+        String newFileName = fileName;
+
+        if (fileName.contains("/")) {
+            newFileName = fileName.replaceAll("/", " ");
+            Log.i(TAG, "去除分隔符后的文件名->" + newFileName);
+
+        }
+
+        return newFileName;
+    }
 
 
     public static void main(String[] args) {

@@ -67,11 +67,8 @@ public class PeerCommunicate extends Thread {
                 while (isLoop) {
                     byte[] buffer = new byte[Constant.BUFFER_LENGTH];
                     DatagramPacket receivePacket = new DatagramPacket(buffer, 0, Constant.BUFFER_LENGTH);
-
-                    Log.i("w2k", "阻塞中等待接入");
                     //block
                     mUdpSocket.receive(receivePacket);
-
                     if (receivePacket.getLength() == 0) {
                         continue;
                     }

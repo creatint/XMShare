@@ -63,6 +63,7 @@ public class ReceiveTask implements Runnable, IReceiveTask {
 
         byte[] buffer = new byte[Constant.FILE_THUMB_HEADER_LENGTH];
         mReceiveFileList = new ArrayList<>();
+
         while (true) {
             int read = 0;
             try {
@@ -70,7 +71,7 @@ public class ReceiveTask implements Runnable, IReceiveTask {
                 read = mInputStream.read(buffer, 0, buffer.length);
                 String str = new String(buffer, Constant.S_CHARSET);
 
-                Log.i(TAG, "str -> "+str);
+//                Log.i(TAG, "str -> "+str);
                 // 拆分前面的数据部分
                 String strHeader = str.substring(0, str.indexOf(Constant.S_END));
                 Log.i(TAG, "strHeader-> " + strHeader);
@@ -94,13 +95,7 @@ public class ReceiveTask implements Runnable, IReceiveTask {
                     }
 
 
-                    // TODO: 2018/1/27 解决文件名中包含/的问题
-                    if (name.contains("/")) {
-                        name.replaceAll("/", " ");
-                    }
-
-
-                    File file = new File(parentfile, name);
+                    File file = new File(parentfile, FileUtils.removeFileSeparator(name));
                     FileUtils.writeStream2SdCard(file, mInputStream, thumbLength);
                 }
 

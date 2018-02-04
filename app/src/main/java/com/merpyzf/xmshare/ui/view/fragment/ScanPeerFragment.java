@@ -25,7 +25,6 @@ import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.entity.SignMessage;
 import com.merpyzf.transfermanager.interfaces.PeerCommunCallback;
-import com.merpyzf.transfermanager.send.SenderManager;
 import com.merpyzf.transfermanager.util.ApManager;
 import com.merpyzf.transfermanager.util.WifiMgr;
 import com.merpyzf.transfermanager.util.timer.OSTimer;
@@ -39,10 +38,16 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 
 public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnItemClickListener {
@@ -440,32 +445,55 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
                     Peer peer = (Peer) msg.obj;
                     Log.i("w2k", "向 " + peer.getHostAddress() + " 发送文件");
 
-                    SenderManager senderManager = SenderManager.getInstance(mContext);
 
+                    // 当前ping的次数
+                    final int[] currentPingCount = {0};
 
-                    for (int i = 0; i < mCountPing; i++) {
+                    Observable.interval(0, 500, TimeUnit.MILLISECONDS)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Observer<Long>() {
+                                @Override
+                                public void onSubscribe(Disposable d) {
 
-                        if (com.merpyzf.transfermanager.util.NetworkUtil.pingIpAddress(peer.getHostAddress())) {
-                            if (mOnPairActionListener != null) {
-                                // 取消wifi扫描
-                                mScanWifiTimer.cancel();
-                                mOnPairActionListener.onSendToHotspotAction(peer, App.getSendFileList());
-                            }
-                            break;
-                        }
-                        mTvTip.setTextColor(Color.WHITE);
-                        mTvTip.setText("正在检查网络连通性...");
-                        Log.i("w2k", peer.getHostAddress() + " ping...");
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                                    Log.i(TAG, "ping.....");
 
-                    }
-                    mTvTip.setTextColor(Color.RED);
-                    mTvTip.setText("网络未连通，请点击好友头像重连!");
-                    Toast.makeText(mContext, "网络未连通通，请点击好友头像重试！", Toast.LENGTH_SHORT).show();
+                                    if (currentPingCount[0] < mCountPing) {
+
+                                        mTvTip.setTextColor(Color.WHITE);
+                                        mTvTip.setText("正在检查网络连通性...");
+
+                                        if (com.merpyzf.transfermanager.util.NetworkUtil.pingIpAddress(peer.getHostAddress())) {
+                                            if (mOnPairActionListener != null) {
+                                                // 取消wifi扫描
+                                                mScanWifiTimer.cancel();
+                                                mOnPairActionListener.onSendToHotspotAction(peer, App.getSendFileList());
+                                                d.dispose();
+                                            }
+                                        }
+                                    } else {
+                                        d.dispose();
+                                    }
+
+                                    currentPingCount[0]++;
+
+                                }
+
+                                @Override
+                                public void onNext(Long value) {
+
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+
+                                }
+
+                                @Override
+                                public void onComplete() {
+
+                                }
+                            });
 
 
                     break;

@@ -180,7 +180,7 @@ public class SendActivity extends AppCompatActivity implements ScanPeerFragment.
             public void onAnimationEnd(Animator animation) {
                 mLinearRocket.setVisibility(View.INVISIBLE);
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                mTransferSendFragment = new TransferSendFragment();
+                mTransferSendFragment = new TransferSendFragment(peer);
                 transaction.replace(R.id.frame_content, mTransferSendFragment);
                 transaction.commit();
                 isTransfering = true;
@@ -209,15 +209,16 @@ public class SendActivity extends AppCompatActivity implements ScanPeerFragment.
 
     @Override
     public void onSendToHotspotAction(Peer peer, List<FileInfo> fileInfoLis) {
-        SenderManager senderManager = SenderManager.getInstance(mContext);
-        // 发送文件
-        senderManager.send(peer.getHostAddress(), App.getSendFileList());
-
+//        SenderManager senderManager = SenderManager.getInstance(mContext);
+//        Log.i("w2k", "跳转到文件发送界面");
         // 加载显示发送文件进度的fragment
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        mTransferSendFragment = new TransferSendFragment();
+        mTransferSendFragment = new TransferSendFragment(peer);
         transaction.replace(R.id.frame_content, mTransferSendFragment);
         transaction.commit();
+        // 发送文件
+//        senderManager
+
 
     }
 
@@ -257,11 +258,7 @@ public class SendActivity extends AppCompatActivity implements ScanPeerFragment.
             mPeerManager.stopUdpServer();
         }
 
-        if (mSenderManager != null) {
-            mSenderManager.release();
-            mSenderManager = null;
-        }
-
+        SenderManager.getInstance(mContext).release();
 
         super.onDestroy();
     }
