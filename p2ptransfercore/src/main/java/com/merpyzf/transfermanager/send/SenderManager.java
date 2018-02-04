@@ -1,7 +1,6 @@
 package com.merpyzf.transfermanager.send;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.merpyzf.transfermanager.P2pTransferHandler;
 import com.merpyzf.transfermanager.entity.FileInfo;
@@ -50,7 +49,7 @@ public class SenderManager {
     private SenderManager(Context context) {
         mTransferObserverLists = new ArrayList<>();
         mP2pTransferHandler = new P2pTransferHandler(mTransferObserverLists);
-        mSingleThreadPool = Executors.newCachedThreadPool();
+        mSingleThreadPool = Executors.newSingleThreadExecutor();
         this.mContext = context;
     }
 
@@ -65,10 +64,8 @@ public class SenderManager {
     public void unRegister(TransferObserver transferObserver) {
 
 
-
         if (mTransferObserverLists.contains(transferObserver)) {
             mTransferObserverLists.remove(transferObserver);
-            Log.i(TAG, "unRegister被调用");
         }
 
     }
@@ -89,6 +86,8 @@ public class SenderManager {
      * 传输结束时进行资源的释放
      */
     public void release() {
-        mSenderTask.release();
+        if (mSenderTask != null) {
+            mSenderTask.release();
+        }
     }
 }

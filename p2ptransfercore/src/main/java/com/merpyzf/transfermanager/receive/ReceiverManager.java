@@ -30,6 +30,7 @@ public class ReceiverManager implements Runnable {
     // 观察者集合
     private List<TransferObserver> mTransferObserverLists;
     private ReceiveTask mReceiveTask;
+    private static final String TAG = ReceiverManager.class.getSimpleName();
     private static boolean isStop = false;
 
     /**
@@ -102,10 +103,10 @@ public class ReceiverManager implements Runnable {
         while (!isStop) {
 
             try {
-                Log.i("w2k", "阻塞中,等待设备连接....");
+                Log.i(TAG, "SocketServer 阻塞中,等待设备连接....");
                 // TODO: 2018/1/26 将mServerSocket.accept()移动到ReceiveTask中避免主线程出错
                 mSocketClient = mServerSocket.accept();
-                Log.i("w2k", "有设备连接:" + mSocketClient.getInetAddress().getHostAddress());
+                Log.i(TAG, "有设备连接:" + mSocketClient.getInetAddress().getHostAddress());
 
                 mReceiveTask = new ReceiveTask(mSocketClient, mP2pTransferHandler);
                 mSingleThreadPool.execute(mReceiveTask);

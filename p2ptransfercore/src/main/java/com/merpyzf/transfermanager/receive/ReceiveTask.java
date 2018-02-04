@@ -71,7 +71,6 @@ public class ReceiveTask implements Runnable, IReceiveTask {
                 read = mInputStream.read(buffer, 0, buffer.length);
                 String str = new String(buffer, Constant.S_CHARSET);
 
-//                Log.i(TAG, "str -> "+str);
                 // 拆分前面的数据部分
                 String strHeader = str.substring(0, str.indexOf(Constant.S_END));
                 Log.i(TAG, "strHeader-> " + strHeader);
@@ -166,7 +165,6 @@ public class ReceiveTask implements Runnable, IReceiveTask {
         Message message = mP2pTransferHandler.obtainMessage();
         // 通知待接收文件列表传输完成
         message.what = Constant.TransferStatus.TRANSFER_FILE_LIST_SUCCESS;
-        Log.i(TAG, "待传输的文件列表长度-> " + mReceiveFileList.size());
         message.obj = mReceiveFileList;
         mP2pTransferHandler.sendMessage(message);
     }
@@ -213,7 +211,6 @@ public class ReceiveTask implements Runnable, IReceiveTask {
             }
 
             String str = new String(headerBytes, Constant.S_CHARSET);
-            Log.i(TAG, "头信息: " + str);
 
             // 解析到的头部字符串
             String header = str.substring(0, str.indexOf(Constant.S_END));

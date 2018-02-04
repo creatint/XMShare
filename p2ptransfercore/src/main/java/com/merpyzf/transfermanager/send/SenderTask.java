@@ -52,6 +52,8 @@ public class SenderTask implements ISendTask, Runnable {
     @Override
     public void init() {
 
+
+
         if (mSocket != null) {
             try {
                 mOutputStream = mSocket.getOutputStream();
@@ -73,7 +75,6 @@ public class SenderTask implements ISendTask, Runnable {
         // 缩略图大小
         // 发送结束标记
         // 缩略图
-        Log.i(TAG, "待发送文件的长度->" + mSendFileList.size());
 
         for (int i = 0; i < mSendFileList.size(); i++) {
             byte[] FileThumbArray = null;
@@ -115,9 +116,6 @@ public class SenderTask implements ISendTask, Runnable {
             sb.append(Constant.S_END);
 
             int currentLength = sb.toString().getBytes().length;
-
-            Log.i(TAG, "header->" + sb.toString());
-
 
             if (currentLength < Constant.FILE_THUMB_HEADER_LENGTH) {
                 // 少于的部分使用空格填充
@@ -162,7 +160,6 @@ public class SenderTask implements ISendTask, Runnable {
         try {
             mOutputStream.write(header.getBytes(Constant.S_CHARSET));
             mOutputStream.flush();
-            Log.i("w2k", "发送的头信息: " + header);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -220,10 +217,6 @@ public class SenderTask implements ISendTask, Runnable {
                 }
 
                 if (end - start > 50) {
-
-                    Log.i("w2k", "readLength: " + readLength + " totalLength: " + totalLength);
-
-//                    Log.i("w2k", "发送进度: "+(readLength / totalLength*1.0f));
                     // 传输进度
                     fileInfo.setProgress((readLength / (totalLength * 1.0f)));
 
@@ -281,6 +274,8 @@ public class SenderTask implements ISendTask, Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        Log.i(TAG, "文件发送所在的线程->"+Thread.currentThread().getName());
 
         init();
 

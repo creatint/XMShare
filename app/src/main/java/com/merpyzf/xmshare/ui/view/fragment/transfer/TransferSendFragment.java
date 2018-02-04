@@ -4,6 +4,8 @@ package com.merpyzf.xmshare.ui.view.fragment.transfer;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -37,8 +39,8 @@ public class TransferSendFragment extends Fragment  {
     private FileTransferAdapter<FileInfo> mFileTransferAdapter;
     private String mNickName;
     private WifiMgr mWifiMgr;
-    private static final String TAG = TransferSendFragment.class.getSimpleName();
     private Peer mPeer;
+    private static final String TAG = TransferSendFragment.class.getSimpleName();
     @SuppressLint("ValidFragment")
     public TransferSendFragment(Peer peer) {
         this.mPeer = peer;
@@ -57,10 +59,16 @@ public class TransferSendFragment extends Fragment  {
                 FileTransferAdapter.TYPE_SEND, App.getSendFileList());
         mRvSendList.setAdapter(mFileTransferAdapter);
 
-        SenderManager.getInstance(mContext).send(mPeer.getHostAddress(), App.getSendFileList());
-
-
         return rootView;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        Log.i(TAG, "TransferSendFragment的View被创建");
+        SenderManager.getInstance(mContext).send(mPeer.getHostAddress(), App.getSendFileList());
+        super.onViewCreated(view, savedInstanceState);
+
+
     }
 
     private void initUI() {
