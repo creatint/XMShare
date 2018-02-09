@@ -31,7 +31,7 @@ import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.base.App;
+import com.merpyzf.xmshare.XMShareApp;
 import com.merpyzf.xmshare.receiver.FileSelectedListChangedReceiver;
 import com.merpyzf.xmshare.ui.adapter.FileAdapter;
 import com.merpyzf.xmshare.ui.view.activity.OnFileSelectListener;
@@ -117,8 +117,8 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
         mLoaderManager.initLoader(LOAD_FILE_TYPE, null, FileListFragment.this);
 
         // 选择前先清空上一次选择的数据
-        if (App.getSendFileList().size() > 0) {
-            App.getSendFileList().clear();
+        if (XMShareApp.getSendFileList().size() > 0) {
+            XMShareApp.getSendFileList().clear();
         }
         /**
          *  文件列表点击选择的回调事件
@@ -130,11 +130,11 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
 
             FileInfo fileInfo = mFileLists.get(position);
 
-            if (!App.getSendFileList().contains(fileInfo)) {
+            if (!XMShareApp.getSendFileList().contains(fileInfo)) {
 
                 ivSelect.setVisibility(View.VISIBLE);
                 // 添加选中的文件
-                App.addSendFile(fileInfo);
+                XMShareApp.addSendFile(fileInfo);
                 // 将文件选择的事件回调给外部
                 if (mFileSelectListener != null) {
                     mFileSelectListener.onSelected(fileInfo);
@@ -158,7 +158,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
             } else {
                 ivSelect.setVisibility(View.INVISIBLE);
                 //移除选中的文件
-                App.removeSendFile(fileInfo);
+                XMShareApp.removeSendFile(fileInfo);
                 if (mFileSelectListener != null) {
                     mFileSelectListener.onCancelSelected(fileInfo);
                 }
@@ -187,8 +187,8 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
 
                 mTvChecked.setText("取消全选");
                 for (int i = 0; i < mFileLists.size(); i++) {
-                    if (!App.getSendFileList().contains(mFileLists.get(i))) {
-                        App.getSendFileList().add(mFileLists.get(i));
+                    if (!XMShareApp.getSendFileList().contains(mFileLists.get(i))) {
+                        XMShareApp.getSendFileList().add(mFileLists.get(i));
                     }
                 }
                 mFileListAdapter.notifyDataSetChanged();
@@ -203,8 +203,8 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
 
                 // 取消全选
                 for (int i = 0; i < mFileLists.size(); i++) {
-                    if (App.getSendFileList().contains(mFileLists.get(i))) {
-                        App.getSendFileList().remove(mFileLists.get(i));
+                    if (XMShareApp.getSendFileList().contains(mFileLists.get(i))) {
+                        XMShareApp.getSendFileList().remove(mFileLists.get(i));
                     }
                 }
                 mFileListAdapter.notifyDataSetChanged();
@@ -272,6 +272,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
         }
         // 设置适配器
         mRvFileList.setAdapter(mFileListAdapter);
+//        mFileListAdapter.setEmptyView(R.layout.view_rv_file_empty);
 
 
     }

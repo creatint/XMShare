@@ -16,7 +16,7 @@ import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.base.App;
+import com.merpyzf.xmshare.XMShareApp;
 import com.merpyzf.xmshare.receiver.FileSelectedListChangedReceiver;
 import com.merpyzf.xmshare.ui.view.activity.SelectFilesActivity;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
@@ -103,7 +103,7 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> im
 
         ivRemove.setOnClickListener(v -> {
 
-            App.removeSendFile(fileInfo);
+            XMShareApp.removeSendFile(fileInfo);
             // 发送文件发生改变的广播
             mContext.sendBroadcast(new Intent(FileSelectedListChangedReceiver.ACTION));
             notifyDataSetChanged();

@@ -25,7 +25,7 @@ import com.merpyzf.transfermanager.receive.ReceiverManager;
 import com.merpyzf.transfermanager.send.SenderManager;
 import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.base.App;
+import com.merpyzf.xmshare.XMShareApp;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.io.File;
@@ -309,7 +309,7 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
 
                             // 文件全部传输成功之后重置待传输文件的状态
                             if (fileInfo.getIsLast() == 1) {
-                                App.resetSendFileList();
+                                XMShareApp.resetSendFileList();
                             }
 
                             Log.i(TAG, "传输完毕TRANSFER_SUCCESS");
@@ -450,7 +450,7 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
 
                             // 文件全部传输成功之后重置待传输文件的状态
                             if (fileInfo.getIsLast() == 1) {
-                                App.resetSendFileList();
+                                XMShareApp.resetSendFileList();
                             }
 
                             SenderManager.getInstance(mContext).unRegister(this);

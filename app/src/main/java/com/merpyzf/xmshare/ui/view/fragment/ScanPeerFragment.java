@@ -30,7 +30,7 @@ import com.merpyzf.transfermanager.util.WifiMgr;
 import com.merpyzf.transfermanager.util.timer.OSTimer;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Constant;
-import com.merpyzf.xmshare.common.base.App;
+import com.merpyzf.xmshare.XMShareApp;
 import com.merpyzf.xmshare.ui.adapter.PeerAdapter;
 import com.merpyzf.xmshare.util.SharedPreUtils;
 
@@ -286,7 +286,7 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
             Log.i("w2k", "尝试第一次获取接收端的IP地址: " + ipAddressFromHotspot);
             mLocalAddress = WifiMgr.getInstance(mContext).getIpAddressFromHotspot();
 
-            App.getSingleThreadPool().execute(() -> {
+            XMShareApp.getSingleThreadPool().execute(() -> {
                 // 当连接上wifi后立即获取对端主机地址，有可能获取不到，需要多次获取才能拿到
                 int count = 0;
                 while (count < 10) {
@@ -467,7 +467,7 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
                                             if (mOnPairActionListener != null) {
                                                 // 取消wifi扫描
                                                 mScanWifiTimer.cancel();
-                                                mOnPairActionListener.onSendToHotspotAction(peer, App.getSendFileList());
+                                                mOnPairActionListener.onSendToHotspotAction(peer, XMShareApp.getSendFileList());
                                                 d.dispose();
                                             }
                                         }

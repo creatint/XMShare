@@ -1,28 +1,22 @@
 package com.merpyzf.xmshare.ui.view.activity;
 
-import android.content.Context;
-import android.content.Intent;
-import android.os.Build;
+import android.Manifest;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,24 +25,26 @@ import com.bumptech.glide.Glide;
 import com.merpyzf.httpcoreserver.ui.HttpServerActivity;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.xmshare.R;
+import com.merpyzf.xmshare.XMShareApp;
 import com.merpyzf.xmshare.common.Constant;
-import com.merpyzf.xmshare.common.base.App;
+import com.merpyzf.xmshare.common.base.BaseActivity;
 import com.merpyzf.xmshare.ui.adapter.FileSelectAdapter;
+import com.merpyzf.xmshare.ui.adapter.FilesFrgPagerAdapter;
 import com.merpyzf.xmshare.ui.view.fragment.FileListFragment;
 import com.merpyzf.xmshare.ui.view.interfaces.PersonalObservable;
 import com.merpyzf.xmshare.ui.view.interfaces.PersonalObserver;
-import com.merpyzf.xmshare.ui.widget.ApplyPermissionFragment;
 import com.merpyzf.xmshare.util.SharedPreUtils;
+import com.tbruyelle.rxpermissions2.Permission;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import de.hdodenhof.circleimageview.CircleImageView;
+import io.reactivex.functions.Consumer;
 
-public class SelectFilesActivity extends AppCompatActivity implements PersonalObserver {
+public class SelectFilesActivity extends BaseActivity implements PersonalObserver {
 
 
     @BindView(R.id.viewpager)
@@ -69,7 +65,6 @@ public class SelectFilesActivity extends AppCompatActivity implements PersonalOb
     LinearLayout mLinearMenu;
     @BindView(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
-
     // toolbar上的昵称
     @BindView(R.id.tv_nickname)
     TextView mTvNickname;
@@ -84,9 +79,6 @@ public class SelectFilesActivity extends AppCompatActivity implements PersonalOb
     // 昵称
     TextView mNavTvNickname;
 
-
-    private Context mContext;
-    private Unbinder mUnbinder;
     private List<Fragment> mFragmentList;
     private String[] mTabTitles;
     private BottomSheetBehavior<View> mSheetBehavior;
@@ -94,31 +86,77 @@ public class SelectFilesActivity extends AppCompatActivity implements PersonalOb
     private FileSelectAdapter<FileInfo> mFileSelectAdapter;
     private String TAG = SelectFilesActivity.class.getSimpleName();
 
-    public static void start(Context context) {
 
-        context.startActivity(new Intent(context, SelectFilesActivity.class));
+    @Override
+    public int getLayoutId() {
+        return R.layout.activity_select_file;
+    }
+
+    @Override
+    public void initRecyclerView() {
+
+        mRvSelectedList.setLayoutManager(new LinearLayoutManager(mContext));
+        mFileSelectAdapter = new FileSelectAdapter<>(mContext, R.layout.item_rv_select, XMShareApp.getSendFileList());
+        mRvSelectedList.setAdapter(mFileSelectAdapter);
+//        mFileSelectAdapter.setEmptyView(R.layout.view_rv_file_empty);
+    }
+
+    @Override
+    public void initViews(Bundle savedInstanceState) {
+
+
+        View headerView = mNavigationView.getHeaderView(0);
+        mNavCivAvatar = headerView.findViewById(R.id.civ_avatar);
+        mNavTvNickname = headerView.findViewById(R.id.tv_nickname);
+
+        // 更新头像和昵称
+        update();
+        updateBottomTitle();
+        // 初始并显示SheetBottom中的Recycler
+        initRecyclerView();
+        mSheetBehavior = BottomSheetBehavior.from(mBottomSheet);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        // 申请权限
+        new RxPermissions(SelectFilesActivity.this)
+                .requestEach(Manifest.permission.READ_EXTERNAL_STORAGE)
+                .subscribe(new Consumer<Permission>() {
+                    @Override
+                    public void accept(Permission permission) throws Exception {
+
+                        // 用户已经同意给与该权限
+                        if (permission.granted) {
+                            // 加载ViewPager
+                            FilesFrgPagerAdapter frgPagerAdapter = new FilesFrgPagerAdapter(fragmentManager, mFragmentList, mTabTitles);
+                            mViewPager.setAdapter(frgPagerAdapter);
+                            mTabs.setupWithViewPager(mViewPager);
+                            mTabs.setTabsFromPagerAdapter(frgPagerAdapter);
+                            mViewPager.setOffscreenPageLimit(4);
+
+                        } else if (permission.shouldShowRequestPermissionRationale) {
+                            // 用户拒绝了该权限，没有选中『不再询问』（Never ask again）,那么下次再次启动时，还会提示请求权限的对话框
+                            Log.d(TAG, permission.name + " is denied. More info should be provided.");
+                        } else {
+                            // 用户拒绝了该权限，并且选中『不再询问』
+                            Log.d(TAG, permission.name + " is denied.");
+                        }
+
+                    }
+                });
+
 
     }
 
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_select_file);
-        mUnbinder = ButterKnife.bind(this);
-        mContext = this;
+    protected void initData() {
 
-
-
-        initUI();
-        initEvent();
-
+        // 文件选择列表变化的监听
         mFileSelectListener = new OnFileSelectListener<FileInfo>() {
             @Override
             public void onSelected(FileInfo fileInfo) {
 
                 Log.i("w2k", "文件被选择了 --> " + fileInfo.getName());
-                App.addSendFile(fileInfo);
+                XMShareApp.addSendFile(fileInfo);
                 mFileSelectAdapter.notifyDataSetChanged();
                 updateBottomTitle();
 
@@ -129,7 +167,7 @@ public class SelectFilesActivity extends AppCompatActivity implements PersonalOb
             public void onCancelSelected(FileInfo fileInfo) {
 
                 Log.i("w2k", "文件被取消选择了 --> " + fileInfo.getName());
-                App.removeSendFile(fileInfo);
+                XMShareApp.removeSendFile(fileInfo);
                 mFileSelectAdapter.notifyDataSetChanged();
                 updateBottomTitle();
 
@@ -147,66 +185,6 @@ public class SelectFilesActivity extends AppCompatActivity implements PersonalOb
         };
 
 
-        // 判断是否要进行权限申请
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            ApplyPermissionFragment applyPermissionFragment = new ApplyPermissionFragment();
-            applyPermissionFragment.haveAll(getSupportFragmentManager(), this, new ApplyPermissionFragment.onApplyPermissionCompleted() {
-                @Override
-                public void onCompleted() {
-
-                    Log.i("w2k", "权限授权完毕的回调");
-                    init();
-
-                }
-            });
-        } else {
-            init();
-        }
-
-
-    }
-
-    /**
-     * 初始化UI
-     */
-    private void initUI() {
-
-        View headerView = mNavigationView.getHeaderView(0);
-        mNavCivAvatar = headerView.findViewById(R.id.civ_avatar);
-        mNavTvNickname = headerView.findViewById(R.id.tv_nickname);
-
-        // 更新头像和昵称
-        update();
-        updateBottomTitle();
-        mRvSelectedList.setLayoutManager(new LinearLayoutManager(mContext));
-
-        mFileSelectAdapter = new FileSelectAdapter<>(mContext, R.layout.item_rv_select, App.getSendFileList());
-
-        mRvSelectedList.setAdapter(mFileSelectAdapter);
-
-
-        mSheetBehavior = BottomSheetBehavior.from(mBottomSheet);
-        // TODO: 2018/1/16 可能会出现OOM,使用ViewPager中Fragment的懒加载来解决ViewPager在快速切换时造成的卡顿问题
-        mViewPager.setOffscreenPageLimit(4);
-
-    }
-
-    /**
-     * 更新底部BottomSheet的标题
-     */
-    public void updateBottomTitle() {
-
-        if (App.getSendFileList().size() == 0) {
-            mTvBottomTitle.setText("请选择要传输的文件");
-            return;
-        }
-        mTvBottomTitle.setText("已选文件个数: " + App.getSendFileList().size());
-    }
-
-    /**
-     * 初始化页面相关的数据
-     */
-    private void init() {
 
 
         mFragmentList = new ArrayList<>();
@@ -233,27 +211,23 @@ public class SelectFilesActivity extends AppCompatActivity implements PersonalOb
         FileListFragment videoFragment = FileListFragment.newInstance(FileInfo.FILE_TYPE_VIDEO, mFileSelectListener);
         mFragmentList.add(videoFragment);
 
-
-        MyFragmentPagerAdapter frgPagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager(), mFragmentList, mTabTitles);
-        mViewPager.setAdapter(frgPagerAdapter);
-        mTabs.setupWithViewPager(mViewPager);
-        mTabs.setTabsFromPagerAdapter(frgPagerAdapter);
-
     }
 
 
-    /**
-     * 初始化事件
-     */
-    private void initEvent() {
 
+    @Override
+    public void initEvents() {
+
+        // 注册一个用户昵称和头像变化的观察者
         PersonalObservable.getInstance().register(this);
+
+        // BottomSheet的滑动中的回调事件
         mSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
 
                 // 如果为选择文件则进制BottomSheet的滑动
-                if (App.getSendFileList().size() == 0) {
+                if (XMShareApp.getSendFileList().size() == 0) {
                     mSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 }
             }
@@ -269,9 +243,10 @@ public class SelectFilesActivity extends AppCompatActivity implements PersonalOb
             PersonalActivity.start(mContext);
         });
 
+        // 浮动发送按钮的点击事件
         mFabSend.setOnClickListener(v -> {
 
-            if (App.getSendFileList().size() > 0) {
+            if (XMShareApp.getSendFileList().size() > 0) {
                 Log.i("w2k", "开始发送文件");
                 SendActivity.start(mContext);
             } else {
@@ -282,13 +257,13 @@ public class SelectFilesActivity extends AppCompatActivity implements PersonalOb
 
         // 顶部menu按钮
         mLinearMenu.setOnClickListener(v -> {
-
             if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
                 mDrawerLayout.closeDrawer(GravityCompat.END);
             } else {
                 mDrawerLayout.openDrawer(GravityCompat.START);
             }
         });
+
 
         // 导航栏菜单的点击事件
         mNavigationView.setNavigationItemSelectedListener(item -> {
@@ -318,7 +293,7 @@ public class SelectFilesActivity extends AppCompatActivity implements PersonalOb
                 // 设置
                 case R.id.nav_setting:
 
-                    SettingActivity.start(mContext);
+                    SettingActivity.start(mContext, SettingActivity.class);
 
                     break;
 
@@ -330,7 +305,7 @@ public class SelectFilesActivity extends AppCompatActivity implements PersonalOb
                 // 检查新版本
                 case R.id.nav_update:
 
-                   break;
+                    break;
 
                 // 反馈
                 case R.id.nav_feedback:
@@ -344,7 +319,15 @@ public class SelectFilesActivity extends AppCompatActivity implements PersonalOb
             return true;
         });
 
+
     }
+
+    @Override
+    protected void initToolBar() {
+
+    }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -377,42 +360,9 @@ public class SelectFilesActivity extends AppCompatActivity implements PersonalOb
     }
 
 
-    // TODO: 2018/1/9  Fragment的适配器需要抽离到外部
-    class MyFragmentPagerAdapter extends FragmentStatePagerAdapter {
-
-        private List<Fragment> mFragmentList;
-        private String[] mTabTitles;
-
-        public MyFragmentPagerAdapter(FragmentManager fm, List<Fragment> fragmentList, String[] tabTitles) {
-            super(fm);
-            this.mFragmentList = fragmentList;
-            this.mTabTitles = tabTitles;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return mFragmentList.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return mFragmentList.size();
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            super.destroyItem(container, position, object);
-
-        }
-
-        @Nullable
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mTabTitles[position];
-        }
-    }
-
-    // 头像/昵称发生变化时的回调
+    /**
+     * 当头像和昵称发生变化时候的更新通知
+     */
     @Override
     public void update() {
 
@@ -422,11 +372,27 @@ public class SelectFilesActivity extends AppCompatActivity implements PersonalOb
         setAvatar(mCivAvatar, Constant.AVATAR_LIST.get(SharedPreUtils.getAvatar(mContext)));
 
 
-
-
     }
 
-    // 设置头像
+
+    /**
+     * 更新底部BottomSheet的标题
+     */
+    public void updateBottomTitle() {
+
+        if (XMShareApp.getSendFileList().size() == 0) {
+            mTvBottomTitle.setText("请选择要传输的文件");
+            return;
+        }
+        mTvBottomTitle.setText("已选文件个数: " + XMShareApp.getSendFileList().size());
+    }
+
+
+    /**
+     * 设置头像
+     * @param view
+     * @param avatar
+     */
     private void setAvatar(CircleImageView view, int avatar) {
         // 设置头像
         Glide.with(mContext)
@@ -438,10 +404,11 @@ public class SelectFilesActivity extends AppCompatActivity implements PersonalOb
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
-        mUnbinder.unbind();
         // 取消注册，从观察者集合中移除
         PersonalObservable.getInstance().unRegister(this);
-        App.getSendFileList().clear();
+        XMShareApp.getSendFileList().clear();
+        super.onDestroy();
+
+
     }
 }

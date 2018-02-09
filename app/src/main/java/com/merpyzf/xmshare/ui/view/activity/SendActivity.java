@@ -22,7 +22,7 @@ import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.interfaces.TransferObserver;
 import com.merpyzf.transfermanager.send.SenderManager;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.base.App;
+import com.merpyzf.xmshare.XMShareApp;
 import com.merpyzf.xmshare.ui.view.fragment.ScanPeerFragment;
 import com.merpyzf.xmshare.ui.view.fragment.transfer.TransferSendFragment;
 import com.merpyzf.xmshare.util.SharedPreUtils;
@@ -144,7 +144,7 @@ public class SendActivity extends AppCompatActivity implements ScanPeerFragment.
 
         // 跳转到文件发送的界面
         mSenderManager = SenderManager.getInstance(mContext);
-        mSenderManager.send(peer.getHostAddress(), App.getSendFileList());
+        mSenderManager.send(peer.getHostAddress(), XMShareApp.getSendFileList());
 
 
         mSenderManager.register(new TransferObserver() {

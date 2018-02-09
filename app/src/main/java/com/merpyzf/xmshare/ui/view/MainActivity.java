@@ -1,10 +1,7 @@
 package com.merpyzf.xmshare.ui.view;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -12,21 +9,18 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.merpyzf.httpcoreserver.ui.HttpServerActivity;
-import com.merpyzf.transfermanager.util.NetworkUtil;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Constant;
+import com.merpyzf.xmshare.common.base.BaseActivity;
 import com.merpyzf.xmshare.ui.view.activity.ReceiveActivity;
 import com.merpyzf.xmshare.ui.view.activity.SelectFilesActivity;
 import com.merpyzf.xmshare.ui.view.activity.SettingActivity;
 import com.merpyzf.xmshare.util.SharedPreUtils;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends BaseActivity implements View.OnClickListener {
 
-    private Unbinder mbind;
     @BindView(R.id.btn_start_server)
     Button btnStartServer;
     @BindView(R.id.btn_receive)
@@ -35,58 +29,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button btnStarSc;
     @BindView(R.id.btn_save)
     Button btnSave;
-
-
     @BindView(R.id.edt_nickname)
     EditText edtNickName;
-
-
     @BindView(R.id.tool_bar)
     Toolbar mToolbar;
 
-
     private String TAG = MainActivity.class.getSimpleName();
-    private Context mContext = null;
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        mContext = this;
-        mbind = ButterKnife.bind(this);
-        init();
-        initUI();
-        initEvent();
-        // 关闭AP
-//        ApManager.configApState(mContext);
-        String localIp = NetworkUtil.getLocalIp(mContext);
-        Log.i("w2k", "本机地址: " + localIp);
+    public int getLayoutId() {
+        return R.layout.activity_main;
+    }
 
+    @Override
+    public void initViews(Bundle savedInstanceState) {
 
     }
 
-    private void initUI() {
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle("小马快传");
-    }
-
-    /**
-     * 初始化参数
-     */
-    private void init() {
-
-        setNickName();
-
-    }
-
-
-    private void initEvent() {
+    @Override
+    public void initEvents() {
 
         btnStartServer.setOnClickListener(this);
         btnReceive.setOnClickListener(this);
         btnSave.setOnClickListener(this);
         btnStarSc.setOnClickListener(this);
-
 
 
         mToolbar.setOnMenuItemClickListener(item -> {
@@ -96,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 case R.id.menu_item_setting:
 
-                    SettingActivity.start(mContext);
+                    SettingActivity.start(mContext, SettingActivity.class);
 
                     break;
 
@@ -109,6 +76,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             return false;
         });
+    }
+
+    @Override
+    protected void initToolBar() {
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setTitle("小马快传");
+    }
+
+
+    @Override
+    protected void initData() {
+        // 设置昵称
+        setNickName();
 
     }
 
@@ -125,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 ReceiveActivity.start(mContext);
                 break;
             case R.id.btn_send:
-                SelectFilesActivity.start(mContext);
+                SelectFilesActivity.start(mContext, SelectFilesActivity.class);
                 break;
 
 
@@ -148,6 +128,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
     /**
      * 设置昵称
      */
@@ -162,13 +150,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
     }
 
 }

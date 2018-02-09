@@ -17,7 +17,7 @@ import com.merpyzf.transfermanager.interfaces.TransferObserver;
 import com.merpyzf.transfermanager.receive.ReceiverManager;
 import com.merpyzf.transfermanager.util.ApManager;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.base.App;
+import com.merpyzf.xmshare.XMShareApp;
 import com.merpyzf.xmshare.ui.view.fragment.ReceivePeerFragment;
 import com.merpyzf.xmshare.ui.view.fragment.transfer.TransferReceiveFragment;
 import com.merpyzf.xmshare.util.SharedPreUtils;
@@ -128,7 +128,7 @@ public class ReceiveActivity extends AppCompatActivity {
                         }
                     });
 //                    new Thread(receiverManager).start();
-                    App.getSingleThreadPool().execute(receiverManager);
+                    XMShareApp.getSingleThreadPool().execute(receiverManager);
                     Log.i("w2k", "开启一个ServerScoket等待设备接入");
 
                     // 当接收到待传输的文件列表时，跳转到文件传输的界面
@@ -152,7 +152,7 @@ public class ReceiveActivity extends AppCompatActivity {
                 public void onApEnableAction() {
 
                     ReceiverManager receiverManager = ReceiverManager.getInstance();
-                    App.getSingleThreadPool().execute(receiverManager);
+                    XMShareApp.getSingleThreadPool().execute(receiverManager);
                     // 监听待传输的文件列表是否发送成功
                     receiverManager.setOnTransferFileListListener(transferFileList -> {
 

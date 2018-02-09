@@ -18,7 +18,7 @@ import com.merpyzf.transfermanager.constant.Constant;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.receive.ReceiverManager;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.base.App;
+import com.merpyzf.xmshare.XMShareApp;
 import com.merpyzf.xmshare.ui.adapter.FileTransferAdapter;
 import com.merpyzf.xmshare.util.AppUtils;
 
@@ -148,7 +148,7 @@ public class TransferReceiveFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        App.getSendFileList().clear();
+        XMShareApp.getSendFileList().clear();
         super.onDestroy();
     }
 

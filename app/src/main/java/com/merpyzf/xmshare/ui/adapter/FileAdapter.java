@@ -18,7 +18,7 @@ import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.transfermanager.util.FormatUtils;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.base.App;
+import com.merpyzf.xmshare.XMShareApp;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.io.File;
@@ -105,7 +105,7 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
         FileInfo fileInfo = (FileInfo) item;
         ImageView ivSelect = helper.getView(R.id.iv_select);
 
-        if (App.getSendFileList().contains(fileInfo)) {
+        if (XMShareApp.getSendFileList().contains(fileInfo)) {
             ivSelect.setVisibility(View.VISIBLE);
 
         } else {

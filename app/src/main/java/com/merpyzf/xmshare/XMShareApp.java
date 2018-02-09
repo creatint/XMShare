@@ -1,4 +1,4 @@
-package com.merpyzf.xmshare.common.base;
+package com.merpyzf.xmshare;
 
 import android.app.Application;
 import android.content.Context;
@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
  * Created by wangke on 2018/1/16.
  */
 
-public class App extends Application {
+public class XMShareApp extends Application {
 
 
     public static Context AppContext;
