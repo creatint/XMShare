@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -104,8 +105,8 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> im
         ivRemove.setOnClickListener(v -> {
 
             XMShareApp.removeSendFile(fileInfo);
-            // 发送文件发生改变的广播
-            mContext.sendBroadcast(new Intent(FileSelectedListChangedReceiver.ACTION));
+            // 发送文件选择状态改变的应用内广播
+            LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(FileSelectedListChangedReceiver.ACTION));
             notifyDataSetChanged();
             //更新底部标题
             ((SelectFilesActivity) mContext).updateBottomTitle();

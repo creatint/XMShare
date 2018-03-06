@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +26,8 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 /**
- * A simple {@link Fragment} subclass.
+ * 文件发送列表进度及状态展示界面
+ * @author wangke
  */
 @SuppressLint("ValidFragment")
 public class TransferSendFragment extends Fragment  {
@@ -64,7 +64,7 @@ public class TransferSendFragment extends Fragment  {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        Log.i(TAG, "TransferSendFragment的View被创建");
+        // 当View创建完毕后进行文件的发送
         SenderManager.getInstance(mContext).send(mPeer.getHostAddress(), XMShareApp.getSendFileList());
         super.onViewCreated(view, savedInstanceState);
 
@@ -81,7 +81,6 @@ public class TransferSendFragment extends Fragment  {
         mUnbinder.unbind();
         SenderManager.getInstance(mContext).release();
         XMShareApp.resetSendFileList();
-        Log.i("w2k", "onDestory");
         super.onDestroy();
     }
 

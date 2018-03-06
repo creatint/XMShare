@@ -17,7 +17,7 @@ public class BottomSheetDialogActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_bottom_sheet_dialog);
+        setContentView(R.layout.selectedfiles_bottom_sheet_dialog);
 
         View viewBottomSheet = findViewById(R.id.bottom_sheet);
         mBtnBs = findViewById(R.id.btn_bottomsheet);

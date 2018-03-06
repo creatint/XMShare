@@ -294,13 +294,22 @@ public class SenderTask implements ISendTask, Runnable {
             if (i == mSendFileList.size() - 1) {
                 fileInfo.setIsLast(1);
             }
-            // 发送文件头信息
-            sendHeader(fileInfo);
 
-            // 发送文件
-            sendBody(fileInfo);
+            sendFile(fileInfo);
         }
 
 
     }
+
+    /**
+     * 发送文件
+     */
+    void sendFile(FileInfo fileInfo){
+        // 发送文件的协议头
+        sendHeader(fileInfo);
+        // fa
+        sendBody(fileInfo);
+
+    }
+
 }

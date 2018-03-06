@@ -22,7 +22,6 @@ import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.interfaces.TransferObserver;
 import com.merpyzf.transfermanager.send.SenderManager;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.XMShareApp;
 import com.merpyzf.xmshare.ui.view.fragment.ScanPeerFragment;
 import com.merpyzf.xmshare.ui.view.fragment.transfer.TransferSendFragment;
 import com.merpyzf.xmshare.util.SharedPreUtils;
@@ -129,7 +128,7 @@ public class SendActivity extends AppCompatActivity implements ScanPeerFragment.
     @Override
     public void onSendConnRequestAction() {
 
-        Log.i("w2k", "显示火箭的图标");
+        Log.i(TAG, "显示火箭的图标");
         // 设为可见状态
         mLinearRocket.setVisibility(View.VISIBLE);
         mLinearRocket.setFocusable(true);
@@ -138,22 +137,22 @@ public class SendActivity extends AppCompatActivity implements ScanPeerFragment.
 
     }
 
+    /**
+     * 局域网内设备配对成功后的回调用
+     * @param peer
+     */
     @Override
     public void onPeerPairSuccessAction(Peer peer) {
 
-
-        // 跳转到文件发送的界面
-        mSenderManager = SenderManager.getInstance(mContext);
-        mSenderManager.send(peer.getHostAddress(), XMShareApp.getSendFileList());
-
-
-        mSenderManager.register(new TransferObserver() {
+        // 注册一个文件发送状态的监听
+        SenderManager.getInstance(mContext).register(new TransferObserver() {
+            // 文件的传输进度
             @Override
             public void onTransferProgress(FileInfo fileInfo) {
 
             }
 
-            // 局域网内的文件发送
+            // 传输中的文件的状态
             @Override
             public void onTransferStatus(FileInfo fileInfo) {
                 // 如果当前传输的是最后一个文件，并且传输成功后重置标记
@@ -161,6 +160,7 @@ public class SendActivity extends AppCompatActivity implements ScanPeerFragment.
                     isTransfering = false;
                 }
             }
+
         });
 
 
@@ -169,7 +169,6 @@ public class SendActivity extends AppCompatActivity implements ScanPeerFragment.
         animator.setInterpolator(new AccelerateInterpolator());
         animator.setDuration(500);
         animator.addListener(new Animator.AnimatorListener() {
-
 
             @Override
             public void onAnimationStart(Animator animation) {

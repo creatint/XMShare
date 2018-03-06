@@ -14,7 +14,7 @@ import com.merpyzf.xmshare.util.SharedPreUtils;
 import butterknife.BindView;
 
 /**
- * 设置页面
+ * 应用设置界面
  */
 public class SettingActivity extends BaseActivity {
 

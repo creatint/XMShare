@@ -44,6 +44,10 @@ import butterknife.BindView;
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.reactivex.functions.Consumer;
 
+/**
+ * 应用首页界面
+ * @author wangke
+ */
 public class SelectFilesActivity extends BaseActivity implements PersonalObserver {
 
 
@@ -98,7 +102,6 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         mRvSelectedList.setLayoutManager(new LinearLayoutManager(mContext));
         mFileSelectAdapter = new FileSelectAdapter<>(mContext, R.layout.item_rv_select, XMShareApp.getSendFileList());
         mRvSelectedList.setAdapter(mFileSelectAdapter);
-//        mFileSelectAdapter.setEmptyView(R.layout.view_rv_file_empty);
     }
 
     @Override
@@ -152,10 +155,13 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
 
         // 文件选择列表变化的监听
         mFileSelectListener = new OnFileSelectListener<FileInfo>() {
+            /**
+             * 选择文件的回调
+             * @param fileInfo
+             */
             @Override
             public void onSelected(FileInfo fileInfo) {
 
-                Log.i("w2k", "文件被选择了 --> " + fileInfo.getName());
                 XMShareApp.addSendFile(fileInfo);
                 mFileSelectAdapter.notifyDataSetChanged();
                 updateBottomTitle();
@@ -163,10 +169,13 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
 
             }
 
+            /**
+             * 文件取消选择的回调
+             * @param fileInfo
+             */
             @Override
             public void onCancelSelected(FileInfo fileInfo) {
 
-                Log.i("w2k", "文件被取消选择了 --> " + fileInfo.getName());
                 XMShareApp.removeSendFile(fileInfo);
                 mFileSelectAdapter.notifyDataSetChanged();
                 updateBottomTitle();
@@ -185,7 +194,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         };
 
 
-
+        // 初始化主页要显示的可以传输文件的类别
 
         mFragmentList = new ArrayList<>();
         mTabTitles = new String[4];
@@ -194,7 +203,6 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         mTabTitles[1] = "图片";
         mTabTitles[2] = "音乐";
         mTabTitles[3] = "视频";
-
         // 应用
         FileListFragment appFragment = FileListFragment.newInstance(FileInfo.FILE_TYPE_APP, mFileSelectListener);
         mFragmentList.add(appFragment);
@@ -247,7 +255,6 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         mFabSend.setOnClickListener(v -> {
 
             if (XMShareApp.getSendFileList().size() > 0) {
-                Log.i("w2k", "开始发送文件");
                 SendActivity.start(mContext);
             } else {
                 Toast.makeText(mContext, "请选择文件", Toast.LENGTH_SHORT).show();
@@ -366,7 +373,6 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
     @Override
     public void update() {
 
-        System.out.println("update执行了");
         mNavTvNickname.setText(SharedPreUtils.getNickName(mContext));
         setAvatar(mNavCivAvatar, Constant.AVATAR_LIST.get(SharedPreUtils.getAvatar(mContext)));
         setAvatar(mCivAvatar, Constant.AVATAR_LIST.get(SharedPreUtils.getAvatar(mContext)));

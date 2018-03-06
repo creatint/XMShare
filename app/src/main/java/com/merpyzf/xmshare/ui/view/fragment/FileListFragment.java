@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
@@ -101,6 +102,18 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
 
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        // 动态注册监听选择文件列表发生改变的广播
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(FileSelectedListChangedReceiver.ACTION);
+        LocalBroadcastManager.getInstance(mContext).registerReceiver(mFslcReceiver, intentFilter);
+
+    }
+
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
@@ -176,9 +189,6 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                 mFileListAdapter.notifyDataSetChanged();
             }
         };
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(FileSelectedListChangedReceiver.ACTION);
-        getActivity().registerReceiver(mFslcReceiver, intentFilter);
 
 
         mCheckBoxAll.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -525,9 +535,16 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        // 解注册
+        LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mFslcReceiver);
+
+    }
+
+    @Override
     public void onDestroy() {
         mLoaderManager.destroyLoader(LOAD_FILE_TYPE);
-        mContext.unregisterReceiver(mFslcReceiver);
         mUnbinder.unbind();
         super.onDestroy();
     }

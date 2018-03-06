@@ -107,7 +107,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
-            android:layout_above="@id/btn_change_ap"
+            android:layout_above="@+id/btn_change_ap"
             android:layout_centerHorizontal="true"
             android:text="tip：您正在使用同网模式"
             />
