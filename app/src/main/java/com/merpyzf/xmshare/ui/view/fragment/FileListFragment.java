@@ -133,6 +133,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
         if (XMShareApp.getSendFileList().size() > 0) {
             XMShareApp.getSendFileList().clear();
         }
+
         /**
          *  文件列表点击选择的回调事件
          */
@@ -148,13 +149,15 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                 ivSelect.setVisibility(View.VISIBLE);
                 // 添加选中的文件
                 XMShareApp.addSendFile(fileInfo);
+
+
+
+
                 // 将文件选择的事件回调给外部
                 if (mFileSelectListener != null) {
                     mFileSelectListener.onSelected(fileInfo);
 
                 }
-
-
                 //2.添加任务 动画
                 View startView = null;
                 View targetView = null;

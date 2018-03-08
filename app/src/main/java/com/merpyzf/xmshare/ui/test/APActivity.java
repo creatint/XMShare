@@ -155,7 +155,7 @@ public class APActivity extends AppCompatActivity {
                     }
                 });
 
-                XMShareApp.mSingleThreadPool.execute(receiverManager);
+                XMShareApp.getSingleThreadPool().execute(receiverManager);
 
             }
 

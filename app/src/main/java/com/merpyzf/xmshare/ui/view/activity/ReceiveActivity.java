@@ -96,6 +96,7 @@ public class ReceiveActivity extends AppCompatActivity {
         mReceivePeerFragment = new ReceivePeerFragment();
         transaction.replace(R.id.frame_content, mReceivePeerFragment);
         transaction.commit();
+
     }
 
     /**
@@ -104,12 +105,10 @@ public class ReceiveActivity extends AppCompatActivity {
     private void initEvent() {
 
         if (mReceivePeerFragment != null) {
-
             mReceivePeerFragment.setOnReceivePairActionListener(new ReceivePeerFragment.OnReceivePairActionListener() {
                 @Override
                 public void onRequestSendFileAction() {
                     // 收到对端请求发送文件的请求
-
                     // 开启一个Socket服务
                     ReceiverManager receiverManager = ReceiverManager.getInstance();
                     receiverManager.register(new TransferObserver() {
@@ -127,7 +126,7 @@ public class ReceiveActivity extends AppCompatActivity {
                             }
                         }
                     });
-//                    new Thread(receiverManager).start();
+
                     XMShareApp.getSingleThreadPool().execute(receiverManager);
                     Log.i("w2k", "开启一个ServerScoket等待设备接入");
 
@@ -161,6 +160,7 @@ public class ReceiveActivity extends AppCompatActivity {
                         transaction.replace(R.id.frame_content, mTransferReceiveFragment);
                         transaction.commit();
                         isTransfering = true;
+
                     });
                 }
             });

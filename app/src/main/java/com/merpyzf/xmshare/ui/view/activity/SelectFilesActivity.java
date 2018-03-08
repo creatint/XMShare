@@ -46,6 +46,7 @@ import io.reactivex.functions.Consumer;
 
 /**
  * 应用首页界面
+ *
  * @author wangke
  */
 public class SelectFilesActivity extends BaseActivity implements PersonalObserver {
@@ -221,8 +222,6 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
 
     }
 
-
-
     @Override
     public void initEvents() {
 
@@ -334,7 +333,45 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
 
     }
 
+    /**
+     * 当头像和昵称发生变化时候的更新通知
+     */
+    @Override
+    public void update() {
 
+        mNavTvNickname.setText(SharedPreUtils.getNickName(mContext));
+        setAvatar(mNavCivAvatar, Constant.AVATAR_LIST.get(SharedPreUtils.getAvatar(mContext)));
+        setAvatar(mCivAvatar, Constant.AVATAR_LIST.get(SharedPreUtils.getAvatar(mContext)));
+
+
+    }
+
+    /**
+     * 更新底部BottomSheet的标题
+     */
+    public void updateBottomTitle() {
+
+        if (XMShareApp.getSendFileList().size() == 0) {
+            mTvBottomTitle.setText("请选择要传输的文件");
+            return;
+        }
+        mTvBottomTitle.setText("已选文件个数: " + XMShareApp.getSendFileList().size());
+    }
+
+    /**
+     * 设置头像
+     *
+     * @param view
+     * @param avatar
+     */
+    private void setAvatar(CircleImageView view, int avatar) {
+        // 设置头像
+        Glide.with(mContext)
+                .load(avatar)
+                .crossFade()
+                .centerCrop()
+                .into(view);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -353,7 +390,6 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         return super.onOptionsItemSelected(item);
     }
 
-
     @Override
     public void onBackPressed() {
 
@@ -364,48 +400,6 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         }
 
 
-    }
-
-
-    /**
-     * 当头像和昵称发生变化时候的更新通知
-     */
-    @Override
-    public void update() {
-
-        mNavTvNickname.setText(SharedPreUtils.getNickName(mContext));
-        setAvatar(mNavCivAvatar, Constant.AVATAR_LIST.get(SharedPreUtils.getAvatar(mContext)));
-        setAvatar(mCivAvatar, Constant.AVATAR_LIST.get(SharedPreUtils.getAvatar(mContext)));
-
-
-    }
-
-
-    /**
-     * 更新底部BottomSheet的标题
-     */
-    public void updateBottomTitle() {
-
-        if (XMShareApp.getSendFileList().size() == 0) {
-            mTvBottomTitle.setText("请选择要传输的文件");
-            return;
-        }
-        mTvBottomTitle.setText("已选文件个数: " + XMShareApp.getSendFileList().size());
-    }
-
-
-    /**
-     * 设置头像
-     * @param view
-     * @param avatar
-     */
-    private void setAvatar(CircleImageView view, int avatar) {
-        // 设置头像
-        Glide.with(mContext)
-                .load(avatar)
-                .crossFade()
-                .centerCrop()
-                .into(view);
     }
 
     @Override
