@@ -51,6 +51,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+/**
+ *
+ * 扫描到的本地文件列表的展示页面
+ * @author wangke
+ *
+ */
 public class FileListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     @BindView(R.id.rv_music_list)
@@ -151,8 +157,6 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                 XMShareApp.addSendFile(fileInfo);
 
 
-
-
                 // 将文件选择的事件回调给外部
                 if (mFileSelectListener != null) {
                     mFileSelectListener.onSelected(fileInfo);
@@ -250,12 +254,14 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
         }
 
 
+
         mFileLists = new ArrayList<>();
 
         switch (LOAD_FILE_TYPE) {
 
             case FileInfo.FILE_TYPE_APP:
 
+                setTitle("应用");
                 mRvFileList.setLayoutManager(new GridLayoutManager(getContext(), 4));
                 mFileListAdapter = new FileAdapter<FileInfo>(getActivity(), R.layout.item_rv_apk, mFileLists);
 
@@ -263,17 +269,21 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
 
             case FileInfo.FILE_TYPE_IMAGE:
 
+                setTitle("图片");
                 mRvFileList.setLayoutManager(new GridLayoutManager(getContext(), 4));
                 mFileListAdapter = new FileAdapter<FileInfo>(getActivity(), R.layout.item_rv_pic, mFileLists);
 
                 break;
 
             case FileInfo.FILE_TYPE_MUSIC:
+
+                setTitle("音乐");
                 mRvFileList.setLayoutManager(new LinearLayoutManager(getContext()));
                 mFileListAdapter = new FileAdapter<FileInfo>(getActivity(), R.layout.item_rv_music, mFileLists);
                 break;
 
             case FileInfo.FILE_TYPE_VIDEO:
+                setTitle("视频");
                 mRvFileList.setLayoutManager(new LinearLayoutManager(getContext()));
                 mFileListAdapter = new FileAdapter<FileInfo>(getActivity(), R.layout.item_rv_video, mFileLists);
                 break;
@@ -283,9 +293,11 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
 
 
         }
+        // 设置空布局
+        // 需要将布局文件转换成View后才能设置，否则会报错
+        mFileListAdapter.setEmptyView(View.inflate(mContext, R.layout.view_rv_file_empty, null));
         // 设置适配器
         mRvFileList.setAdapter(mFileListAdapter);
-//        mFileListAdapter.setEmptyView(R.layout.view_rv_file_empty);
 
 
     }

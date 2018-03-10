@@ -52,6 +52,9 @@ public class FileInfo {
 
     //是否是传输中的最后一个文件，如果是则为1，不是默认为-1
     private int isLast = -1;
+    // 文件传输的完整性校验
+    private String md5;
+
 
 
     public FileInfo() {
@@ -146,6 +149,13 @@ public class FileInfo {
         this.transferSpeed = transferSpeed;
     }
 
+    public String getMd5() {
+        return md5;
+    }
+
+    public void setMd5(String md5) {
+        this.md5 = md5;
+    }
     /**
      * 获取传输中的文件头信息
      *

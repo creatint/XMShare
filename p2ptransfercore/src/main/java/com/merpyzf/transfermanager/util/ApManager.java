@@ -104,7 +104,9 @@ public class ApManager {
             Method method = manager.getClass().getDeclaredMethod("getWifiApConfiguration");
             //调用getWifiApConfiguration()方法，获取到 热点的WifiConfiguration
             WifiConfiguration configuration = (WifiConfiguration) method.invoke(manager);
+
             ssid = configuration.SSID;
+
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
