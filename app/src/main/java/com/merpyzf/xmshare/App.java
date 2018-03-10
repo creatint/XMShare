@@ -4,7 +4,9 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
+import com.litesuits.orm.LiteOrm;
 import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.xmshare.common.Constant;
 import com.merpyzf.xmshare.util.Md5Utils;
 
 import java.io.File;
@@ -23,7 +25,7 @@ import io.reactivex.schedulers.Schedulers;
  * Created by wangke on 2018/1/16.
  */
 
-public class XMShareApp extends Application {
+public class App extends Application {
 
 
     private static Context AppContext;
@@ -33,7 +35,8 @@ public class XMShareApp extends Application {
      */
     private static List<FileInfo> mSendFileList;
     private static ExecutorService mSingleThreadPool;
-    private static String TAG  = XMShareApp.class.getSimpleName();
+    private static LiteOrm mSingleLiteOrm;
+    private static String TAG = App.class.getSimpleName();
 
     @Override
     public void onCreate() {
@@ -56,17 +59,17 @@ public class XMShareApp extends Application {
             mSendFileList.add(fileInfo);
 
             Observable.just(fileInfo)
-                  .flatMap((Function<FileInfo, ObservableSource<File>>) fileInfo1 -> Observable.just(new File(fileInfo1.getPath())))
+                    .flatMap((Function<FileInfo, ObservableSource<File>>) fileInfo1 -> Observable.just(new File(fileInfo1.getPath())))
                     .subscribeOn(AndroidSchedulers.mainThread())// 指定被观察者执行所在的线程
                     .observeOn(Schedulers.io()) // 指定观察者执行所在的线程
-                   .subscribe(file -> {
-                       // 观察者
-                       String md5 = Md5Utils.getMd5(file);
-                       fileInfo.setMd5(md5);
+                    .subscribe(file -> {
+                        // 观察者
+                        String md5 = Md5Utils.getMd5(file);
+                        fileInfo.setMd5(md5);
 
-                       Log.i(TAG, fileInfo.getName()+"-> \n"+md5);
+                        Log.i(TAG, fileInfo.getName() + "-> \n" + md5);
 
-                   });
+                    });
 
 
         }
@@ -101,7 +104,7 @@ public class XMShareApp extends Application {
      */
     public static void resetSendFileList() {
 
-        for(int i=0;i<mSendFileList.size();i++){
+        for (int i = 0; i < mSendFileList.size(); i++) {
             FileInfo fileInfo = mSendFileList.get(i);
             fileInfo.reset();
         }
@@ -111,4 +114,21 @@ public class XMShareApp extends Application {
     public static ExecutorService getSingleThreadPool() {
         return mSingleThreadPool;
     }
+
+    public static LiteOrm getSingleLiteOrm() {
+
+        if (mSingleLiteOrm == null) {
+            synchronized (Object.class) {
+                if (mSingleLiteOrm == null) {
+
+                    mSingleLiteOrm = LiteOrm.newSingleInstance(AppContext, Constant.DB_NAME);
+                    // 开启Debug
+                    mSingleLiteOrm.setDebugged(true);
+                }
+            }
+        }
+        return mSingleLiteOrm;
+    }
+
+
 }

@@ -25,7 +25,7 @@ import com.bumptech.glide.Glide;
 import com.merpyzf.httpcoreserver.ui.HttpServerActivity;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.XMShareApp;
+import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.common.Constant;
 import com.merpyzf.xmshare.common.base.BaseActivity;
 import com.merpyzf.xmshare.ui.adapter.FileSelectAdapter;
@@ -101,7 +101,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
     public void initRecyclerView() {
 
         mRvSelectedList.setLayoutManager(new LinearLayoutManager(mContext));
-        mFileSelectAdapter = new FileSelectAdapter<>(mContext, R.layout.item_rv_select, XMShareApp.getSendFileList());
+        mFileSelectAdapter = new FileSelectAdapter<>(mContext, R.layout.item_rv_select, App.getSendFileList());
         mRvSelectedList.setAdapter(mFileSelectAdapter);
     }
 
@@ -163,7 +163,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
             @Override
             public void onSelected(FileInfo fileInfo) {
 
-                XMShareApp.addSendFile(fileInfo);
+                App.addSendFile(fileInfo);
                 mFileSelectAdapter.notifyDataSetChanged();
                 updateBottomTitle();
 
@@ -177,7 +177,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
             @Override
             public void onCancelSelected(FileInfo fileInfo) {
 
-                XMShareApp.removeSendFile(fileInfo);
+                App.removeSendFile(fileInfo);
                 mFileSelectAdapter.notifyDataSetChanged();
                 updateBottomTitle();
 
@@ -234,7 +234,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
 
                 // 如果为选择文件则进制BottomSheet的滑动
-                if (XMShareApp.getSendFileList().size() == 0) {
+                if (App.getSendFileList().size() == 0) {
                     mSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 }
             }
@@ -253,7 +253,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         // 浮动发送按钮的点击事件
         mFabSend.setOnClickListener(v -> {
 
-            if (XMShareApp.getSendFileList().size() > 0) {
+            if (App.getSendFileList().size() > 0) {
                 SendActivity.start(mContext);
             } else {
                 Toast.makeText(mContext, "请选择文件", Toast.LENGTH_SHORT).show();
@@ -351,11 +351,11 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
      */
     public void updateBottomTitle() {
 
-        if (XMShareApp.getSendFileList().size() == 0) {
+        if (App.getSendFileList().size() == 0) {
             mTvBottomTitle.setText("请选择要传输的文件");
             return;
         }
-        mTvBottomTitle.setText("已选文件个数: " + XMShareApp.getSendFileList().size());
+        mTvBottomTitle.setText("已选文件个数: " + App.getSendFileList().size());
     }
 
     /**
@@ -406,7 +406,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
     protected void onDestroy() {
         // 取消注册，从观察者集合中移除
         PersonalObservable.getInstance().unRegister(this);
-        XMShareApp.getSendFileList().clear();
+        App.getSendFileList().clear();
         super.onDestroy();
 
 

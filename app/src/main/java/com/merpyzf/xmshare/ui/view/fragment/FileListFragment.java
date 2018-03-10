@@ -26,19 +26,23 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.litesuits.orm.LiteOrm;
+import com.litesuits.orm.db.assit.QueryBuilder;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.transfermanager.util.FileUtils;
+import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.XMShareApp;
+import com.merpyzf.xmshare.bean.model.FileMd5Model;
 import com.merpyzf.xmshare.receiver.FileSelectedListChangedReceiver;
 import com.merpyzf.xmshare.ui.adapter.FileAdapter;
 import com.merpyzf.xmshare.ui.view.activity.OnFileSelectListener;
 import com.merpyzf.xmshare.ui.view.activity.SelectFilesActivity;
 import com.merpyzf.xmshare.util.AnimationUtils;
 import com.merpyzf.xmshare.util.ApkUtils;
+import com.merpyzf.xmshare.util.Md5Utils;
 import com.merpyzf.xmshare.util.MusicUtils;
 import com.merpyzf.xmshare.util.VideoUtils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
@@ -50,6 +54,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  *
@@ -136,8 +142,8 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
         mLoaderManager.initLoader(LOAD_FILE_TYPE, null, FileListFragment.this);
 
         // 选择前先清空上一次选择的数据
-        if (XMShareApp.getSendFileList().size() > 0) {
-            XMShareApp.getSendFileList().clear();
+        if (App.getSendFileList().size() > 0) {
+            App.getSendFileList().clear();
         }
 
         /**
@@ -150,11 +156,11 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
 
             FileInfo fileInfo = mFileLists.get(position);
 
-            if (!XMShareApp.getSendFileList().contains(fileInfo)) {
+            if (!App.getSendFileList().contains(fileInfo)) {
 
                 ivSelect.setVisibility(View.VISIBLE);
                 // 添加选中的文件
-                XMShareApp.addSendFile(fileInfo);
+                App.addSendFile(fileInfo);
 
 
                 // 将文件选择的事件回调给外部
@@ -178,7 +184,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
             } else {
                 ivSelect.setVisibility(View.INVISIBLE);
                 //移除选中的文件
-                XMShareApp.removeSendFile(fileInfo);
+                App.removeSendFile(fileInfo);
                 if (mFileSelectListener != null) {
                     mFileSelectListener.onCancelSelected(fileInfo);
                 }
@@ -204,8 +210,8 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
 
                 mTvChecked.setText("取消全选");
                 for (int i = 0; i < mFileLists.size(); i++) {
-                    if (!XMShareApp.getSendFileList().contains(mFileLists.get(i))) {
-                        XMShareApp.getSendFileList().add(mFileLists.get(i));
+                    if (!App.getSendFileList().contains(mFileLists.get(i))) {
+                        App.getSendFileList().add(mFileLists.get(i));
                     }
                 }
                 mFileListAdapter.notifyDataSetChanged();
@@ -220,8 +226,8 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
 
                 // 取消全选
                 for (int i = 0; i < mFileLists.size(); i++) {
-                    if (XMShareApp.getSendFileList().contains(mFileLists.get(i))) {
-                        XMShareApp.getSendFileList().remove(mFileLists.get(i));
+                    if (App.getSendFileList().contains(mFileLists.get(i))) {
+                        App.getSendFileList().remove(mFileLists.get(i));
                     }
                 }
                 mFileListAdapter.notifyDataSetChanged();
@@ -298,6 +304,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
         mFileListAdapter.setEmptyView(View.inflate(mContext, R.layout.view_rv_file_empty, null));
         // 设置适配器
         mRvFileList.setAdapter(mFileListAdapter);
+        mRvFileList.setVisibility(View.INVISIBLE);
 
 
     }
@@ -314,6 +321,8 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
             mFileLists.addAll(appList);
             // 发送一个空的消息，提示扫描完毕
             mHandler.sendEmptyMessage(0);
+            // 异步生成并文件的MD5并写入到数据库中
+            asyncGenerateFileMd5(mFileLists);
 
         }).start();
     }
@@ -416,12 +425,16 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                 mProgressBar.setVisibility(View.INVISIBLE);
                 // 在线程中更新音乐封面图片
                 MusicUtils.updateAlbumImg(getContext(), mFileLists);
+                // 异步生成并文件的MD5并写入到数据库中
+                asyncGenerateFileMd5(mFileLists);
 
             } else {
                 mProgressBar.setVisibility(View.INVISIBLE);
                 Toast.makeText(getContext(), "没有扫描到本地音乐", Toast.LENGTH_SHORT).show();
             }
 
+            mRvFileList.setVisibility(View.VISIBLE);
+            mProgressBar.setVisibility(View.INVISIBLE);
             mFileListAdapter.notifyDataSetChanged();
 
 
@@ -456,7 +469,10 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                 }
                 setTitle("图片");
                 // 数据加载完成后隐藏进进度提示
+                mRvFileList.setVisibility(View.VISIBLE);
                 mProgressBar.setVisibility(View.INVISIBLE);
+                // 异步生成并文件的MD5并写入到数据库中
+                asyncGenerateFileMd5(mFileLists);
             } else {
                 // 数据加载完成后隐藏进进度提示
                 mProgressBar.setVisibility(View.INVISIBLE);
@@ -499,8 +515,13 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
 
                 }
                 setTitle("视频");
+                mRvFileList.setVisibility(View.VISIBLE);
                 mProgressBar.setVisibility(View.INVISIBLE);
                 VideoUtils.updateThumbImg(mContext, mFileLists);
+                // 异步生成并文件的MD5并写入到数据库中
+                asyncGenerateFileMd5(mFileLists);
+
+
 
             } else {
 
@@ -532,6 +553,8 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
             super.handleMessage(msg);
             setTitle("应用");
             mFileListAdapter.notifyDataSetChanged();
+            // 将RecyclerView设置为可见状态
+            mRvFileList.setVisibility(View.VISIBLE);
             mProgressBar.setVisibility(View.INVISIBLE);
         }
     }
@@ -540,6 +563,46 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
     public void setTitle(String type) {
         mTvTitle.setText(type + "(" + mFileLists.size() + ")");
     }
+
+
+    /**
+     * 生成文件的Md5值并存储到数据库中
+     */
+    public void asyncGenerateFileMd5(List<FileInfo> fileList){
+
+        LiteOrm liteOrm = App.getSingleLiteOrm();
+
+        Observable.fromIterable(fileList)
+                .filter(fileInfo -> {
+                    // 过滤掉数据库中已经存在的文件
+                    ArrayList<FileMd5Model> fileMd5Models = liteOrm.query(new QueryBuilder<FileMd5Model>(FileMd5Model.class)
+                            .whereEquals("file_name", fileInfo.getName()));
+                    if(fileMd5Models.size() == 0){
+                        Log.i(TAG,fileInfo.getName()+"在数据库中不存在");
+                        return true;
+                    }
+
+                    Log.i(TAG,fileInfo.getName()+"在数据库中已经存在");
+                    return false;
+                }).subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(fileInfo -> {
+                    // 计算文件的MD5耗时操作
+                    String md5 = Md5Utils.getMd5(new File(fileInfo.getPath()));
+                    Log.i(TAG, "计算"+fileInfo.getName()+"的MD5,并向数据库中写入");
+                    FileMd5Model fileMd5Model = new FileMd5Model(fileInfo.getName(), md5);
+                    // 向数据库中写入
+                    liteOrm.insert(fileMd5Model);
+
+                });
+
+
+
+
+
+
+    }
+
 
 
     @Override

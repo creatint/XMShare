@@ -23,7 +23,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
-        android:name=".XMShareApp"
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -39,13 +39,11 @@
             android:name=".ui.view.activity.SendActivity"
             android:label="发送文件" />
         <activity android:name=".ui.view.activity.SelectFilesActivity">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
         <activity android:name=".ui.test.BottomSheetDialogActivity" />
         <activity android:name=".ui.test.TestRadarViewActivity" />
@@ -72,9 +70,11 @@
         <activity
             android:name=".ui.view.activity.PersonalActivity"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
-        <activity android:name=".ui.test.TestBluetoothActivity"></activity>
+        <activity android:name=".ui.test.TestBluetoothActivity" />
         <activity android:name=".ui.view.activity.InviteActivity" />
+        <activity android:name=".ui.test.TestLiteOrmActivity">
 
+        </activity>
     </application>
 
 </manifest>

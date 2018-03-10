@@ -18,7 +18,7 @@ import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.send.SenderManager;
 import com.merpyzf.transfermanager.util.WifiMgr;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.XMShareApp;
+import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.ui.adapter.FileTransferAdapter;
 
 import butterknife.BindView;
@@ -56,7 +56,7 @@ public class TransferSendFragment extends Fragment  {
         initUI();
 
         mFileTransferAdapter = new FileTransferAdapter<>(R.layout.item_rv_transfer,
-                FileTransferAdapter.TYPE_SEND, XMShareApp.getSendFileList());
+                FileTransferAdapter.TYPE_SEND, App.getSendFileList());
         mRvSendList.setAdapter(mFileTransferAdapter);
 
         return rootView;
@@ -65,7 +65,7 @@ public class TransferSendFragment extends Fragment  {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         // 当View创建完毕后进行文件的发送
-        SenderManager.getInstance(mContext).send(mPeer.getHostAddress(), XMShareApp.getSendFileList());
+        SenderManager.getInstance(mContext).send(mPeer.getHostAddress(), App.getSendFileList());
         super.onViewCreated(view, savedInstanceState);
 
 
@@ -80,7 +80,7 @@ public class TransferSendFragment extends Fragment  {
     public void onDestroy() {
         mUnbinder.unbind();
         SenderManager.getInstance(mContext).release();
-        XMShareApp.resetSendFileList();
+        App.resetSendFileList();
         super.onDestroy();
     }
 
