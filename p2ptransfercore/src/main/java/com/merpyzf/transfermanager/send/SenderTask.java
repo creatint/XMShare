@@ -53,7 +53,6 @@ public class SenderTask implements ISendTask, Runnable {
     public void init() {
 
 
-
         if (mSocket != null) {
             try {
                 mOutputStream = mSocket.getOutputStream();
@@ -76,6 +75,7 @@ public class SenderTask implements ISendTask, Runnable {
         // 发送结束标记
         // 缩略图
 
+
         for (int i = 0; i < mSendFileList.size(); i++) {
             byte[] FileThumbArray = null;
 
@@ -97,9 +97,18 @@ public class SenderTask implements ISendTask, Runnable {
             // 文件大小
             sb.append(file.getLength());
             sb.append(Constant.S_SEPARATOR);
-            // 缩略图大小
-            FileThumbArray = FileUtils.getFileThumbByteArray(mContext, file);
-            sb.append(FileThumbArray.length);
+
+
+            int fileThumbLength = 0;
+
+
+            if (file.getType() != FileInfo.FILE_TYPE_IMAGE) {
+                // 缩略图大小(耗时操作)
+                FileThumbArray = FileUtils.getFileThumbByteArray(mContext, file);
+                fileThumbLength = FileThumbArray.length;
+            }
+
+            sb.append(fileThumbLength);
             sb.append(Constant.S_SEPARATOR);
 
             // 文件MD5值
@@ -129,18 +138,20 @@ public class SenderTask implements ISendTask, Runnable {
             }
             try {
 
-                Log.i(TAG, "写出待发送文件列表:  \n文件名: " + file.getName() + "\n"
-                        + "缩略图大小: " + FileThumbArray.length);
 
                 if (mOutputStream == null) {
                     return;
                 }
 
 
+                Log.i("wk", "写出->" + sb.toString());
+
                 // 写出头信息
                 mOutputStream.write(sb.toString().getBytes());
-                // 写出缩略图
-                mOutputStream.write(FileThumbArray);
+                if (file.getType() != FileInfo.FILE_TYPE_IMAGE) {
+                    // 写出缩略图
+                    mOutputStream.write(FileThumbArray);
+                }
 
                 mOutputStream.flush();
             } catch (IOException e) {
@@ -279,7 +290,7 @@ public class SenderTask implements ISendTask, Runnable {
             e.printStackTrace();
         }
 
-        Log.i(TAG, "文件发送所在的线程->"+Thread.currentThread().getName());
+        Log.i(TAG, "文件发送所在的线程->" + Thread.currentThread().getName());
 
         init();
 
@@ -308,7 +319,7 @@ public class SenderTask implements ISendTask, Runnable {
     /**
      * 发送文件
      */
-    void sendFile(FileInfo fileInfo){
+    void sendFile(FileInfo fileInfo) {
         // 发送文件的协议头
         sendHeader(fileInfo);
         // fa

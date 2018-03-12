@@ -64,17 +64,29 @@ public class ReceiveTask implements Runnable, IReceiveTask {
         byte[] buffer = new byte[Constant.FILE_THUMB_HEADER_LENGTH];
         mReceiveFileList = new ArrayList<>();
 
+        /**
+         *
+         * 本部分接收两部分的内容:
+         *
+         * (图片文件不传输缩略图)
+         *
+         * 前1024字节 -- 文件基本信息(包含文件缩略图的大小)
+         *
+         * 前1024字节之后的部分 -- 文件的缩略图
+         *
+         *
+         */
+
         while (true) {
             int read = 0;
             try {
                 // 1024个字节
                 read = mInputStream.read(buffer, 0, buffer.length);
                 String str = new String(buffer, Constant.S_CHARSET);
-
                 // 拆分前面的数据部分
                 String strHeader = str.substring(0, str.indexOf(Constant.S_END));
-                Log.i(TAG, "strHeader-> " + strHeader);
-                String[] split = strHeader.split(":");
+
+                String[] split = strHeader.split(Constant.S_SEPARATOR);
 
                 // 文件类型
                 int fileType = Integer.valueOf(split[0]);
@@ -84,29 +96,25 @@ public class ReceiveTask implements Runnable, IReceiveTask {
                 String suffix = split[2];
                 // 文件大小
                 int fileLength = Integer.valueOf(split[3]);
+                // 缩略图的大小
                 int thumbLength = Integer.valueOf(split[4]);
-
                 String md5 = split[5];
-
-                Log.i("wk", "接收到的MD5值-> "+md5);
-
-                // 标记是否是最后一个待接收的文件
+                // 标记是否为末尾文件
                 int isLast = Integer.valueOf(split[6]);
-
 
 
                 if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                     // Android系统提供的缓存存放目录
-                    File parentfile = new File("/storage/emulated/0/Android/data/com.merpyzf.xmshare/files/Pictures");
-                    if (!parentfile.exists()) {
-                        parentfile.mkdirs();
+                    File file = new File("/storage/emulated/0/Android/data/com.merpyzf.xmshare/files/Pictures", md5);
+
+                    if (thumbLength != 0) {
+                        // 如果对端发送的文件中包含文件的缩略图话就将缩略图写入到缓存中
+                        FileUtils.writeStream2SdCard(file, mInputStream, thumbLength);
                     }
+                } else {
 
-
-                    File file = new File(parentfile,md5);
-                    FileUtils.writeStream2SdCard(file, mInputStream, thumbLength);
+                    Log.i(TAG, "请检查存储设备是否正确挂载");
                 }
-
 
                 switch (fileType) {
 

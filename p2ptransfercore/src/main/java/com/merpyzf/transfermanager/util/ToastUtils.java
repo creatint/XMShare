@@ -1,4 +1,4 @@
-package com.merpyzf.xmshare.util;
+package com.merpyzf.transfermanager.util;
 
 import android.content.Context;
 import android.view.View;

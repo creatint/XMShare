@@ -5,18 +5,30 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
+import android.os.Environment;
 import android.util.Log;
 
 import com.merpyzf.transfermanager.entity.ApkFile;
 import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.util.FileUtils;
+import com.merpyzf.xmshare.R;
+import com.merpyzf.xmshare.common.Constant;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by wangke on 2017/12/25.
@@ -114,9 +126,9 @@ public class ApkUtils {
     }
 
 
-
     /**
      * 通过包名获取路径/data/app/ **.apk
+     *
      * @param packageName
      * @return
      */
@@ -129,5 +141,75 @@ public class ApkUtils {
 
         return null;
     }
+
+    /**
+     * 缓存apk的ico
+     */
+    public static void asyncCacheApkIco(Context context, List<FileInfo> apkList) {
+
+
+        Observable.fromIterable(apkList)
+                .filter(fileInfo -> {
+
+                    if (fileInfo instanceof ApkFile) {
+
+                        if (Constant.PIC_CACHES_DIR.canWrite() && !isContain(Constant.PIC_CACHES_DIR, (ApkFile) fileInfo)) {
+                            return true;
+                        }
+                    }
+                    return false;
+
+                }).flatMap(fileInfo -> Observable.just(((ApkFile) fileInfo)))
+                .subscribeOn(Schedulers.io())
+                .subscribe(apkFile -> {
+
+                    Bitmap bitmap = FileUtils.drawableToBitmap(apkFile.getApkDrawable());
+                    BufferedOutputStream bos = null;
+                    try {
+
+                        File extPicCacheDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+                        bos = new BufferedOutputStream(new FileOutputStream(new File(extPicCacheDir, Md5Utils.getMd5(apkFile.getName()))));
+                        if (bitmap == null) {
+
+                            bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_thumb_empty);
+                        }
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
+
+                        Log.i("wk", apkFile.getName() + "--> 向缓存中写入ico");
+
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } finally {
+                        try {
+                            bos.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+
+                });
+
+
+    }
+
+    /**
+     * 判断缓存中是否已经存在
+     *
+     * @param parent
+     * @param apkFile
+     * @return
+     */
+    private static synchronized boolean isContain(File parent, ApkFile apkFile) {
+        String[] icos = parent.list();
+        for (int i = 0; i < icos.length; i++) {
+            if (Md5Utils.getMd5(apkFile.getName()).equals(icos[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
 }

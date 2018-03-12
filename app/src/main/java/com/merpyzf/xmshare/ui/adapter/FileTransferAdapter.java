@@ -1,7 +1,5 @@
 package com.merpyzf.xmshare.ui.adapter;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -76,46 +74,42 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
         tvTitle.setText(file.getName());
 
 
-        Bitmap bitmap = null;
         File thumbFile = null;
+        // 缩略图所在的路径
+        String thumbPath = null;
         // 加载图片
         if (FileTransferAdapter.TYPE_SEND == type) {
 
-
             if (item instanceof ApkFile) {
-
                 ApkFile apkFile = (ApkFile) item;
-                bitmap = FileUtils.drawableToBitmap(apkFile.getApkDrawable());
-
+                thumbPath = com.merpyzf.xmshare.common.Constant.PIC_CACHES_DIR + "/" + Md5Utils.getMd5(apkFile.getName());
 
             } else if (item instanceof MusicFile) {
 
                 MusicFile musicFile = (MusicFile) item;
-                String musicThumbPath = com.merpyzf.xmshare.common.Constant.PIC_CACHES_DIR+"/"+ Md5Utils.getMd5(musicFile.getPath());
-                bitmap = BitmapFactory.decodeFile(musicThumbPath);
+                thumbPath = com.merpyzf.xmshare.common.Constant.PIC_CACHES_DIR + "/" + Md5Utils.getMd5(musicFile.getPath());
 
 
             } else if (item instanceof PicFile) {
 
                 PicFile picFile = (PicFile) item;
-                bitmap = BitmapFactory.decodeFile(picFile.getPath());
-
+                thumbPath = picFile.getPath();
 
             } else if (item instanceof VideoFile) {
 
                 VideoFile videoFile = (VideoFile) item;
-                String videoThumbPath = com.merpyzf.xmshare.common.Constant.PIC_CACHES_DIR+"/"+Md5Utils.getMd5(videoFile.getPath());
-                bitmap = BitmapFactory.decodeFile(videoThumbPath);
+                thumbPath = com.merpyzf.xmshare.common.Constant.PIC_CACHES_DIR + "/" + Md5Utils.getMd5(videoFile.getPath());
+
 
             }
 
             Glide.with(mContext)
-                    .load(FileUtils.bitmapToByteArray(bitmap))
+                    .load(thumbPath)
                     .placeholder(R.drawable.ic_thumb_empty)
-                    .override(80, 80)
                     .centerCrop()
                     .error(R.drawable.ic_header)
                     .into(ivThumb);
+
 
         } else if (FileTransferAdapter.TYPE_RECEIVE == type) {
 
@@ -244,8 +238,6 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
                             tvProgress.setText("传输完毕," + getOpenTypeText(fileInfo));
 
 
-
-
                         } else if (file.getFileTransferStatus() == Constant.TransferStatus.TRANSFER_FAILED) {
 
                             progressBar.setProgress(100);
@@ -276,7 +268,7 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
                             progressBar.setVisibility(View.INVISIBLE);
                             ivDone.setVisibility(View.VISIBLE);
                             tvSpeed.setVisibility(View.INVISIBLE);
-                            tvProgress.setText("传输完毕,"+getOpenTypeText(fileInfo));
+                            tvProgress.setText("传输完毕," + getOpenTypeText(fileInfo));
 
                         } else if (file.getFileTransferStatus() == Constant.TransferStatus.TRANSFER_FAILED) {
 

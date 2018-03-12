@@ -171,14 +171,13 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                 ArrayList<FileMd5Model> queryResult = liteOrm.query(new QueryBuilder<FileMd5Model>(FileMd5Model.class)
                         .whereEquals("file_name", fileInfo.getPath()));
 
-                if (queryResult.size()  ==  1) {
+                if (queryResult.size() == 1) {
 
                     Log.i("wk", "查询结果-> " + queryResult.get(0).getMd5());
                     // 给fileInfo对象设置Md5()
                     fileInfo.setMd5(queryResult.get(0).getMd5());
 
                 }
-
 
 
                 // 将文件选择的事件回调给外部
@@ -336,6 +335,8 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
             // 直接将获取到的app集合赋值给mFileLists会改变指针的指向，从而对适配器使用notifyDataSetChanged()失效
             List<FileInfo> appList = ApkUtils.getApp(getActivity(), getActivity().getPackageManager());
             mFileLists.addAll(appList);
+            // 将apk的ico写入到缓存文件中
+            ApkUtils.asyncCacheApkIco(mContext, mFileLists);
             // 发送一个空的消息，提示扫描完毕
             mHandler.sendEmptyMessage(0);
             // 异步生成并文件的MD5并写入到数据库中
