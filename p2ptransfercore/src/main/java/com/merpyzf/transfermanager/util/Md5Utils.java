@@ -1,4 +1,4 @@
-package com.merpyzf.xmshare.util;
+package com.merpyzf.transfermanager.util;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -1,7 +1,11 @@
 package com.merpyzf.xmshare.common;
 
+import android.os.Environment;
+
+import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -26,6 +30,10 @@ public class Constant {
     // 存放头像信息
     public static ArrayList<Integer> AVATAR_LIST = null;
 
+    // 存储图片缓存
+    public static final File PIC_CACHES_DIR;
+
+
     // 初始化头像
     static {
 
@@ -46,6 +54,8 @@ public class Constant {
         AVATAR_LIST.add(R.drawable.ic_avatar_13);
         AVATAR_LIST.add(R.drawable.ic_avatar_14);
         AVATAR_LIST.add(R.drawable.ic_avatar_15);
+
+        PIC_CACHES_DIR =  App.getAppContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
 
     }

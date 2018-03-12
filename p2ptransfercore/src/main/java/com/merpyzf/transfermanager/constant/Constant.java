@@ -8,12 +8,10 @@ public class Constant {
     // sp文件, 存储用户信息和用户设置的信息
 
     // 存放歌曲封面的路径
-    public static final String THUMB_MUSIC = "/xmshare/music_thumb";
-    public static final String THUMB_VIDEO = "/xmshare/video_thumb";
+//    public static final String THUMB_MUSIC = "/xmshare/music_thumb";
+//    public static final String THUMB_VIDEO = "/xmshare/video_thumb";
     // 文件接收列表中显示的被压缩的缩略图
     public static final String THUMB_RECEIVE = "/xmshare/receive_thumb";
-
-
     // 接收apk文件的保存路径
     public static final String SAVE_APK_PATH = "/xmshare/receive/apk";
     // 接收音乐类型文件的保存路径
@@ -29,6 +27,7 @@ public class Constant {
 
     // 字符读取时结束的标记位
     public static final String S_END = "\0";
+
 
     // 传输过程中参数间的分割符
     public static final String S_SEPARATOR = ":";
@@ -76,5 +75,7 @@ public class Constant {
 
 
     }
+
+
 
 }

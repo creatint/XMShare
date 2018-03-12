@@ -4,12 +4,12 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
-import android.os.Environment;
 import android.util.Log;
 
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.xmshare.R;
+import com.merpyzf.xmshare.common.Constant;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -55,20 +55,20 @@ public class VideoUtils {
     public static void updateThumbImg(Context context, List<FileInfo> mFileLists) {
 
 
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            File videoThumbDir = new File(Environment.getExternalStorageDirectory(), com.merpyzf.transfermanager.constant.Constant.THUMB_VIDEO);
-            if (!videoThumbDir.exists()) {
-                videoThumbDir.mkdirs();
-            }
+//        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+//            File videoThumbDir = new File(Environment.getExternalStorageDirectory(), com.merpyzf.transfermanager.constant.Constant.THUMB_VIDEO);
+//            if (!videoThumbDir.exists()) {
+//                videoThumbDir.mkdirs();
+//            }
 
-            writeThumbImg2local(context, videoThumbDir, mFileLists);
-        }
+            writeThumbImg2local(context, mFileLists);
+//        }
 
 
     }
 
 
-    public static void writeThumbImg2local(Context context, File parent, List<FileInfo> videoList) {
+    public static void writeThumbImg2local(Context context, List<FileInfo> videoList) {
 
 
         Observable.fromIterable(videoList)
@@ -76,11 +76,7 @@ public class VideoUtils {
 
                     if (videoFile instanceof VideoFile) {
 
-                        if(!parent.exists()){
-                            parent.mkdirs();
-                        }
-
-                        if (parent.canWrite() && !isContain(parent, (VideoFile) videoFile)) {
+                        if (Constant.PIC_CACHES_DIR.canWrite() && !isContain(Constant.PIC_CACHES_DIR, (VideoFile) videoFile)) {
                             return true;
                         }
                     }
@@ -104,8 +100,7 @@ public class VideoUtils {
                     Log.i("w2k", "写入本地存储的视频封面截图:" + fileName);
 
                     try {
-                        bos = new BufferedOutputStream(new FileOutputStream(new File(parent,
-                                "" + fileName)));
+                        bos = new BufferedOutputStream(new FileOutputStream(new File(Constant.PIC_CACHES_DIR,Md5Utils.getMd5(videoPath))));
                         if (bitmap == null) {
 
                             bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_thumb_empty);
@@ -127,7 +122,7 @@ public class VideoUtils {
         String[] thumbs = parent.list();
 
         for (int i = 0; i < thumbs.length; i++) {
-            if (videoFile.getName().equals(thumbs[i])) {
+            if (Md5Utils.getMd5(videoFile.getPath()).equals(thumbs[i])) {
                 return true;
             }
         }

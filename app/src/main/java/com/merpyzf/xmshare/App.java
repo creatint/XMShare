@@ -131,4 +131,7 @@ public class App extends Application {
     }
 
 
+    public static Context getAppContext() {
+        return AppContext;
+    }
 }

@@ -2,7 +2,6 @@ package com.merpyzf.xmshare.ui.adapter;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -24,8 +23,9 @@ import com.merpyzf.transfermanager.interfaces.TransferObserver;
 import com.merpyzf.transfermanager.receive.ReceiverManager;
 import com.merpyzf.transfermanager.send.SenderManager;
 import com.merpyzf.transfermanager.util.FileUtils;
-import com.merpyzf.xmshare.R;
+import com.merpyzf.transfermanager.util.Md5Utils;
 import com.merpyzf.xmshare.App;
+import com.merpyzf.xmshare.R;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.io.File;
@@ -91,7 +91,7 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
             } else if (item instanceof MusicFile) {
 
                 MusicFile musicFile = (MusicFile) item;
-                String musicThumbPath = Environment.getExternalStorageDirectory().getPath() + Constant.THUMB_MUSIC + "/" + String.valueOf(musicFile.getAlbumId());
+                String musicThumbPath = com.merpyzf.xmshare.common.Constant.PIC_CACHES_DIR+"/"+ Md5Utils.getMd5(musicFile.getPath());
                 bitmap = BitmapFactory.decodeFile(musicThumbPath);
 
 
@@ -104,8 +104,7 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
             } else if (item instanceof VideoFile) {
 
                 VideoFile videoFile = (VideoFile) item;
-                String videoThumbPath = Environment.getExternalStorageDirectory()
-                        + Constant.THUMB_VIDEO + "/" + videoFile.getName();
+                String videoThumbPath = com.merpyzf.xmshare.common.Constant.PIC_CACHES_DIR+"/"+Md5Utils.getMd5(videoFile.getPath());
                 bitmap = BitmapFactory.decodeFile(videoThumbPath);
 
             }
@@ -120,8 +119,8 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
 
         } else if (FileTransferAdapter.TYPE_RECEIVE == type) {
 
-            thumbFile = new File(Environment.getExternalStorageDirectory().getPath()
-                    + com.merpyzf.transfermanager.constant.Constant.THUMB_RECEIVE, file.getName());
+            // 接受到的文件缩略图的名字为待接收的文件的MD5的值
+            thumbFile = new File(com.merpyzf.xmshare.common.Constant.PIC_CACHES_DIR, file.getMd5());
 
             Glide.with(mContext)
                     .load(thumbFile)

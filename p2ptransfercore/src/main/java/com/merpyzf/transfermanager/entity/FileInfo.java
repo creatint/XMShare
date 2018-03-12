@@ -196,6 +196,7 @@ public class FileInfo {
         return sb.toString();
     }
 
+
     /**
      * 重置当前对象的状态
      */

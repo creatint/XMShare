@@ -9,6 +9,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
@@ -58,10 +59,9 @@ import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 
 /**
- *
  * 扫描到的本地文件列表的展示页面
- * @author wangke
  *
+ * @author wangke
  */
 public class FileListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -153,6 +153,10 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
 
             ImageView ivSelect = view1.findViewById(R.id.iv_select);
 
+            File path = App.getAppContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+            Log.i("wk", path.getAbsolutePath());
+
 
             FileInfo fileInfo = mFileLists.get(position);
 
@@ -161,6 +165,20 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                 ivSelect.setVisibility(View.VISIBLE);
                 // 添加选中的文件
                 App.addSendFile(fileInfo);
+
+
+                LiteOrm liteOrm = App.getSingleLiteOrm();
+                ArrayList<FileMd5Model> queryResult = liteOrm.query(new QueryBuilder<FileMd5Model>(FileMd5Model.class)
+                        .whereEquals("file_name", fileInfo.getPath()));
+
+                if (queryResult.size()  ==  1) {
+
+                    Log.i("wk", "查询结果-> " + queryResult.get(0).getMd5());
+                    // 给fileInfo对象设置Md5()
+                    fileInfo.setMd5(queryResult.get(0).getMd5());
+
+                }
+
 
 
                 // 将文件选择的事件回调给外部
@@ -258,7 +276,6 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
         } else {
             mTvChecked.setText("全选");
         }
-
 
 
         mFileLists = new ArrayList<>();
@@ -522,7 +539,6 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                 asyncGenerateFileMd5(mFileLists);
 
 
-
             } else {
 
                 mProgressBar.setVisibility(View.INVISIBLE);
@@ -568,7 +584,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
     /**
      * 生成文件的Md5值并存储到数据库中
      */
-    public void asyncGenerateFileMd5(List<FileInfo> fileList){
+    public void asyncGenerateFileMd5(List<FileInfo> fileList) {
 
         LiteOrm liteOrm = App.getSingleLiteOrm();
 
@@ -576,33 +592,28 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                 .filter(fileInfo -> {
                     // 过滤掉数据库中已经存在的文件
                     ArrayList<FileMd5Model> fileMd5Models = liteOrm.query(new QueryBuilder<FileMd5Model>(FileMd5Model.class)
-                            .whereEquals("file_name", fileInfo.getName()));
-                    if(fileMd5Models.size() == 0){
-                        Log.i(TAG,fileInfo.getName()+"在数据库中不存在");
+                            .whereEquals("file_name", fileInfo.getPath()));
+                    if (fileMd5Models.size() == 0) {
+//                        Log.i(TAG,fileInfo.getName()+"在数据库中不存在");
                         return true;
                     }
 
-                    Log.i(TAG,fileInfo.getName()+"在数据库中已经存在");
+//                    Log.i(TAG,fileInfo.getName()+"在数据库中已经存在");
                     return false;
                 }).subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .subscribe(fileInfo -> {
                     // 计算文件的MD5耗时操作
                     String md5 = Md5Utils.getMd5(new File(fileInfo.getPath()));
-                    Log.i(TAG, "计算"+fileInfo.getName()+"的MD5,并向数据库中写入");
-                    FileMd5Model fileMd5Model = new FileMd5Model(fileInfo.getName(), md5);
+//                    Log.i(TAG, "计算"+fileInfo.getName()+"的MD5,并向数据库中写入");
+                    FileMd5Model fileMd5Model = new FileMd5Model(fileInfo.getPath(), md5);
                     // 向数据库中写入
                     liteOrm.insert(fileMd5Model);
 
                 });
 
 
-
-
-
-
     }
-
 
 
     @Override

@@ -1,7 +1,6 @@
 package com.merpyzf.xmshare.ui.adapter;
 
 import android.content.Context;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -17,8 +16,10 @@ import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.transfermanager.util.FormatUtils;
-import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.App;
+import com.merpyzf.xmshare.R;
+import com.merpyzf.xmshare.common.Constant;
+import com.merpyzf.xmshare.util.Md5Utils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.io.File;
@@ -63,8 +64,7 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
             helper.setText(R.id.tv_artist, musicFile.getArtist());
             helper.setText(R.id.tv_size, FormatUtils.convert2Mb(musicFile.getLength()) + " MB");
 
-            File albumFile = new File(Environment.getExternalStorageDirectory().getPath()
-                    + com.merpyzf.transfermanager.constant.Constant.THUMB_MUSIC, String.valueOf(musicFile.getAlbumId()));
+            File albumFile = new File(Constant.PIC_CACHES_DIR, Md5Utils.getMd5(musicFile.getPath()));
             if (albumFile.exists()) {
                 //设置封面图片
                 Glide.with(mContext)
@@ -92,7 +92,7 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
             helper.setText(R.id.tv_size, FormatUtils.convert2Mb(videoFile.getLength()) + " MB");
             helper.setText(R.id.tv_duration, FormatUtils.convertMS2Str(videoFile.getDuration()));
             ImageView ivVideoThumb = helper.getView(R.id.iv_cover);
-            String videoThumbPath = Environment.getExternalStorageDirectory() + com.merpyzf.transfermanager.constant.Constant.THUMB_VIDEO + "/" + videoFile.getName();
+            String videoThumbPath = Constant.PIC_CACHES_DIR+"/"+Md5Utils.getMd5(videoFile.getPath());
 
             Glide.with(mContext)
                     .load(new File(videoThumbPath))

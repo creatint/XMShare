@@ -7,10 +7,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
+import android.util.Log;
 
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.xmshare.R;
+import com.merpyzf.xmshare.common.Constant;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -22,7 +24,8 @@ import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
-import io.reactivex.functions.Consumer;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
@@ -62,8 +65,13 @@ public class MusicUtils {
         return ContentUris.withAppendedId(artworkUri, albumId);
     }
 
-
-    public static void writeAlbumImg2local(final Context context, final File parent, List<FileInfo> musicList) {
+    /**
+     * 将专辑封面图缓存到本地
+     *
+     * @param context
+     * @param musicList
+     */
+    public static synchronized void writeAlbumImg2local(final Context context, List<FileInfo> musicList) {
 
 
         Observable.fromIterable(musicList)
@@ -73,32 +81,43 @@ public class MusicUtils {
 
                         if (musicFile instanceof MusicFile) {
 
-                            if (parent.canWrite() && !isContain(parent, (MusicFile) musicFile)) {
+                            if (Constant.PIC_CACHES_DIR.canWrite() && !isContain(Constant.PIC_CACHES_DIR, (MusicFile) musicFile)) {
                                 return true;
                             }
                         }
                         return false;
 
                     }
-                }).flatMap(new Function<FileInfo, ObservableSource<Long>>() {
+                }).flatMap(new Function<FileInfo, ObservableSource<MusicFile>>() {
             @Override
-            public ObservableSource<Long> apply(FileInfo musicFile) throws Exception {
-                return Observable.just(((MusicFile) musicFile).getAlbumId());
+            public ObservableSource<MusicFile> apply(FileInfo musicFile) throws Exception {
+                return Observable.just(((MusicFile) musicFile));
             }
         }).subscribeOn(Schedulers.io())
-                .subscribe(new Consumer<Long>() {
+                .subscribe(new Observer<MusicFile>() {
                     @Override
-                    public void accept(Long albumId) throws Exception {
-                        Bitmap bitmap = loadCoverFromMediaStore(context, albumId);
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(MusicFile musicFile) {
+
+                        Bitmap bitmap = loadCoverFromMediaStore(context, musicFile.getAlbumId());
                         BufferedOutputStream bos = null;
                         try {
-                            bos = new BufferedOutputStream(new FileOutputStream(new File(parent,
-                                    "" + albumId)));
+
+                            File extPicCacheDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+                            bos = new BufferedOutputStream(new FileOutputStream(new File(extPicCacheDir, Md5Utils.getMd5(musicFile.getPath()))));
                             if (bitmap == null) {
 
                                 bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_thumb_empty);
                             }
                             bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
+
+                            Log.i("wk", musicFile.getName()+"--> 向缓存中写入图片");
+
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
                         } finally {
@@ -108,6 +127,18 @@ public class MusicUtils {
                                 e.printStackTrace();
                             }
                         }
+
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
                     }
                 });
 
@@ -125,7 +156,7 @@ public class MusicUtils {
     private static synchronized boolean isContain(File parent, MusicFile musicFile) {
         String[] albums = parent.list();
         for (int i = 0; i < albums.length; i++) {
-            if (musicFile.getAlbumId() == Integer.valueOf(albums[i])) {
+            if (Md5Utils.getMd5(musicFile.getPath()).equals(albums[i])) {
                 return true;
             }
         }
@@ -137,16 +168,9 @@ public class MusicUtils {
     /**
      * 更新封面图片
      */
-    public static void updateAlbumImg(Context context, List<FileInfo> fileInfoList) {
-        File mParentAlbumFile = null;
+    public static synchronized void updateAlbumImg(Context context, List<FileInfo> fileInfoList) {
 
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            mParentAlbumFile = new File(Environment.getExternalStorageDirectory(), com.merpyzf.transfermanager.constant.Constant.THUMB_MUSIC);
-            if (!mParentAlbumFile.exists()) {
-                mParentAlbumFile.mkdirs();
-            }
-        }
-        writeAlbumImg2local(context, mParentAlbumFile, fileInfoList);
+        writeAlbumImg2local(context, fileInfoList);
 
     }
 }
