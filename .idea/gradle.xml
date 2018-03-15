@@ -9,6 +9,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/filemanager" />
             <option value="$PROJECT_DIR$/httpcoreserver" />
             <option value="$PROJECT_DIR$/p2ptransfercore" />
             <option value="$PROJECT_DIR$/radarview" />

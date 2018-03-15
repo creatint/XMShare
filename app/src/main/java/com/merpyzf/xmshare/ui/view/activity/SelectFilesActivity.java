@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.merpyzf.filemanager.fragment.MainFragment;
 import com.merpyzf.httpcoreserver.ui.HttpServerActivity;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.xmshare.R;
@@ -198,12 +199,16 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         // 初始化主页要显示的可以传输文件的类别
 
         mFragmentList = new ArrayList<>();
-        mTabTitles = new String[4];
+        mTabTitles = new String[5];
+        mTabTitles[0] = "文件";
+        mTabTitles[1] = "应用";
+        mTabTitles[2] = "图片";
+        mTabTitles[3] = "音乐";
+        mTabTitles[4] = "视频";
 
-        mTabTitles[0] = "应用";
-        mTabTitles[1] = "图片";
-        mTabTitles[2] = "音乐";
-        mTabTitles[3] = "视频";
+
+        // 文件
+        mFragmentList.add(new MainFragment());
         // 应用
         FileListFragment appFragment = FileListFragment.newInstance(FileInfo.FILE_TYPE_APP, mFileSelectListener);
         mFragmentList.add(appFragment);
@@ -219,6 +224,9 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         // 视频
         FileListFragment videoFragment = FileListFragment.newInstance(FileInfo.FILE_TYPE_VIDEO, mFileSelectListener);
         mFragmentList.add(videoFragment);
+
+
+
 
     }
 

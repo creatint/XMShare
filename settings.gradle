@@ -1,1 +1,1 @@
-include ':app', ':httpcoreserver', ':p2ptransfercore', ':radarview'
+include ':app', ':httpcoreserver', ':p2ptransfercore', ':radarview', ':filemanager'

@@ -36,6 +36,10 @@ public class ReceiveTask implements Runnable, IReceiveTask {
     private long end_cal_speed;
     private String TAG = ReceiveTask.class.getSimpleName();
     private boolean isStop = false;
+    /**
+     * 用于标记当前的传输状态
+     */
+    private int currentStatus = 1;
 
     public ReceiveTask(Socket socket, P2pTransferHandler receiveHandler) {
         this.mSocketClient = socket;
@@ -191,7 +195,8 @@ public class ReceiveTask implements Runnable, IReceiveTask {
     }
 
     @Override
-    public void run() {
+    public synchronized void run() {
+
 
         receiveTransferFileList();
         // 用于计算传输的速度
@@ -216,6 +221,7 @@ public class ReceiveTask implements Runnable, IReceiveTask {
 
     @Override
     public synchronized FileInfo parseHeader() {
+
 
         byte[] headerBytes = new byte[Constant.HEADER_LENGTH];
         int headCurrent = 0;
@@ -304,6 +310,7 @@ public class ReceiveTask implements Runnable, IReceiveTask {
         try {
             bos = new BufferedOutputStream(new FileOutputStream(saveFile));
             while (currentLength < totalLength) {
+
                 // 剩下的未读取的字节
                 int leftLength = totalLength - currentLength;
                 if (leftLength >= Constant.BUFFER_LENGTH) {
@@ -338,6 +345,7 @@ public class ReceiveTask implements Runnable, IReceiveTask {
 
 
             }
+
             bos.flush();
             // 标记文件传输成功
             fileInfo.setFileTransferStatus(Constant.TransferStatus.TRANSFER_SUCCESS);

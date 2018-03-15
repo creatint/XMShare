@@ -2,6 +2,7 @@ package com.merpyzf.xmshare.common.base;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -41,6 +42,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         setContentView(getLayoutId());
         // 设置系统顶部菜单栏为沉浸样式
         initSystemBarTint();
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         mContext = this;
         mUnbinder = ButterKnife.bind(this);
         initData();

@@ -90,6 +90,7 @@ dependencies {
     implementation 'com.android.support:palette-v7:27.0.2'
     implementation files('libs/zxing-3.1.1.jar')
     implementation files('libs/lite-orm-1.9.2.jar')
+    implementation project(':filemanager')
 }
 
 
