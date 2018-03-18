@@ -3,7 +3,6 @@
     package="com.merpyzf.xmshare">
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <!-- 文件读取 需要动态申请 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -23,8 +22,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
-
-
     <application
         android:name=".XMShareApp"
         android:allowBackup="true"
@@ -42,14 +39,11 @@
             android:name=".ui.view.activity.SendActivity"
             android:label="发送文件" />
         <activity android:name=".ui.view.activity.SelectFilesActivity">
-
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
         <activity android:name=".ui.test.BottomSheetDialogActivity" />
         <activity android:name=".ui.test.TestRadarViewActivity" />
@@ -76,10 +70,9 @@
         <activity
             android:name=".ui.view.activity.PersonalActivity"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
-        <activity android:name=".ui.test.TestBluetoothActivity">
-
-        </activity>
-        <activity android:name=".ui.view.activity.InviteActivity"></activity>
+        <activity android:name=".ui.test.TestBluetoothActivity"></activity>
+        <activity android:name=".ui.view.activity.InviteActivity" />
+        <activity android:name=".ui.test.recyclerview_demo.TestRecyclerViewActivity"></activity>
     </application>
 
 </manifest>
