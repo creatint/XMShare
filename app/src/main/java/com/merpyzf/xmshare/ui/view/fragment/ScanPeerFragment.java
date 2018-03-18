@@ -30,7 +30,7 @@ import com.merpyzf.transfermanager.util.WifiMgr;
 import com.merpyzf.transfermanager.util.timer.OSTimer;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Constant;
-import com.merpyzf.xmshare.XMShareApp;
+import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.ui.adapter.PeerAdapter;
 import com.merpyzf.xmshare.util.SharedPreUtils;
 
@@ -83,6 +83,9 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
     private static final String TAG = ScanPeerFragment.class.getSimpleName();
     // 用于定时扫描wifi的定时器
     private OSTimer mScanWifiTimer;
+    // 是否停止扫描
+    private boolean isStopScan = false;
+
 
 
     public ScanPeerFragment() {
@@ -228,6 +231,8 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
             mTvTip.setText("正在努力连接到该网络...");
             // 连接并传输wifi
             connectWifiAndTransfer(peer);
+            isStopScan = true;
+
 
 
         } else {
@@ -286,7 +291,7 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
             Log.i("w2k", "尝试第一次获取接收端的IP地址: " + ipAddressFromHotspot);
             mLocalAddress = WifiMgr.getInstance(mContext).getIpAddressFromHotspot();
 
-            XMShareApp.getSingleThreadPool().execute(() -> {
+            App.getSingleThreadPool().execute(() -> {
                 // 当连接上wifi后立即获取对端主机地址，有可能获取不到，需要多次获取才能拿到
                 int count = 0;
                 while (count < 10) {
@@ -353,7 +358,12 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
                 mPeerList.remove(i);
             }
         }
+
+        Log.i("w2k", "扫描附近的wifi");
+
         for (ScanResult scanResult : scanResults) {
+
+            Log.i("w2k", "wifi 名称-> "+scanResult.SSID);
 
             if (scanResult.SSID.startsWith("XM")) {
 
@@ -436,8 +446,9 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
             switch (msg.what) {
 
                 case TYPE_SCAN_WIFI:
-
-                    scanWifi();
+                    if(!isStopScan) {
+                        scanWifi();
+                    }
                     break;
 
                 case TYPE_SEND_FILE:
@@ -466,13 +477,17 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
                                         if (com.merpyzf.transfermanager.util.NetworkUtil.pingIpAddress(peer.getHostAddress())) {
                                             if (mOnPairActionListener != null) {
                                                 // 取消wifi扫描
-                                                mScanWifiTimer.cancel();
-                                                mOnPairActionListener.onSendToHotspotAction(peer, XMShareApp.getSendFileList());
+//                                                mScanWifiTimer.cancel();
+                                               isStopScan = true;
+                                                mOnPairActionListener.onSendToHotspotAction(peer, App.getSendFileList());
                                                 d.dispose();
                                             }
                                         }
                                     } else {
                                         d.dispose();
+                                        // 继续开始扫描附近wifi
+                                        isStopScan = false;
+
                                     }
 
                                     currentPingCount[0]++;
@@ -499,7 +514,7 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
                     break;
 
                 case TYPE_GET_IP_FAILED:
-
+                    isStopScan = false;
                     mTvTip.setTextColor(Color.RED);
                     mTvTip.setText("获取接收端IP地址失败，请点击好友头像重试...");
 

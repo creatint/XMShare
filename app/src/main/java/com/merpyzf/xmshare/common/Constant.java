@@ -1,7 +1,11 @@
 package com.merpyzf.xmshare.common;
 
+import android.os.Environment;
+
+import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -10,11 +14,14 @@ import java.util.ArrayList;
 
 public class Constant {
 
+
     // sp文件, 存储用户信息和用户设置的信息
     public static final String SP_USER = "sp_user_info";
+    // 数据库名
+    public static final String DB_NAME = "xmshare.db";
+
     // 传输模式
     public static final String KEY_TRANSFER_MODE = "transfer_mode";
-
     // 使用已连接的局域网传输
     public static final int TRANSFER_MODE_LAN = -1;
     // 通过建立热点组件局域网的方式传输
@@ -22,6 +29,10 @@ public class Constant {
 
     // 存放头像信息
     public static ArrayList<Integer> AVATAR_LIST = null;
+
+    // 存储图片缓存
+    public static final File PIC_CACHES_DIR;
+
 
     // 初始化头像
     static {
@@ -43,6 +54,8 @@ public class Constant {
         AVATAR_LIST.add(R.drawable.ic_avatar_13);
         AVATAR_LIST.add(R.drawable.ic_avatar_14);
         AVATAR_LIST.add(R.drawable.ic_avatar_15);
+
+        PIC_CACHES_DIR =  App.getAppContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
 
     }

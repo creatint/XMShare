@@ -23,7 +23,7 @@ import com.merpyzf.transfermanager.interfaces.TransferObserver;
 import com.merpyzf.transfermanager.receive.ReceiverManager;
 import com.merpyzf.transfermanager.util.ApManager;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.XMShareApp;
+import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.receiver.APChangedReceiver;
 
 /**
@@ -155,7 +155,7 @@ public class APActivity extends AppCompatActivity {
                     }
                 });
 
-                XMShareApp.mSingleThreadPool.execute(receiverManager);
+                App.getSingleThreadPool().execute(receiverManager);
 
             }
 

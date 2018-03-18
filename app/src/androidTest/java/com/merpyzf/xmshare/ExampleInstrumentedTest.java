@@ -3,15 +3,14 @@ package com.merpyzf.xmshare;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
-import android.util.Log;
-
-import com.merpyzf.xmshare.util.timer.OSTimer;
-import com.merpyzf.xmshare.util.timer.TimeOut;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -31,7 +30,11 @@ public class ExampleInstrumentedTest {
     @Test
     public void test() throws Exception{
 
-
+        List<String> mDatas = new ArrayList<>();
+        mDatas.add("1");
+        mDatas.add("2");
+        mDatas.add("3");
+        mDatas.add("4");
 
 
 

@@ -205,12 +205,15 @@ public class NetworkUtil {
     /**
      * 获取ssid
      *
-     * @param nickName
-     * @param avatar
+     * @param nickName 用户名
+     * @param avatar 头像id
      * @return
      */
     public static String getSSID(String nickName, int avatar) {
-        String ssid = "XM" + (FormatUtils.string2Unicode(avatar + "") + "-" + FormatUtils.string2Unicode(nickName)).replaceAll("\\\\u", "T");
+
+
+        String ssid = "XM" + (FormatUtils.string2Unicode(avatar + "") + "-" +
+                FormatUtils.string2Unicode(nickName)).replaceAll("\\\\u", "T");
         return ssid;
     }
 

@@ -16,6 +16,10 @@ import android.widget.LinearLayout;
  */
 public class AnimationUtils {
 
+    private AnimationUtils(){
+        throw new UnsupportedOperationException("不能被实例化");
+    }
+
     /**
      * 创建动画层
      *

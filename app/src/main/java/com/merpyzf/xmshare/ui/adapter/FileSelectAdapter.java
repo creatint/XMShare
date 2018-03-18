@@ -2,7 +2,6 @@ package com.merpyzf.xmshare.ui.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
@@ -16,8 +15,10 @@ import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.transfermanager.entity.VideoFile;
+import com.merpyzf.transfermanager.util.Md5Utils;
+import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.XMShareApp;
+import com.merpyzf.xmshare.common.Constant;
 import com.merpyzf.xmshare.receiver.FileSelectedListChangedReceiver;
 import com.merpyzf.xmshare.ui.view.activity.SelectFilesActivity;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
@@ -64,8 +65,7 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> im
 
 
             MusicFile musicFile = (MusicFile) item;
-            File albumFile = new File(Environment.getExternalStorageDirectory().getPath()
-                    + com.merpyzf.transfermanager.constant.Constant.THUMB_MUSIC, String.valueOf(musicFile.getAlbumId()));
+            File albumFile = new File(Constant.PIC_CACHES_DIR, Md5Utils.getMd5(musicFile.getPath()));
             if (albumFile.exists()) {
                 //设置封面图片
                 Glide.with(mContext)
@@ -91,7 +91,7 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> im
 
 
             VideoFile videoFile = (VideoFile) item;
-            String videoThumbPath = Environment.getExternalStorageDirectory() + com.merpyzf.transfermanager.constant.Constant.THUMB_VIDEO + "/" + videoFile.getName();
+            String videoThumbPath = Constant.PIC_CACHES_DIR+ "/" +Md5Utils.getMd5( videoFile.getPath());
             Glide.with(mContext)
                     .load(new File(videoThumbPath))
                     .crossFade()
@@ -104,7 +104,7 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> im
 
         ivRemove.setOnClickListener(v -> {
 
-            XMShareApp.removeSendFile(fileInfo);
+            App.removeSendFile(fileInfo);
             // 发送文件选择状态改变的应用内广播
             LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(FileSelectedListChangedReceiver.ACTION));
             notifyDataSetChanged();

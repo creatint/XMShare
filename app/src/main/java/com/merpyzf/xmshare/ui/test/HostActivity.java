@@ -20,7 +20,7 @@ import com.merpyzf.transfermanager.util.ApManager;
 import com.merpyzf.transfermanager.util.NetworkUtil;
 import com.merpyzf.transfermanager.util.WifiMgr;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.XMShareApp;
+import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.receiver.APChangedReceiver;
 import com.merpyzf.xmshare.receiver.WifiChangedReceiver;
 import com.merpyzf.xmshare.ui.adapter.PeerAdapter;
@@ -76,7 +76,7 @@ public class HostActivity extends AppCompatActivity {
 
                         if (NetworkUtil.pingIpAddress(peer.getHostAddress())) {
                             // 发送文件
-                            senderManager.send(peer.getHostAddress(), XMShareApp.getSendFileList());
+                            senderManager.send(peer.getHostAddress(), App.getSendFileList());
                             break;
                         }
                         Log.i("w2k", peer.getHostAddress() + " ping...");
@@ -259,7 +259,7 @@ public class HostActivity extends AppCompatActivity {
             Log.i("w2k", "尝试第一次获取接收端的IP地址: " + ipAddressFromHotspot);
             localAddress = WifiMgr.getInstance(mContext).getIpAddressFromHotspot();
 
-            XMShareApp.getSingleThreadPool().execute(() -> {
+            App.getSingleThreadPool().execute(() -> {
                 // 当连接上wifi后立即获取对端主机地址，有可能获取不到，需要多次获取才能拿到
                 int count = 0;
                 while (count < 10) {

@@ -84,33 +84,37 @@ public class SenderTask implements ISendTask, Runnable {
 
             //文件类型
             sb.append(file.getType());
-            sb.append(":");
+            sb.append(Constant.S_SEPARATOR);
 
             //文件名
             sb.append(file.getName());
-            sb.append(":");
+            sb.append(Constant.S_SEPARATOR);
 
             // 后缀名
             sb.append(file.getSuffix());
-            sb.append(":");
+            sb.append(Constant.S_SEPARATOR);
 
             // 文件大小
             sb.append(file.getLength());
-            sb.append(":");
+            sb.append(Constant.S_SEPARATOR);
             // 缩略图大小
             FileThumbArray = FileUtils.getFileThumbByteArray(mContext, file);
             sb.append(FileThumbArray.length);
-            sb.append(":");
+            sb.append(Constant.S_SEPARATOR);
+
+            // 文件MD5值
+            sb.append(file.getMd5());
+            sb.append(Constant.S_SEPARATOR);
 
             //最后一个文件
             if (i == mSendFileList.size() - 1) {
 
                 sb.append("1");
-                sb.append(":");
+                sb.append(Constant.S_SEPARATOR);
 
             } else {
                 sb.append("-1");
-                sb.append(":");
+                sb.append(Constant.S_SEPARATOR);
             }
 
             sb.append(Constant.S_END);

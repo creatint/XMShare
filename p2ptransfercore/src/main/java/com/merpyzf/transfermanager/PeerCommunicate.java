@@ -93,9 +93,7 @@ public class PeerCommunicate extends Thread {
             isLoop = false;
         } finally {
 
-
         }
-
 
     }
 

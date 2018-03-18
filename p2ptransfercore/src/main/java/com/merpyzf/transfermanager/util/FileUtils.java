@@ -130,7 +130,7 @@ public class FileUtils {
      * @param file
      * @return
      */
-    public static byte[] getFileThumbByteArray(Context mContext, FileInfo file) {
+    public static byte[] getFileThumbByteArray(Context context, FileInfo file) {
 
         byte[] FileThumbArray = new byte[0];
 
@@ -141,35 +141,33 @@ public class FileUtils {
             // 将文件的缩略图转换成
             Bitmap appThumbBmp = FileUtils.drawableToBitmap(appFile.getApkDrawable());
             // 对缩略图进行压缩
-            FileThumbArray = FileUtils.bitmapToByteArray(zoomImage(mContext, appThumbBmp));
+            FileThumbArray = FileUtils.bitmapToByteArray(zoomImage(context, appThumbBmp));
 
         } else if (file instanceof PicFile) {
 
             PicFile picFile = (PicFile) file;
             // 获取图片原始的bitmap
             Bitmap appThumbBmp = BitmapFactory.decodeFile(picFile.getPath());
-            FileThumbArray = FileUtils.bitmapToByteArray(zoomImage(mContext, appThumbBmp));
+            FileThumbArray = FileUtils.bitmapToByteArray(zoomImage(context, appThumbBmp));
 
 
         } else if (file instanceof MusicFile) {
 
             MusicFile musicFile = (MusicFile) file;
 
-            File thumbFile = new File(Environment.getExternalStorageDirectory().getPath()
-                    + Constant.THUMB_MUSIC, String.valueOf(musicFile.getAlbumId()));
+            File thumbFile = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), Md5Utils.getMd5(musicFile.getPath()));
             // 获取图片原始的bitmap
             Bitmap appThumbBmp = BitmapFactory.decodeFile(thumbFile.getPath());
-            FileThumbArray = FileUtils.bitmapToByteArray(zoomImage(mContext, appThumbBmp));
+            FileThumbArray = FileUtils.bitmapToByteArray(zoomImage(context, appThumbBmp));
 
         } else if (file instanceof VideoFile) {
 
             VideoFile videoFile = (VideoFile) file;
 
-            File thumbFile = new File(Environment.getExternalStorageDirectory() +
-                    Constant.THUMB_VIDEO + "/" + videoFile.getName());
+            File thumbFile = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),Md5Utils.getMd5(videoFile.getPath()));
 
             Bitmap appThumbBmp = BitmapFactory.decodeFile(thumbFile.getPath());
-            FileThumbArray = FileUtils.bitmapToByteArray(zoomImage(mContext, appThumbBmp));
+            FileThumbArray = FileUtils.bitmapToByteArray(zoomImage(context, appThumbBmp));
         }
 
         return FileThumbArray;
