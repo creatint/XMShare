@@ -105,11 +105,23 @@ public class WifiMgr {
     /**
      * 连接到指定的Wifi网络
      */
-    public boolean connectNewWifi(WifiConfiguration wifiCfg) {
+    public boolean connectNewWifi1(WifiConfiguration wifiCfg) {
         // 断开当前的连接
         disconnectCurrentNetwork();
         int netWorkId = mWifiManager.addNetwork(wifiCfg);
         return mWifiManager.enableNetwork(netWorkId, true);
+    }
+
+
+    /**
+     * 连接到指定的Wifi网络(这种方法可能能解决某些机型通过代码调用连接热点失效的问题)
+     */
+    public boolean connectNewWifi(WifiConfiguration wifiCfg) {
+        // 断开当前的连接
+        disconnectCurrentNetwork();
+        int netWorkId = mWifiManager.addNetwork(wifiCfg);
+        mWifiManager.saveConfiguration();
+        return mWifiManager.reconnect();
     }
 
 
