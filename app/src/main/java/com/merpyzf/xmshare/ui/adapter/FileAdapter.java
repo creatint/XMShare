@@ -33,6 +33,7 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
 
     private Context mContext;
     private List<T> mFileList;
+//    private List<View> mImageViews = new ArrayList<>();
     private static final String TAG = FileAdapter.class.getSimpleName();
 
     public FileAdapter(Context context, int layoutResId, @Nullable List<T> data) {
@@ -77,13 +78,16 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
 
         } else if (item instanceof PicFile) {
 
-
+           ImageView iv=  (ImageView) helper.getView(R.id.iv_cover);
             PicFile picFile = (PicFile) item;
             Glide.with(mContext)
                     .load(picFile.getPath())
-                    .crossFade()
-                    .centerCrop()
-                    .into((ImageView) helper.getView(R.id.iv_cover));
+                    .fitCenter()
+                    .into(iv);
+
+//
+//            mImageViews.add(iv);
+
 
         } else if (item instanceof VideoFile) {
 
@@ -99,6 +103,8 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
                     .crossFade()
                     .centerCrop()
                     .into(ivVideoThumb);
+
+
 
         }
 
@@ -133,4 +139,15 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
 
         return "^_^";
     }
+
+//    public void clearGlideCache() {
+//
+//        for (View imageView : mImageViews) {
+//
+//            Glide.clear(imageView);
+//
+//        }
+//
+//
+//    }
 }

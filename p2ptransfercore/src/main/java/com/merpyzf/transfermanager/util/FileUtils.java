@@ -55,6 +55,29 @@ public class FileUtils {
     }
 
 
+
+    /**
+     * 根据文件路径获取文件的后缀名
+     *
+     * @param
+     * @return 当获取不到时返回 ""
+     */
+    public static String getFileSuffix(File file) {
+
+        String filePath = file.getPath();
+
+        int index = filePath.indexOf('.');
+        if (index == -1) {
+            return "";
+        } else {
+            String suffix = filePath.substring(index + 1);
+            return suffix;
+        }
+
+
+    }
+
+
     /**
      * Bitmap 写入到SD卡
      *

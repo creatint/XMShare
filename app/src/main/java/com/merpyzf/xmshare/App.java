@@ -8,6 +8,7 @@ import com.litesuits.orm.LiteOrm;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.xmshare.common.Constant;
 import com.merpyzf.xmshare.util.Md5Utils;
+import com.squareup.leakcanary.LeakCanary;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        LeakCanary.install(this);
         AppContext = getApplicationContext();
         mSendFileList = new ArrayList<>();
         mSingleThreadPool = Executors.newSingleThreadExecutor();
