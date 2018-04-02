@@ -32,6 +32,7 @@ import com.merpyzf.xmshare.common.base.BaseActivity;
 import com.merpyzf.xmshare.ui.adapter.FileSelectAdapter;
 import com.merpyzf.xmshare.ui.adapter.FilesFrgPagerAdapter;
 import com.merpyzf.xmshare.ui.view.fragment.FileListFragment;
+import com.merpyzf.xmshare.ui.view.fragment.ImageFragment;
 import com.merpyzf.xmshare.ui.view.interfaces.PersonalObservable;
 import com.merpyzf.xmshare.ui.view.interfaces.PersonalObserver;
 import com.merpyzf.xmshare.util.SharedPreUtils;
@@ -214,7 +215,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         mFragmentList.add(appFragment);
 
         // 图片
-        FileListFragment picFragment = FileListFragment.newInstance(FileInfo.FILE_TYPE_IMAGE, mFileSelectListener);
+        Fragment picFragment = new ImageFragment();
         mFragmentList.add(picFragment);
 
         // 音乐
@@ -224,8 +225,6 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         // 视频
         FileListFragment videoFragment = FileListFragment.newInstance(FileInfo.FILE_TYPE_VIDEO, mFileSelectListener);
         mFragmentList.add(videoFragment);
-
-
 
 
     }
@@ -401,13 +400,34 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
     @Override
     public void onBackPressed() {
 
+
+        Log.i("wk", "onBachPressed被点击");
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+
+            int currentItem = mViewPager.getCurrentItem();
+
+            if (currentItem == 2) {
+
+                popBackStack(getSupportFragmentManager());
+
+            } else {
+
+                finish();
+            }
+
+
         }
 
+    }
 
+    public void popBackStack(FragmentManager fragmentManager) {
+        if (fragmentManager.getBackStackEntryCount() > 0) {
+            fragmentManager.popBackStack();
+        } else {
+            finish();
+        }
     }
 
     @Override

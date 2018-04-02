@@ -320,9 +320,6 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
         mFileListAdapter.setEmptyView(View.inflate(mContext, R.layout.view_rv_file_empty, null));
         // 设置适配器
         mRvFileList.setAdapter(mFileListAdapter);
-        mRvFileList.setVisibility(View.INVISIBLE);
-
-
     }
 
     /**
@@ -403,8 +400,11 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
         return null;
     }
 
+
     @Override
     public void onLoadFinished(Loader loader, Cursor data) {
+
+        // 这边的逻辑放到子线程中执行（耗时操作）
 
 
         if (LOAD_FILE_TYPE == FileInfo.FILE_TYPE_MUSIC) {
@@ -582,24 +582,38 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        Log.i("wk", "isVisibleToUser===> " + isVisibleToUser);
+        Log.i("wk", "LOAD_TYPE ===> " + LOAD_FILE_TYPE);
+
+
+    }
+
     /**
      * 生成文件的Md5值并存储到数据库中
      */
     public void asyncGenerateFileMd5(List<FileInfo> fileList) {
 
+
+        List<FileInfo> copyFileInfoList = new ArrayList<>();
+
+        copyFileInfoList.addAll(fileList);
+
+
         LiteOrm liteOrm = App.getSingleLiteOrm();
 
-        Observable.fromIterable(fileList)
+        Observable.fromIterable(copyFileInfoList)
                 .filter(fileInfo -> {
                     // 过滤掉数据库中已经存在的文件
                     ArrayList<FileMd5Model> fileMd5Models = liteOrm.query(new QueryBuilder<FileMd5Model>(FileMd5Model.class)
                             .whereEquals("file_name", fileInfo.getPath()));
                     if (fileMd5Models.size() == 0) {
-//                        Log.i(TAG,fileInfo.getName()+"在数据库中不存在");
                         return true;
                     }
 
-//                    Log.i(TAG,fileInfo.getName()+"在数据库中已经存在");
                     return false;
                 }).subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
