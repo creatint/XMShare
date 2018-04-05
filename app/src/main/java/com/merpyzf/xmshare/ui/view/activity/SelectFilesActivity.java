@@ -25,18 +25,17 @@ import com.bumptech.glide.Glide;
 import com.merpyzf.filemanager.fragment.MainFragment;
 import com.merpyzf.httpcoreserver.ui.HttpServerActivity;
 import com.merpyzf.transfermanager.entity.FileInfo;
-import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.App;
+import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Constant;
 import com.merpyzf.xmshare.common.base.BaseActivity;
 import com.merpyzf.xmshare.ui.adapter.FileSelectAdapter;
 import com.merpyzf.xmshare.ui.adapter.FilesFrgPagerAdapter;
 import com.merpyzf.xmshare.ui.view.fragment.FileListFragment;
-import com.merpyzf.xmshare.ui.view.fragment.ImageFragment;
+import com.merpyzf.xmshare.ui.view.fragment.PhotoFragment;
 import com.merpyzf.xmshare.ui.view.interfaces.PersonalObservable;
 import com.merpyzf.xmshare.ui.view.interfaces.PersonalObserver;
 import com.merpyzf.xmshare.util.SharedPreUtils;
-import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import java.util.ArrayList;
@@ -44,7 +43,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import de.hdodenhof.circleimageview.CircleImageView;
-import io.reactivex.functions.Consumer;
 
 /**
  * 应用首页界面
@@ -125,29 +123,26 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         FragmentManager fragmentManager = getSupportFragmentManager();
         // 申请权限
         new RxPermissions(SelectFilesActivity.this)
-                .requestEach(Manifest.permission.READ_EXTERNAL_STORAGE)
-                .subscribe(new Consumer<Permission>() {
-                    @Override
-                    public void accept(Permission permission) throws Exception {
+                .requestEach(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .subscribe(permission -> {
 
-                        // 用户已经同意给与该权限
-                        if (permission.granted) {
-                            // 加载ViewPager
-                            FilesFrgPagerAdapter frgPagerAdapter = new FilesFrgPagerAdapter(fragmentManager, mFragmentList, mTabTitles);
-                            mViewPager.setAdapter(frgPagerAdapter);
-                            mTabs.setupWithViewPager(mViewPager);
-                            mTabs.setTabsFromPagerAdapter(frgPagerAdapter);
-                            mViewPager.setOffscreenPageLimit(4);
+                    // 用户已经同意给与该权限
+                    if (permission.granted) {
+                        // 加载ViewPager
+                        FilesFrgPagerAdapter frgPagerAdapter = new FilesFrgPagerAdapter(fragmentManager, mFragmentList, mTabTitles);
+                        mViewPager.setAdapter(frgPagerAdapter);
+                        mTabs.setupWithViewPager(mViewPager);
+                        mTabs.setTabsFromPagerAdapter(frgPagerAdapter);
+                        mViewPager.setOffscreenPageLimit(4);
 
-                        } else if (permission.shouldShowRequestPermissionRationale) {
-                            // 用户拒绝了该权限，没有选中『不再询问』（Never ask again）,那么下次再次启动时，还会提示请求权限的对话框
-                            Log.d(TAG, permission.name + " is denied. More info should be provided.");
-                        } else {
-                            // 用户拒绝了该权限，并且选中『不再询问』
-                            Log.d(TAG, permission.name + " is denied.");
-                        }
-
+                    } else if (permission.shouldShowRequestPermissionRationale) {
+                        // 用户拒绝了该权限，没有选中『不再询问』（Never ask again）,那么下次再次启动时，还会提示请求权限的对话框
+                        Log.d(TAG, permission.name + " is denied. More info should be provided.");
+                    } else {
+                        // 用户拒绝了该权限，并且选中『不再询问』
+                        Log.d(TAG, permission.name + " is denied.");
                     }
+
                 });
 
 
@@ -189,7 +184,21 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
              * 全选/取消全选的回调
              */
             @Override
-            public void onCheckedAll() {
+            public void onCheckedAll(List<FileInfo> fileInfoList) {
+                App.addSendFiles(fileInfoList);
+                mFileSelectAdapter.notifyDataSetChanged();
+                updateBottomTitle();
+
+            }
+
+            /**
+             * 取消文件全选
+             * @param fileInfoList
+             */
+            @Override
+            public void onCancelCheckedAll(List<FileInfo> fileInfoList) {
+
+                App.removeSendFiles(fileInfoList);
                 mFileSelectAdapter.notifyDataSetChanged();
                 updateBottomTitle();
 
@@ -215,7 +224,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         mFragmentList.add(appFragment);
 
         // 图片
-        Fragment picFragment = new ImageFragment();
+        Fragment picFragment = new PhotoFragment(mFileSelectListener);
         mFragmentList.add(picFragment);
 
         // 音乐
@@ -401,7 +410,6 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
     public void onBackPressed() {
 
 
-        Log.i("wk", "onBachPressed被点击");
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
         } else {
@@ -412,6 +420,9 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
 
                 popBackStack(getSupportFragmentManager());
 
+                backIndicator();
+
+
             } else {
 
                 finish();
@@ -419,6 +430,30 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
 
 
         }
+
+    }
+
+    private void backIndicator() {
+
+        PhotoFragment imageFragment = null;
+
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+
+            if (fragment instanceof PhotoFragment) {
+
+                imageFragment = (PhotoFragment) fragment;
+
+            }
+
+        }
+
+
+        if (imageFragment == null) {
+            return;
+        }
+
+        imageFragment.getFileSelectIndicator().back();
+
 
     }
 

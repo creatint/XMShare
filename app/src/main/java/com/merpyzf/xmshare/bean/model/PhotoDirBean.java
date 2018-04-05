@@ -1,17 +1,20 @@
 package com.merpyzf.xmshare.bean.model;
 
 import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.transfermanager.util.FileUtils;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Created by merpyzf on 2018/4/2.
  */
 
-public class PhotoDirBean {
+public class PhotoDirBean implements Serializable {
 
     // 相册文件夹的封面图
     private String coverImg;
@@ -74,24 +77,34 @@ public class PhotoDirBean {
 
         for (File image : images) {
 
-            FileInfo fileInfo = new FileInfo();
-            fileInfo.setPath(image.getPath());
-            fileInfo.setName(image.getName());
-            fileInfo.setLength((int) image.length());
-            fileInfo.setSuffix(FileUtils.getFileSuffix(image));
-            fileInfo.setType(FileInfo.FILE_TYPE_IMAGE);
-            imageList.add(fileInfo);
+            PicFile picFile = new PicFile();
+            picFile.setPath(image.getPath());
+            picFile.setName(image.getName());
+            picFile.setLength((int) image.length());
+            picFile.setSuffix(FileUtils.getFileSuffix(image));
+            picFile.setType(FileInfo.FILE_TYPE_IMAGE);
+            imageList.add(picFile);
 
         }
+
+        Collections.sort(imageList, (o1, o2) -> {
+
+            File file1 = new File(o1.getPath());
+            File file2 = new File(o2.getPath());
+
+            if (file1.lastModified() > file2.lastModified()) {
+
+                return -1;
+            } else {
+                return 1;
+            }
+        });
 
 
         this.imageList = imageList;
 
 
-
     }
-
-
 
 
     /**
@@ -107,4 +120,6 @@ public class PhotoDirBean {
         return imageList.size();
 
     }
+
+
 }

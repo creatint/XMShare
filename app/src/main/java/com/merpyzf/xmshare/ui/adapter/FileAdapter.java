@@ -23,6 +23,7 @@ import com.merpyzf.xmshare.util.Md5Utils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,7 +34,7 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
 
     private Context mContext;
     private List<T> mFileList;
-//    private List<View> mImageViews = new ArrayList<>();
+    private List<View> mImageViews = new ArrayList<>();
     private static final String TAG = FileAdapter.class.getSimpleName();
 
     public FileAdapter(Context context, int layoutResId, @Nullable List<T> data) {
@@ -66,27 +67,41 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
             helper.setText(R.id.tv_size, FormatUtils.convert2Mb(musicFile.getLength()) + " MB");
 
             File albumFile = new File(Constant.PIC_CACHES_DIR, Md5Utils.getMd5(musicFile.getPath()));
+
+            ImageView imageView = helper.getView(R.id.iv_cover);
             if (albumFile.exists()) {
                 //设置封面图片
                 Glide.with(mContext)
                         .load(albumFile)
-                        .crossFade()
+                        .dontAnimate()
                         .centerCrop()
-                        .into((ImageView) helper.getView(R.id.iv_cover));
+                        .placeholder(R.drawable.ic_thumb_empty)
+                        .error(R.drawable.ic_thumb_empty)
+                        .into(imageView);
+
+
             }
 
 
         } else if (item instanceof PicFile) {
 
-           ImageView iv=  (ImageView) helper.getView(R.id.iv_cover);
+            ImageView iv = helper.getView(R.id.iv_cover);
             PicFile picFile = (PicFile) item;
+
             Glide.with(mContext)
                     .load(picFile.getPath())
+                    .error(R.drawable.ic_thumb_empty)
+                    .crossFade()
                     .fitCenter()
                     .into(iv);
+            // 会不会有可能包含重复的
+            if (!mImageViews.contains(iv)) {
+                mImageViews.add(iv);
 
-//
-//            mImageViews.add(iv);
+                Log.i("wk", "mImages的数量->"+mImageViews.size()+"不重复");
+            }else{
+                Log.i("wk", "mImages的数量->"+mImageViews.size()+"包含了重复的");
+            }
 
 
         } else if (item instanceof VideoFile) {
@@ -96,14 +111,15 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
             helper.setText(R.id.tv_size, FormatUtils.convert2Mb(videoFile.getLength()) + " MB");
             helper.setText(R.id.tv_duration, FormatUtils.convertMS2Str(videoFile.getDuration()));
             ImageView ivVideoThumb = helper.getView(R.id.iv_cover);
-            String videoThumbPath = Constant.PIC_CACHES_DIR+"/"+Md5Utils.getMd5(videoFile.getPath());
+            String videoThumbPath = Constant.PIC_CACHES_DIR + "/" + Md5Utils.getMd5(videoFile.getPath());
 
             Glide.with(mContext)
                     .load(new File(videoThumbPath))
-                    .crossFade()
+                    .placeholder(R.drawable.ic_thumb_empty)
+                    .error(R.drawable.ic_thumb_empty)
+                    .dontAnimate()
                     .centerCrop()
                     .into(ivVideoThumb);
-
 
 
         }
@@ -140,14 +156,17 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
         return "^_^";
     }
 
-//    public void clearGlideCache() {
-//
-//        for (View imageView : mImageViews) {
-//
-//            Glide.clear(imageView);
-//
-//        }
-//
-//
-//    }
+
+    public void clearGlideCache() {
+
+        if (mImageViews.size() == 0 || mImageViews == null) {
+            return;
+        }
+
+        for (View imageView : mImageViews) {
+            Glide.clear(imageView);
+        }
+
+    }
+
 }

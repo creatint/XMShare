@@ -1,14 +1,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.merpyzf.xmshare.ui.view.fragment.ImageFragment">
+
+    tools:context="com.merpyzf.xmshare.ui.view.fragment.PhotoFragment">
 
     <RelativeLayout
         android:id="@+id/rl_top"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:foreground="@drawable/card_foreground"
+        android:clickable="true"
         android:orientation="horizontal">
 
         <TextView
@@ -45,20 +49,19 @@
     </RelativeLayout>
 
 
-
     <com.merpyzf.filemanager.widget.FileSelectIndicator
         android:id="@+id/fileSelectIndicator"
         android:layout_width="match_parent"
-        android:layout_height="30dp">
-    </com.merpyzf.filemanager.widget.FileSelectIndicator>
+        android:layout_height="30dp"
+        app:baseName="相册"
+
+        ></com.merpyzf.filemanager.widget.FileSelectIndicator>
 
 
     <FrameLayout
         android:id="@+id/fl_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        >
-    </FrameLayout>
+        android:layout_weight="1"></FrameLayout>
 
 </LinearLayout>

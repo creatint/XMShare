@@ -20,7 +20,7 @@ public interface IFileSelectorIndicator {
      * 移除一个目录
      * @param path 目录的绝对路径
      */
-    void remove(Label path);
+    void removeAfter(Label path);
 
 
     /**

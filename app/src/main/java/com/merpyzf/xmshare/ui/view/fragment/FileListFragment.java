@@ -226,32 +226,34 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
             if (isChecked) {
 
                 mTvChecked.setText("取消全选");
-                for (int i = 0; i < mFileLists.size(); i++) {
-                    if (!App.getSendFileList().contains(mFileLists.get(i))) {
-                        App.getSendFileList().add(mFileLists.get(i));
-                    }
-                }
-                mFileListAdapter.notifyDataSetChanged();
+//                for (int i = 0; i < mFileLists.size(); i++) {
+//                    if (!App.getSendFileList().contains(mFileLists.get(i))) {
+//                        App.getSendFileList().add(mFileLists.get(i));
+//                    }
+//                }
+
                 if (mFileSelectListener != null) {
-                    mFileSelectListener.onCheckedAll();
+                    mFileSelectListener.onCheckedAll(mFileLists);
                 }
+
+                mFileListAdapter.notifyDataSetChanged();
 
                 mTvChecked.setText("取消全选");
 
 
             } else {
 
-                // 取消全选
-                for (int i = 0; i < mFileLists.size(); i++) {
-                    if (App.getSendFileList().contains(mFileLists.get(i))) {
-                        App.getSendFileList().remove(mFileLists.get(i));
-                    }
+//                // 取消全选
+//                for (int i = 0; i < mFileLists.size(); i++) {
+//                    if (App.getSendFileList().contains(mFileLists.get(i))) {
+//                        App.getSendFileList().remove(mFileLists.get(i));
+//                    }
+//                }
+//
+                if (mFileSelectListener != null) {
+                    mFileSelectListener.onCancelCheckedAll(mFileLists);
                 }
                 mFileListAdapter.notifyDataSetChanged();
-                if (mFileSelectListener != null) {
-                    mFileSelectListener.onCheckedAll();
-                }
-
                 mTvChecked.setText("全选");
 
             }
@@ -582,15 +584,6 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
 
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-
-        Log.i("wk", "isVisibleToUser===> " + isVisibleToUser);
-        Log.i("wk", "LOAD_TYPE ===> " + LOAD_FILE_TYPE);
-
-
-    }
 
     /**
      * 生成文件的Md5值并存储到数据库中

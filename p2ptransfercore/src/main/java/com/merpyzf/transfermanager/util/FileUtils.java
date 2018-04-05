@@ -55,7 +55,6 @@ public class FileUtils {
     }
 
 
-
     /**
      * 根据文件路径获取文件的后缀名
      *
@@ -187,7 +186,7 @@ public class FileUtils {
 
             VideoFile videoFile = (VideoFile) file;
 
-            File thumbFile = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),Md5Utils.getMd5(videoFile.getPath()));
+            File thumbFile = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), Md5Utils.getMd5(videoFile.getPath()));
 
             Bitmap appThumbBmp = BitmapFactory.decodeFile(thumbFile.getPath());
             FileThumbArray = FileUtils.bitmapToByteArray(zoomImage(context, appThumbBmp));
@@ -293,8 +292,10 @@ public class FileUtils {
                 case FileInfo.FILE_TYPE_APP:
 
                     parent = new File(Environment.getExternalStorageDirectory(), Constant.SAVE_APK_PATH);
+
                     if (!parent.exists()) {
-                        parent.mkdirs();
+                        boolean isCreated = parent.mkdirs();
+
                     }
 
                     file = new File(parent, FileUtils.removeFileSeparator(fileInfo.getName()) + "." + fileInfo.getSuffix());
@@ -405,9 +406,6 @@ public class FileUtils {
 
         return newFileName;
     }
-
-
-
 
 
     public static void main(String[] args) {

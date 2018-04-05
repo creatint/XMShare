@@ -1,8 +1,11 @@
 package com.merpyzf.transfermanager.util;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
+import android.os.Build;
+import android.util.Log;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -57,7 +60,6 @@ public class ApManager {
             }
 
 
-
             Method method = wifimanager.getClass().getMethod("setWifiApEnabled", WifiConfiguration.class, boolean.class);
             method.invoke(wifimanager, wificonfiguration, !isApOn(context));
             return true;
@@ -71,7 +73,9 @@ public class ApManager {
     // toggle wifi hotspot on or off, and specify the hotspot name
     public static boolean configApState(Context context, String nickName, int avatar) {
         WifiManager wifimanager = (WifiManager) context.getSystemService(context.WIFI_SERVICE);
+        ConnectivityManager mCm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         WifiConfiguration wificonfiguration = null;
+
         try {
             wificonfiguration = new WifiConfiguration();
             wificonfiguration.SSID = NetworkUtil.getSSID(nickName, avatar);
@@ -84,8 +88,25 @@ public class ApManager {
                     turnOffAp(context);
                 }
             }
+
+
             Method method = wifimanager.getClass().getMethod("setWifiApEnabled", WifiConfiguration.class, boolean.class);
             method.invoke(wifimanager, wificonfiguration, !isApOn(context));
+
+            // Android6.0以上的设备需要进行特殊处理
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                Log.i("wk","当前运行的设备为Android6.0以上的设备");
+
+
+
+
+
+
+
+
+            }
+
+
             return true;
         } catch (Exception e) {
             e.printStackTrace();

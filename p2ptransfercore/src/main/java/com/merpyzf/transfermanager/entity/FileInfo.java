@@ -2,11 +2,13 @@ package com.merpyzf.transfermanager.entity;
 
 import com.merpyzf.transfermanager.constant.Constant;
 
+import java.io.Serializable;
+
 /**
  * Created by wangke on 2017/12/23.
  */
 
-public class FileInfo {
+public class FileInfo implements Serializable{
 
     /**
      * 应用类型(APK)

@@ -1,6 +1,7 @@
 package com.merpyzf.filemanager.widget;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -30,6 +31,8 @@ public class FileSelectIndicator extends HorizontalScrollView implements IFileSe
     private LinearLayout mRootView = null;
     private IndicatorClickCallback mCallBack = null;
     private List<Label> mLabelList = null;
+    private int mTextColor;
+
 
     public FileSelectIndicator(Context context) {
         this(context, null);
@@ -43,17 +46,27 @@ public class FileSelectIndicator extends HorizontalScrollView implements IFileSe
         super(context, attrs, defStyleAttr);
         // 在这里进行初始化的方法
         this.mContext = context;
-        init();
+
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.fileSelectIndicator);
+
+        String baseName = (String) typedArray.getText(R.styleable.fileSelectIndicator_baseName);
+        // 字体颜色
+        mTextColor = typedArray.getColor(R.styleable.fileSelectIndicator_textColor, getResources().getColor(R.color.colorPrimaryText));
+        // 有一个颜色值还没有获取
+        //        typedArray.getDimension(R.styleable.fileSelectIndicator_textSize, )
+
+
+        init(baseName);
     }
 
-    private void init() {
+    private void init(String baseName) {
         mLabelList = new ArrayList<>();
         mRootView = new LinearLayout(mContext);
         mRootView.setOrientation(LinearLayout.HORIZONTAL);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         mRootView.setLayoutParams(layoutParams);
         addView(mRootView);
-        add(new Label("文件", ""));
+        add(new Label(baseName, ""));
 
     }
 
@@ -61,22 +74,21 @@ public class FileSelectIndicator extends HorizontalScrollView implements IFileSe
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
-
         if (mRootView != null) {
-
-
             int childCount = mRootView.getChildCount();
-
             if (childCount > 0) {
                 View view = mRootView.getChildAt(childCount - 1);
                 float x = view.getX();
-                Log.i("wk", "x -- >" + x);
-
                 scrollTo((int) view.getX(), (int) view.getX());
-
             }
-
         }
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
+
     }
 
     @Override
@@ -95,19 +107,38 @@ public class FileSelectIndicator extends HorizontalScrollView implements IFileSe
 
     }
 
+    /**
+     * 移除给定标签之后的所有标签
+     *
+     * @param label
+     */
     @Override
-    public void remove(Label label) {
+    public void removeAfter(Label label) {
 
-        int start = mLabelList.indexOf(label)+1;
-        int end = mLabelList.size()-1;
+        int start = mLabelList.indexOf(label) + 1;
+        int end = mLabelList.size() - 1;
 
         if (start <= end) {
-            for (int i = end; i >=start; i--) {
+            for (int i = end; i >= start; i--) {
                 mLabelList.remove(i);
                 mRootView.removeViewAt(i);
             }
 
         }
+    }
+
+    /**
+     * 移除最后一个标签相当于返回
+     */
+    public void back() {
+
+
+        int removeIndex = mLabelList.size()-1;
+
+        mLabelList.remove(removeIndex);
+        mRootView.removeViewAt(removeIndex);
+
+
     }
 
     @Override
@@ -202,7 +233,7 @@ public class FileSelectIndicator extends HorizontalScrollView implements IFileSe
             // 需要进行移除的操作
             isBack = false;
 
-            remove(label);
+            removeAfter(label);
 
 
         }
