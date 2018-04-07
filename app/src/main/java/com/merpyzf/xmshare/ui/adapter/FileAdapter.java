@@ -66,7 +66,8 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
             helper.setText(R.id.tv_artist, musicFile.getArtist());
             helper.setText(R.id.tv_size, FormatUtils.convert2Mb(musicFile.getLength()) + " MB");
 
-            File albumFile = new File(Constant.PIC_CACHES_DIR, Md5Utils.getMd5(musicFile.getPath()));
+            File albumFile = new File(Constant.PIC_CACHES_DIR, Md5Utils.getMd5(musicFile.getAlbumId()+""));
+
 
             ImageView imageView = helper.getView(R.id.iv_cover);
             if (albumFile.exists()) {

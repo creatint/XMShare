@@ -110,7 +110,7 @@ public class MusicUtils {
 
                             File extPicCacheDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
-                            bos = new BufferedOutputStream(new FileOutputStream(new File(extPicCacheDir, Md5Utils.getMd5(musicFile.getPath()))));
+                            bos = new BufferedOutputStream(new FileOutputStream(new File(extPicCacheDir, Md5Utils.getMd5(musicFile.getAlbumId()+""))));
                             if (bitmap == null) {
 
                                 bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_thumb_empty);

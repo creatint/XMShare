@@ -7,7 +7,7 @@ package com.merpyzf.transfermanager.entity;
 
 public class MusicFile extends FileInfo {
 
-    // 封面id
+    // 专辑id
     private long albumId;
     // 作者
     private String artist;

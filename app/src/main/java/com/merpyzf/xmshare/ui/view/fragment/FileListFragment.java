@@ -13,6 +13,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.GridLayoutManager;
@@ -31,7 +32,6 @@ import com.litesuits.orm.LiteOrm;
 import com.litesuits.orm.db.assit.QueryBuilder;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
-import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.xmshare.App;
@@ -56,7 +56,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+
+import static com.merpyzf.transfermanager.entity.FileInfo.FILE_TYPE_APP;
+import static com.merpyzf.transfermanager.entity.FileInfo.FILE_TYPE_IMAGE;
+import static com.merpyzf.transfermanager.entity.FileInfo.FILE_TYPE_MUSIC;
+import static com.merpyzf.transfermanager.entity.FileInfo.FILE_TYPE_VIDEO;
 
 /**
  * 扫描到的本地文件列表的展示页面
@@ -86,8 +92,6 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
     private List<FileInfo> mFileLists;
     private FileAdapter mFileListAdapter;
 
-    private Uri mUri;
-    private String[] mProjections;
     private Handler mHandler;
     private OnFileSelectListener<FileInfo> mFileSelectListener;
     private FileSelectedListChangedReceiver mFslcReceiver;
@@ -107,9 +111,8 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     public static FileListFragment newInstance(int type, OnFileSelectListener<FileInfo> fileSelectListener) {
-        FileListFragment fileListFragment = new FileListFragment(type, fileSelectListener);
 
-        return fileListFragment;
+        return new FileListFragment(type, fileSelectListener);
     }
 
 
@@ -126,7 +129,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_file_list, container, false);
@@ -134,7 +137,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
         mContext = getContext();
         initUI();
 
-        if (LOAD_FILE_TYPE == FileInfo.FILE_TYPE_APP) {
+        if (LOAD_FILE_TYPE == FILE_TYPE_APP) {
             asyncLoadApp();
         }
 
@@ -146,9 +149,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
             App.getSendFileList().clear();
         }
 
-        /**
-         *  文件列表点击选择的回调事件
-         */
+
         mFileListAdapter.setOnItemClickListener((adapter, view1, position) -> {
 
             ImageView ivSelect = view1.findViewById(R.id.iv_select);
@@ -226,30 +227,15 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
             if (isChecked) {
 
                 mTvChecked.setText("取消全选");
-//                for (int i = 0; i < mFileLists.size(); i++) {
-//                    if (!App.getSendFileList().contains(mFileLists.get(i))) {
-//                        App.getSendFileList().add(mFileLists.get(i));
-//                    }
-//                }
-
                 if (mFileSelectListener != null) {
                     mFileSelectListener.onCheckedAll(mFileLists);
                 }
 
                 mFileListAdapter.notifyDataSetChanged();
-
                 mTvChecked.setText("取消全选");
 
 
             } else {
-
-//                // 取消全选
-//                for (int i = 0; i < mFileLists.size(); i++) {
-//                    if (App.getSendFileList().contains(mFileLists.get(i))) {
-//                        App.getSendFileList().remove(mFileLists.get(i));
-//                    }
-//                }
-//
                 if (mFileSelectListener != null) {
                     mFileSelectListener.onCancelCheckedAll(mFileLists);
                 }
@@ -283,7 +269,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
 
         switch (LOAD_FILE_TYPE) {
 
-            case FileInfo.FILE_TYPE_APP:
+            case FILE_TYPE_APP:
 
                 setTitle("应用");
                 mRvFileList.setLayoutManager(new GridLayoutManager(getContext(), 4));
@@ -291,22 +277,14 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
 
                 break;
 
-            case FileInfo.FILE_TYPE_IMAGE:
-
-                setTitle("图片");
-                mRvFileList.setLayoutManager(new GridLayoutManager(getContext(), 4));
-                mFileListAdapter = new FileAdapter<FileInfo>(getActivity(), R.layout.item_rv_pic, mFileLists);
-
-                break;
-
-            case FileInfo.FILE_TYPE_MUSIC:
+            case FILE_TYPE_MUSIC:
 
                 setTitle("音乐");
                 mRvFileList.setLayoutManager(new LinearLayoutManager(getContext()));
                 mFileListAdapter = new FileAdapter<FileInfo>(getActivity(), R.layout.item_rv_music, mFileLists);
                 break;
 
-            case FileInfo.FILE_TYPE_VIDEO:
+            case FILE_TYPE_VIDEO:
                 setTitle("视频");
                 mRvFileList.setLayoutManager(new LinearLayoutManager(getContext()));
                 mFileListAdapter = new FileAdapter<FileInfo>(getActivity(), R.layout.item_rv_video, mFileLists);
@@ -339,7 +317,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
             // 发送一个空的消息，提示扫描完毕
             mHandler.sendEmptyMessage(0);
             // 异步生成并文件的MD5并写入到数据库中
-            asyncGenerateFileMd5(mFileLists);
+            Md5Utils.asyncGenerateFileMd5(mFileLists);
 
         }).start();
     }
@@ -347,15 +325,16 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public Loader onCreateLoader(int id, Bundle args) {
+        // 这个方法执行在主线程
 
-        Log.i("chk", "onCreateLoader->" + Thread.currentThread().getName());
+        Uri uri;
+        String[] projections;
+        // 扫描音乐文件
+        if (id == FILE_TYPE_MUSIC) {
 
-        // 从本地数据库中扫描音乐文件
-        if (id == FileInfo.FILE_TYPE_MUSIC) {
+            uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
 
-            mUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-
-            mProjections = new String[]{
+            projections = new String[]{
                     MediaStore.Audio.Media.TITLE,  //音乐名
                     MediaStore.Audio.Media.ARTIST, // 艺术家
                     MediaStore.Audio.Media.DATA, //音乐文件所在路径
@@ -365,13 +344,13 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                     MediaStore.Audio.Media.DURATION //音乐时长
             };
 
-            return new CursorLoader(getContext(), mUri, mProjections, null, null, MediaStore.Audio.Media.DATE_ADDED + " DESC");
+            return new CursorLoader(getContext(), uri, projections, null, null, MediaStore.Audio.Media.DATE_ADDED + " DESC");
 
-            // 从本地数据库中扫描本地图片
-        } else if (id == FileInfo.FILE_TYPE_IMAGE) {
+            // 扫描图片文件
+        } else if (id == FILE_TYPE_IMAGE) {
 
-            mUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-            mProjections = new String[]
+            uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+            projections = new String[]
                     {
                             MediaStore.Images.Media._ID,
                             MediaStore.Images.Media.DATA, // 文件路径
@@ -379,13 +358,14 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                             MediaStore.Images.Media.DATE_ADDED // 文件添加/修改时间
                     };
 
-            return new CursorLoader(getContext(), mUri, mProjections, null, null, MediaStore.Images.Media.DATE_ADDED + " DESC");
+            return new CursorLoader(getContext(), uri, projections, null, null, MediaStore.Images.Media.DATE_ADDED + " DESC");
 
-        } else if (id == FileInfo.FILE_TYPE_VIDEO) {
+            // 扫描视频文件
+        } else if (id == FILE_TYPE_VIDEO) {
 
-            mUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+            uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
 
-            mProjections = new String[]
+            projections = new String[]
                     {
                             MediaStore.Video.Media._ID,
                             MediaStore.Video.Media.TITLE,
@@ -394,7 +374,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                             MediaStore.Video.Media.DATE_ADDED // 文件添加/修改时间
                     };
 
-            return new CursorLoader(getContext(), mUri, mProjections, null, null, MediaStore.Video.Media.DATE_ADDED + " DESC");
+            return new CursorLoader(getContext(), uri, projections, null, null, MediaStore.Video.Media.DATE_ADDED + " DESC");
 
         }
 
@@ -406,150 +386,108 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoadFinished(Loader loader, Cursor data) {
 
-        // 这边的逻辑放到子线程中执行（耗时操作）
+
+        if (LOAD_FILE_TYPE == FILE_TYPE_MUSIC) {
+
+            Observable.just(data)
+                    .flatMap(cursor -> {
+                        // 遍历扫描到的音乐文件
+                        while (data.moveToNext()) {
+
+                            String title = data.getString(0);
+                            String artist = data.getString(1);
+                            String path = data.getString(2);
+                            int album_id = data.getInt(3);
+                            Log.i("album_id", "name-->" + title + "album_id-->" + album_id);
+                            // 注意这边的音乐文件的大小是否正确
+                            long extra_max_bytes = data.getLong(5);
+                            long duration = data.getLong(6);
+                            MusicFile fileInfo = new MusicFile(title, path, FILE_TYPE_MUSIC, (int) extra_max_bytes, album_id, artist, duration);
+                            // 添加文件的后缀名
+                            fileInfo.setSuffix(FileUtils.getFileSuffix(path));
+                            if (extra_max_bytes > 1024 * 1024) {
+                                mFileLists.add(fileInfo);
+                            }
+
+                        }
+                        return Observable.just(mFileLists);
+                    }).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(fileInfoList -> {
 
 
-        if (LOAD_FILE_TYPE == FileInfo.FILE_TYPE_MUSIC) {
+                        if (fileInfoList.size() == 0) {
+                            mProgressBar.setVisibility(View.INVISIBLE);
+                            Toast.makeText(getContext(), "没有扫描到本地音乐", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
 
-            if (data.getCount() > 0) {
+                        // 刷新界面
+                        setTitle("音乐");
+                        mProgressBar.setVisibility(View.INVISIBLE);
+                        mRvFileList.setVisibility(View.VISIBLE);
+                        mProgressBar.setVisibility(View.INVISIBLE);
+                        mFileListAdapter.notifyDataSetChanged();
 
+                        // 在线程中更新音乐封面图片
+                        MusicUtils.updateAlbumImg(getContext(), mFileLists);
+                        // 异步生成并文件的MD5并写入到数据库中
+                        Md5Utils.asyncGenerateFileMd5(mFileLists);
 
-                // 遍历扫描到的音乐文件
-                while (data.moveToNext()) {
-
-                    String title = data.getString(0);
-                    String artist = data.getString(1);
-                    String path = data.getString(2);
-                    int album_id = data.getInt(3);
-                    String mimeType = data.getString(4);
-
-                    // 注意这边的音乐文件的大小是否正确
-                    long extra_max_bytes = data.getLong(5);
-                    long duration = data.getLong(6);
-                    MusicFile fileInfo = new MusicFile(title, path, FileInfo.FILE_TYPE_MUSIC, (int) extra_max_bytes, album_id, artist, duration);
-                    // 添加文件的后缀名
-                    fileInfo.setSuffix(FileUtils.getFileSuffix(path));
-
-                    Log.i(TAG, "name->" + title + " extra_max_bytes->" + extra_max_bytes);
-
-                    // 筛选大于1MB的文件
-                    if (extra_max_bytes > 1024 * 1024) {
-
-                        mFileLists.add(fileInfo);
-                    }
-
-                }
-
-                setTitle("音乐");
-                // 数据加载完成后隐藏进进度提示
-                mProgressBar.setVisibility(View.INVISIBLE);
-                // 在线程中更新音乐封面图片
-                MusicUtils.updateAlbumImg(getContext(), mFileLists);
-                // 异步生成并文件的MD5并写入到数据库中
-                asyncGenerateFileMd5(mFileLists);
-
-            } else {
-                mProgressBar.setVisibility(View.INVISIBLE);
-                Toast.makeText(getContext(), "没有扫描到本地音乐", Toast.LENGTH_SHORT).show();
-            }
-
-            mRvFileList.setVisibility(View.VISIBLE);
-            mProgressBar.setVisibility(View.INVISIBLE);
-            mFileListAdapter.notifyDataSetChanged();
+                    });
 
 
-        } else if (LOAD_FILE_TYPE == FileInfo.FILE_TYPE_IMAGE) {
-
-            if (data.getCount() > 0) {
-
-                // 遍历扫描到的图片文件
-                while (data.moveToNext()) {
-
-                    String id = data.getString(data.getColumnIndexOrThrow(MediaStore.Images.Media._ID));
-                    String path = data.getString(data.getColumnIndexOrThrow(MediaStore.Images.Media.DATA));
-                    String title = data.getString(data.getColumnIndex(MediaStore.Video.Media.TITLE));
-
-                    File file = new File(path);
-
-                    //对图片的大小进行筛选
-                    if (file.length() > 2000) {
-
-                        PicFile picFile = new PicFile();
-                        picFile.setId(id);
-                        picFile.setPath(path);
-                        picFile.setName(title);
-                        // 设置文件的大小
-                        picFile.setLength((int) new File(path).length());
-                        picFile.setSuffix(FileUtils.getFileSuffix(path));
-                        // 设置文件的类型
-                        picFile.setType(FileInfo.FILE_TYPE_IMAGE);
-                        mFileLists.add(picFile);
-                    }
-
-                }
-                setTitle("图片");
-                // 数据加载完成后隐藏进进度提示
-                mRvFileList.setVisibility(View.VISIBLE);
-                mProgressBar.setVisibility(View.INVISIBLE);
-                // 异步生成并文件的MD5并写入到数据库中
-                asyncGenerateFileMd5(mFileLists);
-            } else {
-                // 数据加载完成后隐藏进进度提示
-                mProgressBar.setVisibility(View.INVISIBLE);
-                Toast.makeText(mContext, "没有在当前设备上扫描到图片", Toast.LENGTH_SHORT).show();
+        } else if (LOAD_FILE_TYPE == FILE_TYPE_VIDEO) {
 
 
-            }
-            // 刷新数据
-            mFileListAdapter.notifyDataSetChanged();
+            Observable.just(data)
+                    .flatMap(cursor -> {
 
+                        while (data.moveToNext()) {
 
-        } else if (LOAD_FILE_TYPE == FileInfo.FILE_TYPE_VIDEO) {
+                            String id = data.getString(data.getColumnIndex(MediaStore.Video.Media._ID));
+                            String title = data.getString(data.getColumnIndex(MediaStore.Video.Media.TITLE));
+                            long duration = data.getLong(data.getColumnIndex(MediaStore.Video.Media.DURATION));
+                            String path = data.getString(data.getColumnIndex(MediaStore.Video.Media.DATA));
+                            long length = new File(path).length();
 
-            if (data.getCount() > 0) {
+                            VideoFile videoFile = new VideoFile();
+                            videoFile.setAlbumId(id);
+                            videoFile.setName(title);
+                            videoFile.setPath(path);
+                            videoFile.setLength((int) length);
+                            videoFile.setDuration(duration);
+                            // 设置文件后缀
+                            videoFile.setSuffix(FileUtils.getFileSuffix(path));
+                            // 设置文件类型
+                            videoFile.setType(FILE_TYPE_VIDEO);
 
+                            // 筛选大于1MB的文件
+                            if (length > 1024 * 1024) {
+                                mFileLists.add(videoFile);
+                            }
+                        }
+                        return Observable.just(mFileLists);
+                    }).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(fileInfoList -> {
 
-                while (data.moveToNext()) {
+                        if (fileInfoList.size() == 0) {
+                            mProgressBar.setVisibility(View.INVISIBLE);
+                            Toast.makeText(mContext, "没有在当前设备上扫描到视频", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
 
-                    String id = data.getString(data.getColumnIndex(MediaStore.Video.Media._ID));
-                    String title = data.getString(data.getColumnIndex(MediaStore.Video.Media.TITLE));
-                    long duration = data.getLong(data.getColumnIndex(MediaStore.Video.Media.DURATION));
-                    String path = data.getString(data.getColumnIndex(MediaStore.Video.Media.DATA));
-                    long length = new File(path).length();
+                        // 更新UI
+                        setTitle("视频");
+                        mRvFileList.setVisibility(View.VISIBLE);
+                        mProgressBar.setVisibility(View.INVISIBLE);
+                        mFileListAdapter.notifyDataSetChanged();
 
-                    VideoFile videoFile = new VideoFile();
-                    videoFile.setAlbumId(id);
-                    videoFile.setName(title);
-                    videoFile.setPath(path);
-                    videoFile.setLength((int) length);
-                    videoFile.setDuration(duration);
-                    // 设置文件后缀
-                    videoFile.setSuffix(FileUtils.getFileSuffix(path));
-                    // 设置文件类型
-                    videoFile.setType(FileInfo.FILE_TYPE_VIDEO);
+                        VideoUtils.updateThumbImg(mContext, mFileLists);
+                        Md5Utils.asyncGenerateFileMd5(mFileLists);
 
-                    // 筛选大于1MB的文件
-                    if (length > 1024 * 1024) {
-                        mFileLists.add(videoFile);
-                    }
-
-                }
-                setTitle("视频");
-                mRvFileList.setVisibility(View.VISIBLE);
-                mProgressBar.setVisibility(View.INVISIBLE);
-                VideoUtils.updateThumbImg(mContext, mFileLists);
-                // 异步生成并文件的MD5并写入到数据库中
-                asyncGenerateFileMd5(mFileLists);
-
-
-            } else {
-
-                mProgressBar.setVisibility(View.INVISIBLE);
-                Toast.makeText(mContext, "没有在当前设备上扫描到视频", Toast.LENGTH_SHORT).show();
-
-            }
-
-            mFileListAdapter.notifyDataSetChanged();
+                    });
 
 
         }
@@ -581,46 +519,6 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
 
     public void setTitle(String type) {
         mTvTitle.setText(type + "(" + mFileLists.size() + ")");
-    }
-
-
-
-    /**
-     * 生成文件的Md5值并存储到数据库中
-     */
-    public void asyncGenerateFileMd5(List<FileInfo> fileList) {
-
-
-        List<FileInfo> copyFileInfoList = new ArrayList<>();
-
-        copyFileInfoList.addAll(fileList);
-
-
-        LiteOrm liteOrm = App.getSingleLiteOrm();
-
-        Observable.fromIterable(copyFileInfoList)
-                .filter(fileInfo -> {
-                    // 过滤掉数据库中已经存在的文件
-                    ArrayList<FileMd5Model> fileMd5Models = liteOrm.query(new QueryBuilder<FileMd5Model>(FileMd5Model.class)
-                            .whereEquals("file_name", fileInfo.getPath()));
-                    if (fileMd5Models.size() == 0) {
-                        return true;
-                    }
-
-                    return false;
-                }).subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribe(fileInfo -> {
-                    // 计算文件的MD5耗时操作
-                    String md5 = Md5Utils.getMd5(new File(fileInfo.getPath()));
-//                    Log.i(TAG, "计算"+fileInfo.getName()+"的MD5,并向数据库中写入");
-                    FileMd5Model fileMd5Model = new FileMd5Model(fileInfo.getPath(), md5);
-                    // 向数据库中写入
-                    liteOrm.insert(fileMd5Model);
-
-                });
-
-
     }
 
 

@@ -1,5 +1,11 @@
 package com.merpyzf.xmshare.util;
 
+import com.litesuits.orm.LiteOrm;
+import com.litesuits.orm.db.assit.QueryBuilder;
+import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.xmshare.App;
+import com.merpyzf.xmshare.bean.model.FileMd5Model;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -7,6 +13,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by 春水碧于天 on 2018/3/7.
@@ -103,5 +114,44 @@ public class Md5Utils {
         return hexValue.toString();
     }
 
+
+
+    /**
+     * 生成文件的Md5值并存储到数据库中
+     */
+    public static void asyncGenerateFileMd5(List<FileInfo> fileList) {
+
+
+        List<FileInfo> copyFileInfoList = new ArrayList<>();
+
+        copyFileInfoList.addAll(fileList);
+
+
+        LiteOrm liteOrm = App.getSingleLiteOrm();
+
+        Observable.fromIterable(copyFileInfoList)
+                .filter(fileInfo -> {
+                    // 过滤掉数据库中已经存在的文件
+                    ArrayList<FileMd5Model> fileMd5Models = liteOrm.query(new QueryBuilder<FileMd5Model>(FileMd5Model.class)
+                            .whereEquals("file_name", fileInfo.getPath()));
+                    if (fileMd5Models.size() == 0) {
+                        return true;
+                    }
+
+                    return false;
+                }).subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(fileInfo -> {
+                    // 计算文件的MD5耗时操作
+                    String md5 = Md5Utils.getMd5(new File(fileInfo.getPath()));
+//                    Log.i(TAG, "计算"+fileInfo.getName()+"的MD5,并向数据库中写入");
+                    FileMd5Model fileMd5Model = new FileMd5Model(fileInfo.getPath(), md5);
+                    // 向数据库中写入
+                    liteOrm.insert(fileMd5Model);
+
+                });
+
+
+    }
 
 }
