@@ -8,6 +8,7 @@
       <module fileurl="file://$PROJECT_DIR$/filemanager/filemanager.iml" filepath="$PROJECT_DIR$/filemanager/filemanager.iml" />
       <module fileurl="file://$PROJECT_DIR$/httpcoreserver/httpcoreserver.iml" filepath="$PROJECT_DIR$/httpcoreserver/httpcoreserver.iml" />
       <module fileurl="file://$PROJECT_DIR$/p2ptransfercore/p2ptransfercore.iml" filepath="$PROJECT_DIR$/p2ptransfercore/p2ptransfercore.iml" />
+      <module fileurl="file://$PROJECT_DIR$/qrcodescan/qrcodescan.iml" filepath="$PROJECT_DIR$/qrcodescan/qrcodescan.iml" />
       <module fileurl="file://$PROJECT_DIR$/radarview/radarview.iml" filepath="$PROJECT_DIR$/radarview/radarview.iml" />
     </modules>
   </component>

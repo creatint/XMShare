@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$/filemanager" />
             <option value="$PROJECT_DIR$/httpcoreserver" />
             <option value="$PROJECT_DIR$/p2ptransfercore" />
+            <option value="$PROJECT_DIR$/qrcodescan" />
             <option value="$PROJECT_DIR$/radarview" />
           </set>
         </option>
