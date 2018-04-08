@@ -7,7 +7,7 @@ import android.os.Message;
 
 import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.entity.SignMessage;
-import com.merpyzf.transfermanager.interfaces.PeerCommunCallback;
+import com.merpyzf.transfermanager.interfaces.PeerCommCallback;
 import com.merpyzf.transfermanager.interfaces.PeerTransferBreakCallBack;
 
 /**
@@ -17,12 +17,12 @@ import com.merpyzf.transfermanager.interfaces.PeerTransferBreakCallBack;
 public class PeerHandler extends Handler {
     private Context mContext = null;
     private PeerCommunicate mPeerCommunicate;
-    private PeerCommunCallback mPeerCommunCallback = null;
+    private PeerCommCallback mPeerCommCallback = null;
     private PeerTransferBreakCallBack mPeerTransferBreakCallback = null;
 
-    public PeerHandler(Context mContext, PeerCommunCallback peerCommunCallback) {
+    public PeerHandler(Context mContext, PeerCommCallback peerCommCallback) {
         this.mContext = mContext;
-        this.mPeerCommunCallback = peerCommunCallback;
+        this.mPeerCommCallback = peerCommCallback;
     }
 
     public PeerHandler(Looper looper) {
@@ -61,9 +61,9 @@ public class PeerHandler extends Handler {
             // 设备上线
             case SignMessage.cmd.ON_LINE:
 
-                if (mPeerCommunCallback != null) {
+                if (mPeerCommCallback != null) {
 
-                    mPeerCommunCallback.onDeviceOnLine(peer);
+                    mPeerCommCallback.onDeviceOnLine(peer);
                 }
 
                 break;
@@ -71,9 +71,9 @@ public class PeerHandler extends Handler {
             // 设备下线
             case SignMessage.cmd.OFF_LINE:
 
-                if (mPeerCommunCallback != null) {
+                if (mPeerCommCallback != null) {
 
-                    mPeerCommunCallback.onDeviceOffLine(peer);
+                    mPeerCommCallback.onDeviceOffLine(peer);
                 }
 
 
@@ -82,18 +82,18 @@ public class PeerHandler extends Handler {
 
             case SignMessage.cmd.REQUEST_CONN:
 
-                if (mPeerCommunCallback != null) {
+                if (mPeerCommCallback != null) {
 
-                    mPeerCommunCallback.onRequestConnect(peer);
+                    mPeerCommCallback.onRequestConnect(peer);
                 }
 
                 break;
 
             case SignMessage.cmd.ANSWER_REQUEST_CONN:
 
-                if (mPeerCommunCallback != null) {
+                if (mPeerCommCallback != null) {
 
-                    mPeerCommunCallback.onAnswerRequestConnect(peer);
+                    mPeerCommCallback.onAnswerRequestConnect(peer);
                 }
 
                 break;

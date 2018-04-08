@@ -193,7 +193,10 @@ public class ShowPhotosFragment extends Fragment implements BaseQuickAdapter.OnI
             View startView = null;
             View targetView = null;
 
+
             startView = view.findViewById(R.id.iv_cover);
+            AnimationUtils.zoomOutCover(startView, 200);
+
             if (getActivity() != null && (getActivity() instanceof SelectFilesActivity)) {
                 SelectFilesActivity chooseFileActivity = (SelectFilesActivity) getActivity();
                 targetView = mBottomSheetView;
@@ -203,6 +206,11 @@ public class ShowPhotosFragment extends Fragment implements BaseQuickAdapter.OnI
 
 
         } else {
+
+
+
+            AnimationUtils.zoomInCover(view.findViewById(R.id.iv_cover), 200);
+
             ivSelect.setVisibility(View.INVISIBLE);
             //移除选中的文件
             App.removeSendFile(fileInfo);
@@ -231,7 +239,6 @@ public class ShowPhotosFragment extends Fragment implements BaseQuickAdapter.OnI
         Log.i("wk", "onDestroy方法执行了");
         mContext = null;
         mFslcReceiver = null;
-        mAdapter.clearGlideCache();
         mUnbind.unbind();
         super.onDestroy();
     }

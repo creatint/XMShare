@@ -32,7 +32,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.view.MainActivity"></activity>
+        <activity android:name=".ui.view.MainActivity" />
         <activity android:name=".ui.view.SplashActivity" />
         <activity
             android:name=".ui.view.activity.ReceiveActivity"
@@ -76,8 +76,11 @@
         <activity android:name=".ui.view.activity.InviteActivity" />
         <activity android:name=".ui.test.TestLiteOrmActivity" />
         <activity android:name=".ui.test.TestFileIndicatorActivity" />
-        <activity android:name=".ui.test.TestChangeSkinActivity"></activity>
-        <activity android:name=".ui.test.TestApActivity"></activity>
+        <activity android:name=".ui.test.TestChangeSkinActivity" />
+        <activity android:name=".ui.test.TestApActivity" />
+        <activity android:name=".ui.test.QRTestActivity">
+
+        </activity>
     </application>
 
 </manifest>

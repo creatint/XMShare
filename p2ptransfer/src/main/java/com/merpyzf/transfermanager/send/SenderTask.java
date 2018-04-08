@@ -12,7 +12,6 @@ import com.merpyzf.transfermanager.util.FileUtils;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -200,7 +199,7 @@ public class SenderTask implements ISendTask, Runnable {
 
         int readLength = 0;
         // 每一次读取的字节长度
-        int currentLength = -1;
+        int currentLength;
 
         long start = System.currentTimeMillis();
 
@@ -253,8 +252,6 @@ public class SenderTask implements ISendTask, Runnable {
             mP2pTransferHandler.sendMessage(message);
 
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -290,10 +287,7 @@ public class SenderTask implements ISendTask, Runnable {
             e.printStackTrace();
         }
 
-        Log.i(TAG, "文件发送所在的线程->" + Thread.currentThread().getName());
-
         init();
-
         /**
          * 发送待传输文件列表和缩略图文件
          */
@@ -320,11 +314,8 @@ public class SenderTask implements ISendTask, Runnable {
      * 发送文件
      */
     void sendFile(FileInfo fileInfo) {
-        // 发送文件的协议头
         sendHeader(fileInfo);
-        // fa
         sendBody(fileInfo);
-
     }
 
 }

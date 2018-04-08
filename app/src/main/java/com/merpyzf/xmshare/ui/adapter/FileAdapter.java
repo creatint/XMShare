@@ -19,11 +19,11 @@ import com.merpyzf.transfermanager.util.FormatUtils;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Constant;
+import com.merpyzf.xmshare.util.AnimationUtils;
 import com.merpyzf.xmshare.util.Md5Utils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,7 +34,6 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
 
     private Context mContext;
     private List<T> mFileList;
-    private List<View> mImageViews = new ArrayList<>();
     private static final String TAG = FileAdapter.class.getSimpleName();
 
     public FileAdapter(Context context, int layoutResId, @Nullable List<T> data) {
@@ -66,7 +65,7 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
             helper.setText(R.id.tv_artist, musicFile.getArtist());
             helper.setText(R.id.tv_size, FormatUtils.convert2Mb(musicFile.getLength()) + " MB");
 
-            File albumFile = new File(Constant.PIC_CACHES_DIR, Md5Utils.getMd5(musicFile.getAlbumId()+""));
+            File albumFile = new File(Constant.PIC_CACHES_DIR, Md5Utils.getMd5(musicFile.getAlbumId() + ""));
 
 
             ImageView imageView = helper.getView(R.id.iv_cover);
@@ -95,13 +94,18 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
                     .crossFade()
                     .fitCenter()
                     .into(iv);
-            // 会不会有可能包含重复的
-            if (!mImageViews.contains(iv)) {
-                mImageViews.add(iv);
 
-                Log.i("wk", "mImages的数量->"+mImageViews.size()+"不重复");
-            }else{
-                Log.i("wk", "mImages的数量->"+mImageViews.size()+"包含了重复的");
+
+            /**
+             * 被选中了
+             */
+            if (App.getSendFileList().contains(item)) {
+
+                // 缩小
+                AnimationUtils.zoomOutCover(iv, 0);
+
+            } else {
+                AnimationUtils.zoomInCover(iv, 0);
             }
 
 
@@ -157,17 +161,5 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
         return "^_^";
     }
 
-
-    public void clearGlideCache() {
-
-        if (mImageViews.size() == 0 || mImageViews == null) {
-            return;
-        }
-
-        for (View imageView : mImageViews) {
-            Glide.clear(imageView);
-        }
-
-    }
 
 }

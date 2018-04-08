@@ -17,7 +17,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"/>
 
-        <com.google.zxing.view.ViewfinderView
+        <com.merpyzf.qrcodescan.google.view.ViewfinderView
             android:id="@+id/viewfinder_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

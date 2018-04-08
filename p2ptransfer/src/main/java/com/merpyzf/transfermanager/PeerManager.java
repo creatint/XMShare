@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.merpyzf.transfermanager.entity.SignMessage;
-import com.merpyzf.transfermanager.interfaces.PeerCommunCallback;
+import com.merpyzf.transfermanager.interfaces.PeerCommCallback;
 import com.merpyzf.transfermanager.interfaces.PeerTransferBreakCallBack;
 import com.merpyzf.transfermanager.util.NetworkUtil;
 import com.merpyzf.transfermanager.util.SharedPreUtils;
@@ -23,7 +23,7 @@ public class PeerManager {
 
     private Context mContext = null;
     private PeerHandler mPeerHandler;
-    private PeerCommunCallback mPeerCallback = null;
+    private PeerCommCallback mPeerCallback = null;
     private OSTimer mOsTimer;
     private PeerCommunicate mPeerCommunicate;
     private PeerTransferBreakCallBack mTransferBreakCallback = null;
@@ -33,7 +33,7 @@ public class PeerManager {
     private boolean isStop = false;
 
 
-    public PeerManager(Context context, String nickName, PeerCommunCallback peerCallback) {
+    public PeerManager(Context context, String nickName, PeerCommCallback peerCallback) {
         this.mContext = context;
         this.nickName = nickName;
         // 创建Handler用于接收的UDP消息处理

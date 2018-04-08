@@ -29,12 +29,6 @@
             android:textColor="#fff"
             android:textSize="16sp"/>
 
-        <!--<ImageView-->
-            <!--android:id="@+id/scanner_toolbar_more"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:paddingRight="20dp"-->
-            <!--android:src="@mipmap/abc_ic_menu_moreoverflow_mtrl_alpha"/>-->
 
     </LinearLayout>
 

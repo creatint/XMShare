@@ -53,16 +53,23 @@ public class SenderManager {
         this.mContext = context;
     }
 
-
+    /**
+     * 注册一个观察者
+     *
+     * @param transferObserver
+     */
     public void register(TransferObserver transferObserver) {
 
         mTransferObserverLists.add(transferObserver);
 
     }
 
-
+    /**
+     * 移除一个观察者
+     *
+     * @param transferObserver
+     */
     public void unRegister(TransferObserver transferObserver) {
-
 
         if (mTransferObserverLists.contains(transferObserver)) {
             mTransferObserverLists.remove(transferObserver);
@@ -71,13 +78,14 @@ public class SenderManager {
     }
 
     /**
-     * 发送文件， 异步的过程
+     * 发送文件
      *
-     * @param filelist
+     * @param destAddress
+     * @param fileInfoList
      */
-    public void send(String destAddress, List<FileInfo> filelist) {
+    public void send(String destAddress, List<FileInfo> fileInfoList) {
 
-        mSenderTask = new SenderTask(mContext, destAddress, filelist, mP2pTransferHandler);
+        mSenderTask = new SenderTask(mContext, destAddress, fileInfoList, mP2pTransferHandler);
         mSingleThreadPool.execute(mSenderTask);
 
     }

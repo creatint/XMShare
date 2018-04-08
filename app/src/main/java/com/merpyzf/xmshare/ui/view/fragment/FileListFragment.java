@@ -181,6 +181,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                 }
 
 
+
                 // 将文件选择的事件回调给外部
                 if (mFileSelectListener != null) {
                     mFileSelectListener.onSelected(fileInfo);

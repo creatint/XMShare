@@ -160,6 +160,8 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
             @Override
             public void onSelected(FileInfo fileInfo) {
 
+
+
                 App.addSendFile(fileInfo);
                 mFileSelectAdapter.notifyDataSetChanged();
                 updateBottomTitle();

@@ -33,7 +33,6 @@ public class PeerCommunicate extends Thread {
     private boolean isLoop = true;
     private Context mContext = null;
     private Handler mHandler = null;
-    private String nickName;
     private static final String TAG = PeerCommunicate.class.getName();
 
 
@@ -41,7 +40,7 @@ public class PeerCommunicate extends Thread {
 
         mContext = context;
         mHandler = handler;
-        nickName = SharedPreUtils.getString(context, Constant.SP_USER, "nickName", "");
+        String nickName = SharedPreUtils.getString(context, Constant.SP_USER, "nickName", "");
 
         init();
     }
@@ -59,7 +58,9 @@ public class PeerCommunicate extends Thread {
     }
 
 
-    // UDPServer负责监听UDP消息
+    /**
+     * 负责监听UDP消息
+     */
     @Override
     public void run() {
         try {
@@ -72,8 +73,6 @@ public class PeerCommunicate extends Thread {
                     if (receivePacket.getLength() == 0) {
                         continue;
                     }
-
-                    int port = receivePacket.getPort();
                     String hostAddress = receivePacket.getAddress().getHostAddress();
                     String receiveMsg = new String(buffer, 0, buffer.length, "utf-8");
 
@@ -92,7 +91,9 @@ public class PeerCommunicate extends Thread {
             e.printStackTrace();
             isLoop = false;
         } finally {
-
+            if (null != mUdpSocket) {
+                mUdpSocket.close();
+            }
         }
 
     }

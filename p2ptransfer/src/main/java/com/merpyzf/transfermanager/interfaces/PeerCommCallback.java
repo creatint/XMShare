@@ -6,7 +6,7 @@ import com.merpyzf.transfermanager.entity.Peer;
  * Created by wangke on 2017/12/13.
  * 搜寻局域网内设备的事件回调
  */
-public interface PeerCommunCallback {
+public interface PeerCommCallback {
 
     /**
      * 设备上线
