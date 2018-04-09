@@ -1,0 +1,58 @@
+[
+    {
+        "merged": "D:\\XMShare\\qrcodescan\\build\\intermediates\\res\\merged\\androidTest\\debug\\anim\\abc_grow_fade_in_from_bottom.xml",
+        "source": "C:\\Users\\春水碧于天\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.0.2.aar\\b42a4da55edfa52082b2fc25199be49a\\res\\anim\\abc_grow_fade_in_from_bottom.xml"
+    },
+    {
+        "merged": "D:\\XMShare\\qrcodescan\\build\\intermediates\\res\\merged\\androidTest\\debug\\anim\\abc_slide_out_top.xml",
+        "source": "C:\\Users\\春水碧于天\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.0.2.aar\\b42a4da55edfa52082b2fc25199be49a\\res\\anim\\abc_slide_out_top.xml"
+    },
+    {
+        "merged": "D:\\XMShare\\qrcodescan\\build\\intermediates\\res\\merged\\androidTest\\debug\\anim\\abc_popup_enter.xml",
+        "source": "C:\\Users\\春水碧于天\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.0.2.aar\\b42a4da55edfa52082b2fc25199be49a\\res\\anim\\abc_popup_enter.xml"
+    },
+    {
+        "merged": "D:\\XMShare\\qrcodescan\\build\\intermediates\\res\\merged\\androidTest\\debug\\anim\\abc_fade_in.xml",
+        "source": "C:\\Users\\春水碧于天\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.0.2.aar\\b42a4da55edfa52082b2fc25199be49a\\res\\anim\\abc_fade_in.xml"
+    },
+    {
+        "merged": "D:\\XMShare\\qrcodescan\\build\\intermediates\\res\\merged\\androidTest\\debug\\anim\\tooltip_exit.xml",
+        "source": "C:\\Users\\春水碧于天\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.0.2.aar\\b42a4da55edfa52082b2fc25199be49a\\res\\anim\\tooltip_exit.xml"
+    },
+    {
+        "merged": "D:\\XMShare\\qrcodescan\\build\\intermediates\\res\\merged\\androidTest\\debug\\anim\\tooltip_enter.xml",
+        "source": "C:\\Users\\春水碧于天\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.0.2.aar\\b42a4da55edfa52082b2fc25199be49a\\res\\anim\\tooltip_enter.xml"
+    },
+    {
+        "merged": "D:\\XMShare\\qrcodescan\\build\\intermediates\\res\\merged\\androidTest\\debug\\anim\\design_snackbar_out.xml",
+        "source": "C:\\Users\\春水碧于天\\.gradle\\caches\\transforms-1\\files-1.1\\design-27.0.2.aar\\64405fa2290331b9b6a3aa588dbc14ab\\res\\anim\\design_snackbar_out.xml"
+    },
+    {
+        "merged": "D:\\XMShare\\qrcodescan\\build\\intermediates\\res\\merged\\androidTest\\debug\\anim\\abc_fade_out.xml",
+        "source": "C:\\Users\\春水碧于天\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.0.2.aar\\b42a4da55edfa52082b2fc25199be49a\\res\\anim\\abc_fade_out.xml"
+    },
+    {
+        "merged": "D:\\XMShare\\qrcodescan\\build\\intermediates\\res\\merged\\androidTest\\debug\\anim\\abc_slide_out_bottom.xml",
+        "source": "C:\\Users\\春水碧于天\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.0.2.aar\\b42a4da55edfa52082b2fc25199be49a\\res\\anim\\abc_slide_out_bottom.xml"
+    },
+    {
+        "merged": "D:\\XMShare\\qrcodescan\\build\\intermediates\\res\\merged\\androidTest\\debug\\anim\\abc_shrink_fade_out_from_bottom.xml",
+        "source": "C:\\Users\\春水碧于天\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.0.2.aar\\b42a4da55edfa52082b2fc25199be49a\\res\\anim\\abc_shrink_fade_out_from_bottom.xml"
+    },
+    {
+        "merged": "D:\\XMShare\\qrcodescan\\build\\intermediates\\res\\merged\\androidTest\\debug\\anim\\abc_popup_exit.xml",
+        "source": "C:\\Users\\春水碧于天\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.0.2.aar\\b42a4da55edfa52082b2fc25199be49a\\res\\anim\\abc_popup_exit.xml"
+    },
+    {
+        "merged": "D:\\XMShare\\qrcodescan\\build\\intermediates\\res\\merged\\androidTest\\debug\\anim\\abc_slide_in_bottom.xml",
+        "source": "C:\\Users\\春水碧于天\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.0.2.aar\\b42a4da55edfa52082b2fc25199be49a\\res\\anim\\abc_slide_in_bottom.xml"
+    },
+    {
+        "merged": "D:\\XMShare\\qrcodescan\\build\\intermediates\\res\\merged\\androidTest\\debug\\anim\\abc_slide_in_top.xml",
+        "source": "C:\\Users\\春水碧于天\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.0.2.aar\\b42a4da55edfa52082b2fc25199be49a\\res\\anim\\abc_slide_in_top.xml"
+    },
+    {
+        "merged": "D:\\XMShare\\qrcodescan\\build\\intermediates\\res\\merged\\androidTest\\debug\\anim\\design_snackbar_in.xml",
+        "source": "C:\\Users\\春水碧于天\\.gradle\\caches\\transforms-1\\files-1.1\\design-27.0.2.aar\\64405fa2290331b9b6a3aa588dbc14ab\\res\\anim\\design_snackbar_in.xml"
+    }
+]

@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "D:\\XMShare\\p2ptransfer\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout-v21\\notification_template_icon_group.xml",
+        "source": "C:\\Users\\春水碧于天\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-26.1.0.aar\\3ed8e8ed3bbea3060aa244143789aea0\\res\\layout-v21\\notification_template_icon_group.xml"
+    },
+    {
+        "merged": "D:\\XMShare\\p2ptransfer\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout-v21\\notification_action.xml",
+        "source": "C:\\Users\\春水碧于天\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-26.1.0.aar\\3ed8e8ed3bbea3060aa244143789aea0\\res\\layout-v21\\notification_action.xml"
+    },
+    {
+        "merged": "D:\\XMShare\\p2ptransfer\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout-v21\\notification_action_tombstone.xml",
+        "source": "C:\\Users\\春水碧于天\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-26.1.0.aar\\3ed8e8ed3bbea3060aa244143789aea0\\res\\layout-v21\\notification_action_tombstone.xml"
+    },
+    {
+        "merged": "D:\\XMShare\\p2ptransfer\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout-v21\\notification_template_custom_big.xml",
+        "source": "C:\\Users\\春水碧于天\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-26.1.0.aar\\3ed8e8ed3bbea3060aa244143789aea0\\res\\layout-v21\\notification_template_custom_big.xml"
+    }
+]

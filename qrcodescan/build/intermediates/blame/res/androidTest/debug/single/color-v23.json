@@ -1,0 +1,42 @@
+[
+    {
+        "merged": "D:\\XMShare\\qrcodescan\\build\\intermediates\\res\\merged\\androidTest\\debug\\color-v23\\abc_color_highlight_material.xml",
+        "source": "C:\\Users\\春水碧于天\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.0.2.aar\\b42a4da55edfa52082b2fc25199be49a\\res\\color-v23\\abc_color_highlight_material.xml"
+    },
+    {
+        "merged": "D:\\XMShare\\qrcodescan\\build\\intermediates\\res\\merged\\androidTest\\debug\\color-v23\\abc_tint_spinner.xml",
+        "source": "C:\\Users\\春水碧于天\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.0.2.aar\\b42a4da55edfa52082b2fc25199be49a\\res\\color-v23\\abc_tint_spinner.xml"
+    },
+    {
+        "merged": "D:\\XMShare\\qrcodescan\\build\\intermediates\\res\\merged\\androidTest\\debug\\color-v23\\abc_tint_btn_checkable.xml",
+        "source": "C:\\Users\\春水碧于天\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.0.2.aar\\b42a4da55edfa52082b2fc25199be49a\\res\\color-v23\\abc_tint_btn_checkable.xml"
+    },
+    {
+        "merged": "D:\\XMShare\\qrcodescan\\build\\intermediates\\res\\merged\\androidTest\\debug\\color-v23\\design_tint_password_toggle.xml",
+        "source": "C:\\Users\\春水碧于天\\.gradle\\caches\\transforms-1\\files-1.1\\design-27.0.2.aar\\64405fa2290331b9b6a3aa588dbc14ab\\res\\color-v23\\design_tint_password_toggle.xml"
+    },
+    {
+        "merged": "D:\\XMShare\\qrcodescan\\build\\intermediates\\res\\merged\\androidTest\\debug\\color-v23\\abc_btn_colored_text_material.xml",
+        "source": "C:\\Users\\春水碧于天\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.0.2.aar\\b42a4da55edfa52082b2fc25199be49a\\res\\color-v23\\abc_btn_colored_text_material.xml"
+    },
+    {
+        "merged": "D:\\XMShare\\qrcodescan\\build\\intermediates\\res\\merged\\androidTest\\debug\\color-v23\\abc_tint_edittext.xml",
+        "source": "C:\\Users\\春水碧于天\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.0.2.aar\\b42a4da55edfa52082b2fc25199be49a\\res\\color-v23\\abc_tint_edittext.xml"
+    },
+    {
+        "merged": "D:\\XMShare\\qrcodescan\\build\\intermediates\\res\\merged\\androidTest\\debug\\color-v23\\abc_tint_seek_thumb.xml",
+        "source": "C:\\Users\\春水碧于天\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.0.2.aar\\b42a4da55edfa52082b2fc25199be49a\\res\\color-v23\\abc_tint_seek_thumb.xml"
+    },
+    {
+        "merged": "D:\\XMShare\\qrcodescan\\build\\intermediates\\res\\merged\\androidTest\\debug\\color-v23\\abc_tint_switch_track.xml",
+        "source": "C:\\Users\\春水碧于天\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.0.2.aar\\b42a4da55edfa52082b2fc25199be49a\\res\\color-v23\\abc_tint_switch_track.xml"
+    },
+    {
+        "merged": "D:\\XMShare\\qrcodescan\\build\\intermediates\\res\\merged\\androidTest\\debug\\color-v23\\abc_tint_default.xml",
+        "source": "C:\\Users\\春水碧于天\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.0.2.aar\\b42a4da55edfa52082b2fc25199be49a\\res\\color-v23\\abc_tint_default.xml"
+    },
+    {
+        "merged": "D:\\XMShare\\qrcodescan\\build\\intermediates\\res\\merged\\androidTest\\debug\\color-v23\\abc_btn_colored_borderless_text_material.xml",
+        "source": "C:\\Users\\春水碧于天\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-27.0.2.aar\\b42a4da55edfa52082b2fc25199be49a\\res\\color-v23\\abc_btn_colored_borderless_text_material.xml"
+    }
+]
