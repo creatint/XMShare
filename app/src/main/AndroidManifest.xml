@@ -2,9 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.merpyzf.xmshare">
 
+    <uses-permission android:name="android.permission.OVERRIDE_WIFI_CONFIG" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+
     <!-- 文件读取 需要动态申请 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -40,7 +42,11 @@
             android:name=".ui.view.activity.SendActivity"
             android:label="发送文件" />
         <activity android:name=".ui.view.activity.SelectFilesActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity android:name=".ui.test.BottomSheetDialogActivity" />
         <activity android:name=".ui.test.TestRadarViewActivity" />
@@ -69,13 +75,11 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <activity android:name=".ui.test.TestBluetoothActivity"></activity>
         <activity android:name=".ui.view.activity.InviteActivity" />
-        <activity android:name=".ui.test.TestLiteOrmActivity"></activity>
-        <activity android:name=".ui.test.TestFileIndicatorActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+        <activity android:name=".ui.test.TestLiteOrmActivity" />
+        <activity android:name=".ui.test.TestFileIndicatorActivity" />
+        <activity android:name=".ui.test.TestChangeSkinActivity" />
+        <activity android:name=".ui.test.TestApActivity" />
+        <activity android:name=".ui.test.QRTestActivity">
 
         </activity>
     </application>

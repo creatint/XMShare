@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -52,18 +53,11 @@ public class VideoUtils {
     /**
      * 更新封面图片
      */
-    public static void updateThumbImg(Context context, List<FileInfo> mFileLists) {
+    public static void updateThumbImg(Context context, List<FileInfo> fileInfoList) {
 
-
-//        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-//            File videoThumbDir = new File(Environment.getExternalStorageDirectory(), com.merpyzf.transfermanager.constant.Constant.THUMB_VIDEO);
-//            if (!videoThumbDir.exists()) {
-//                videoThumbDir.mkdirs();
-//            }
-
-            writeThumbImg2local(context, mFileLists);
-//        }
-
+        List<FileInfo> copyFileInfoList = new ArrayList<>();
+        copyFileInfoList.addAll(fileInfoList);
+        writeThumbImg2local(context, copyFileInfoList);
 
     }
 
@@ -83,6 +77,7 @@ public class VideoUtils {
                     return false;
 
                 }).flatMap(videoFile -> Observable.just(videoFile.getPath()))
+                .observeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io())
                 .subscribe(videoPath -> {
 
@@ -94,13 +89,13 @@ public class VideoUtils {
 
                     int dotIndex = fileName.lastIndexOf('.');
 
-                    fileName = fileName.substring(0,dotIndex);
+                    fileName = fileName.substring(0, dotIndex);
 
 
                     Log.i("w2k", "写入本地存储的视频封面截图:" + fileName);
 
                     try {
-                        bos = new BufferedOutputStream(new FileOutputStream(new File(Constant.PIC_CACHES_DIR,Md5Utils.getMd5(videoPath))));
+                        bos = new BufferedOutputStream(new FileOutputStream(new File(Constant.PIC_CACHES_DIR, Md5Utils.getMd5(videoPath))));
                         if (bitmap == null) {
 
                             bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_thumb_empty);

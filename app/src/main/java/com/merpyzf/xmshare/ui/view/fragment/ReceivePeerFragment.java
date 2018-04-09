@@ -34,7 +34,7 @@ import com.merpyzf.radarview.RadarLayout;
 import com.merpyzf.transfermanager.PeerManager;
 import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.entity.SignMessage;
-import com.merpyzf.transfermanager.interfaces.PeerCommunCallback;
+import com.merpyzf.transfermanager.interfaces.PeerCommCallback;
 import com.merpyzf.transfermanager.util.ApManager;
 import com.merpyzf.transfermanager.util.NetworkUtil;
 import com.merpyzf.transfermanager.util.WifiMgr;
@@ -178,7 +178,7 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
     private void initUdpListener() {
 
         String nickName = com.merpyzf.xmshare.util.SharedPreUtils.getString(mContext, Constant.SP_USER, "nickName", "");
-        mPeerManager = new PeerManager(mContext, nickName, new PeerCommunCallback() {
+        mPeerManager = new PeerManager(mContext, nickName, new PeerCommCallback() {
             @Override
             public void onDeviceOnLine(Peer peer) {
 

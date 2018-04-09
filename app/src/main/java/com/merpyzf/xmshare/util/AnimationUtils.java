@@ -1,5 +1,7 @@
 package com.merpyzf.xmshare.util;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +18,7 @@ import android.widget.LinearLayout;
  */
 public class AnimationUtils {
 
-    private AnimationUtils(){
+    private AnimationUtils() {
         throw new UnsupportedOperationException("不能被实例化");
     }
 
@@ -127,6 +129,37 @@ public class AnimationUtils {
         void onAnimationStart(Animation animation);
 
         void onAnimationEnd(Animation animation);
+    }
+
+    /**
+     * 放大封面图
+     *
+     * @param view
+     * @param duration
+     */
+    public static void zoomInCover(View view, long duration) {
+        ObjectAnimator scanY = ObjectAnimator.ofFloat(view, "scaleY", 0.8f, 1f);
+        ObjectAnimator scanX = ObjectAnimator.ofFloat(view, "scaleX", 0.8f, 1f);
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.playTogether(scanX, scanY);
+        animatorSet.setDuration(duration);
+        animatorSet.start();
+    }
+
+
+    /**
+     * 缩小封面图
+     *
+     * @param view
+     * @param duration
+     */
+    public static void zoomOutCover(View view, long duration) {
+        ObjectAnimator scanY = ObjectAnimator.ofFloat(view, "scaleY", 1f, 0.8f);
+        ObjectAnimator scanX = ObjectAnimator.ofFloat(view, "scaleX", 1f, 0.8f);
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.playTogether(scanX, scanY);
+        animatorSet.setDuration(duration);
+        animatorSet.start();
     }
 
 

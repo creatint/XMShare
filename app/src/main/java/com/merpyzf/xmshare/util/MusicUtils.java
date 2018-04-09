@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -109,14 +110,14 @@ public class MusicUtils {
 
                             File extPicCacheDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
-                            bos = new BufferedOutputStream(new FileOutputStream(new File(extPicCacheDir, Md5Utils.getMd5(musicFile.getPath()))));
+                            bos = new BufferedOutputStream(new FileOutputStream(new File(extPicCacheDir, Md5Utils.getMd5(musicFile.getAlbumId()+""))));
                             if (bitmap == null) {
 
                                 bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_thumb_empty);
                             }
                             bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
 
-                            Log.i("wk", musicFile.getName()+"--> 向缓存中写入图片");
+                            Log.i("wk", musicFile.getName() + "--> 向缓存中写入图片");
 
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
@@ -170,7 +171,11 @@ public class MusicUtils {
      */
     public static synchronized void updateAlbumImg(Context context, List<FileInfo> fileInfoList) {
 
-        writeAlbumImg2local(context, fileInfoList);
+        // copy一份List<FileInfo>到一个新的集合避免在使用iterator遍历集合的同时又对集合修改，就会产生ConcurrentModificationException
+
+        List<FileInfo> copyFileInfoList = new ArrayList<>();
+        copyFileInfoList.addAll(fileInfoList);
+        writeAlbumImg2local(context, copyFileInfoList);
 
     }
 }

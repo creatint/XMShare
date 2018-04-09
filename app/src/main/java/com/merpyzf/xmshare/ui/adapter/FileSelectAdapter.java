@@ -65,7 +65,7 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> im
 
 
             MusicFile musicFile = (MusicFile) item;
-            File albumFile = new File(Constant.PIC_CACHES_DIR, Md5Utils.getMd5(musicFile.getPath()));
+            File albumFile = new File(Constant.PIC_CACHES_DIR, Md5Utils.getMd5(musicFile.getAlbumId()+""));
             if (albumFile.exists()) {
                 //设置封面图片
                 Glide.with(mContext)

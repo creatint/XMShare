@@ -19,6 +19,7 @@ import com.merpyzf.transfermanager.util.FormatUtils;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Constant;
+import com.merpyzf.xmshare.util.AnimationUtils;
 import com.merpyzf.xmshare.util.Md5Utils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
@@ -64,26 +65,49 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
             helper.setText(R.id.tv_artist, musicFile.getArtist());
             helper.setText(R.id.tv_size, FormatUtils.convert2Mb(musicFile.getLength()) + " MB");
 
-            File albumFile = new File(Constant.PIC_CACHES_DIR, Md5Utils.getMd5(musicFile.getPath()));
+            File albumFile = new File(Constant.PIC_CACHES_DIR, Md5Utils.getMd5(musicFile.getAlbumId() + ""));
+
+
+            ImageView imageView = helper.getView(R.id.iv_cover);
             if (albumFile.exists()) {
                 //设置封面图片
                 Glide.with(mContext)
                         .load(albumFile)
-                        .crossFade()
+                        .dontAnimate()
                         .centerCrop()
-                        .into((ImageView) helper.getView(R.id.iv_cover));
+                        .placeholder(R.drawable.ic_thumb_empty)
+                        .error(R.drawable.ic_thumb_empty)
+                        .into(imageView);
+
+
             }
 
 
         } else if (item instanceof PicFile) {
 
-
+            ImageView iv = helper.getView(R.id.iv_cover);
             PicFile picFile = (PicFile) item;
+
             Glide.with(mContext)
                     .load(picFile.getPath())
+                    .error(R.drawable.ic_thumb_empty)
                     .crossFade()
-                    .centerCrop()
-                    .into((ImageView) helper.getView(R.id.iv_cover));
+                    .fitCenter()
+                    .into(iv);
+
+
+            /**
+             * 被选中了
+             */
+            if (App.getSendFileList().contains(item)) {
+
+                // 缩小
+                AnimationUtils.zoomOutCover(iv, 0);
+
+            } else {
+                AnimationUtils.zoomInCover(iv, 0);
+            }
+
 
         } else if (item instanceof VideoFile) {
 
@@ -92,13 +116,16 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
             helper.setText(R.id.tv_size, FormatUtils.convert2Mb(videoFile.getLength()) + " MB");
             helper.setText(R.id.tv_duration, FormatUtils.convertMS2Str(videoFile.getDuration()));
             ImageView ivVideoThumb = helper.getView(R.id.iv_cover);
-            String videoThumbPath = Constant.PIC_CACHES_DIR+"/"+Md5Utils.getMd5(videoFile.getPath());
+            String videoThumbPath = Constant.PIC_CACHES_DIR + "/" + Md5Utils.getMd5(videoFile.getPath());
 
             Glide.with(mContext)
                     .load(new File(videoThumbPath))
-                    .crossFade()
+                    .placeholder(R.drawable.ic_thumb_empty)
+                    .error(R.drawable.ic_thumb_empty)
+                    .dontAnimate()
                     .centerCrop()
                     .into(ivVideoThumb);
+
 
         }
 
@@ -133,4 +160,6 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
 
         return "^_^";
     }
+
+
 }

@@ -24,7 +24,7 @@ import com.merpyzf.transfermanager.PeerManager;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.entity.SignMessage;
-import com.merpyzf.transfermanager.interfaces.PeerCommunCallback;
+import com.merpyzf.transfermanager.interfaces.PeerCommCallback;
 import com.merpyzf.transfermanager.util.ApManager;
 import com.merpyzf.transfermanager.util.WifiMgr;
 import com.merpyzf.transfermanager.util.timer.OSTimer;
@@ -127,7 +127,7 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
 
         String nickName = SharedPreUtils.getString(mContext, Constant.SP_USER, "nickName", "");
         // 这里只需要建立一次
-        mPeerManager = new PeerManager(mContext, nickName, new PeerCommunCallback() {
+        mPeerManager = new PeerManager(mContext, nickName, new PeerCommCallback() {
             @Override
             public void onDeviceOnLine(Peer peer) {
                 if (!mPeerList.contains(peer)) {
