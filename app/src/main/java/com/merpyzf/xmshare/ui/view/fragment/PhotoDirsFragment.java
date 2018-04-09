@@ -55,6 +55,7 @@ public class PhotoDirsFragment extends Fragment implements LoaderManager.LoaderC
     private List<PhotoDirBean> mPhotoDirs = new ArrayList<>();
     private ImgDirsAdapter mAdapter;
     private PhotoFragment mImageFragment;
+    private int mPhotosNum = 0;
 
 
     public PhotoDirsFragment() {
@@ -109,6 +110,8 @@ public class PhotoDirsFragment extends Fragment implements LoaderManager.LoaderC
 
         }
 
+        mImageFragment.getTvTitle().setText("图片("+mPhotosNum+")");
+
 
         mRvDirsList.setLayoutManager(new LinearLayoutManager(mContext));
         // TODO: 2018/4/2 分割线需要美化
@@ -149,6 +152,9 @@ public class PhotoDirsFragment extends Fragment implements LoaderManager.LoaderC
     public void onLoadFinished(Loader loader, Cursor data) {
 
 
+        Log.i("wk", "执行了");
+
+
         Observable.just(data)
                 .filter(cursor -> !cursor.isClosed())
                 .map(cursor -> {
@@ -173,16 +179,18 @@ public class PhotoDirsFragment extends Fragment implements LoaderManager.LoaderC
 
                                 File[] images = file.getParentFile().listFiles(filterFile -> {
 
-                                    Log.i("wk", "suffix-->" + FileUtils.getFileSuffix(filterFile.getPath()));
 
                                     String fileSuffix = FileUtils.getFileSuffix(filterFile.getPath()).toLowerCase();
 
 
-                                    if (!fileSuffix.equals("") && filterFile.length() > 20*1024) {
+                                    if (!fileSuffix.equals("") && filterFile.length() > 20 * 1024) {
 
                                         if (fileSuffix.equals("jpg") || fileSuffix.equals("jpeg")
                                                 || fileSuffix.equals("gif") || fileSuffix.equals("png")
                                                 || fileSuffix.equals("bpm") || fileSuffix.equals("webp")) {
+
+                                            mPhotosNum++;
+
                                             return true;
                                         } else {
                                             return false;
@@ -229,6 +237,8 @@ public class PhotoDirsFragment extends Fragment implements LoaderManager.LoaderC
                     mPhotoDirs.clear();
                     mPhotoDirs.addAll(photoDirBeans);
                     mAdapter.notifyDataSetChanged();
+                    mImageFragment.getTvTitle().setText("图片(" + mPhotosNum + ")");
+
 
                 });
 

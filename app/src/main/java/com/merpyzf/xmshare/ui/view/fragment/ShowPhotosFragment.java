@@ -139,6 +139,9 @@ public class ShowPhotosFragment extends Fragment implements BaseQuickAdapter.OnI
 
     }
 
+    /**
+     *
+     */
     private void initUI() {
 
 
@@ -148,6 +151,7 @@ public class ShowPhotosFragment extends Fragment implements BaseQuickAdapter.OnI
         mRvPhotoList.setAdapter(mAdapter);
         if (mPhotoFrg == null) return;
         mCheckBoxAll = mPhotoFrg.getCheckbox();
+        mPhotoFrg.getTvTitle().setText("图片(" + mImages.size() + ")");
     }
 
 
@@ -206,7 +210,6 @@ public class ShowPhotosFragment extends Fragment implements BaseQuickAdapter.OnI
 
 
         } else {
-
 
 
             AnimationUtils.zoomInCover(view.findViewById(R.id.iv_cover), 200);

@@ -87,7 +87,6 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
     private List<Fragment> mFragmentList;
     private String[] mTabTitles;
     private BottomSheetBehavior<View> mSheetBehavior;
-    private OnFileSelectListener<FileInfo> mFileSelectListener;
     private FileSelectAdapter<FileInfo> mFileSelectAdapter;
     private String TAG = SelectFilesActivity.class.getSimpleName();
 
@@ -152,14 +151,13 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
     protected void initData() {
 
         // 文件选择列表变化的监听
-        mFileSelectListener = new OnFileSelectListener<FileInfo>() {
+        OnFileSelectListener<FileInfo> mFileSelectListener = new OnFileSelectListener<FileInfo>() {
             /**
              * 选择文件的回调
              * @param fileInfo
              */
             @Override
             public void onSelected(FileInfo fileInfo) {
-
 
 
                 App.addSendFile(fileInfo);
@@ -264,9 +262,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         });
 
         // 头像的点击事件
-        mNavCivAvatar.setOnClickListener(v -> {
-            PersonalActivity.start(mContext);
-        });
+        mNavCivAvatar.setOnClickListener(v -> PersonalActivity.start(mContext));
 
         // 浮动发送按钮的点击事件
         mFabSend.setOnClickListener(v -> {

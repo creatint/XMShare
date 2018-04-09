@@ -289,11 +289,9 @@ public class SenderTask implements ISendTask, Runnable {
 
         init();
         /**
-         * 发送待传输文件列表和缩略图文件
+         * 发送文件列表和缩略图文件
          */
         sendTransferFileList();
-
-        // 遍历所有待发送的文件列表
         for (int i = 0; i < mSendFileList.size(); i++) {
 
             FileInfo fileInfo = mSendFileList.get(i);
