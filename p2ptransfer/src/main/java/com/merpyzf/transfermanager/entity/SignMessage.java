@@ -149,12 +149,14 @@ public class SignMessage {
 
             String[] MsgProperties = signMessage.split(Constant.S_SEPARATOR);
 
-            message.setPacketName(MsgProperties[0]);
-            message.setHostAddress(MsgProperties[1]);
-            message.setNickName(MsgProperties[2]);
-            message.setAvatarPosition(Integer.valueOf(MsgProperties[3]));
-            message.setMsgContent(MsgProperties[4]);
-            message.setCmd(Integer.valueOf(MsgProperties[5]));
+            if (MsgProperties.length == 6) {
+                message.setPacketName(MsgProperties[0]);
+                message.setHostAddress(MsgProperties[1]);
+                message.setNickName(MsgProperties[2]);
+                message.setAvatarPosition(Integer.valueOf(MsgProperties[3]));
+                message.setMsgContent(MsgProperties[4]);
+                message.setCmd(Integer.valueOf(MsgProperties[5]));
+            }
             return message;
 
         }

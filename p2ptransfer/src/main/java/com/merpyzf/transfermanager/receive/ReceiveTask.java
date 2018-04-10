@@ -12,12 +12,14 @@ import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.transfermanager.util.FileUtils;
+import com.merpyzf.transfermanager.util.Md5Utils;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,10 +42,13 @@ public class ReceiveTask implements Runnable, IReceiveTask {
      * 用于标记当前的传输状态
      */
     private int currentStatus = 1;
+    private final InetAddress inetAddress;
 
     public ReceiveTask(Socket socket, P2pTransferHandler receiveHandler) {
         this.mSocketClient = socket;
         this.mP2pTransferHandler = receiveHandler;
+        inetAddress = socket.getInetAddress();
+
         init();
     }
 
@@ -109,7 +114,7 @@ public class ReceiveTask implements Runnable, IReceiveTask {
 
                 if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                     // Android系统提供的缓存存放目录
-                    File file = new File("/storage/emulated/0/Android/data/com.merpyzf.xmshare/files/Pictures", md5);
+                    File file = new File("/storage/emulated/0/Android/data/com.merpyzf.xmshare/files/Pictures", Md5Utils.getMd5(name+fileLength));
 
                     if (thumbLength != 0) {
                         // 如果对端发送的文件中包含文件的缩略图话就将缩略图写入到缓存中
@@ -354,6 +359,9 @@ public class ReceiveTask implements Runnable, IReceiveTask {
             message.what = Constant.TransferStatus.TRANSFER_SUCCESS;
             message.obj = fileInfo;
             mP2pTransferHandler.sendMessage(message);
+
+
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ArrayIndexOutOfBoundsException e) {

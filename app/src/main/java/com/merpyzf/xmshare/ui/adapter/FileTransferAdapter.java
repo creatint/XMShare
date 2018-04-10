@@ -87,13 +87,15 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
             } else if (item instanceof MusicFile) {
 
                 MusicFile musicFile = (MusicFile) item;
-                thumbPath = com.merpyzf.xmshare.common.Constant.PIC_CACHES_DIR + "/" + Md5Utils.getMd5(musicFile.getPath());
+                thumbPath = com.merpyzf.xmshare.common.Constant.PIC_CACHES_DIR + "/" + Md5Utils.getMd5(musicFile.getAlbumId()+"");
 
 
             } else if (item instanceof PicFile) {
 
                 PicFile picFile = (PicFile) item;
                 thumbPath = picFile.getPath();
+
+
 
             } else if (item instanceof VideoFile) {
 
@@ -114,7 +116,7 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
         } else if (FileTransferAdapter.TYPE_RECEIVE == type) {
 
             // 接受到的文件缩略图的名字为待接收的文件的MD5的值
-            thumbFile = new File(com.merpyzf.xmshare.common.Constant.PIC_CACHES_DIR, file.getMd5());
+            thumbFile = new File(com.merpyzf.xmshare.common.Constant.PIC_CACHES_DIR, Md5Utils.getMd5(file.getName()+file.getLength()));
 
             Glide.with(mContext)
                     .load(thumbFile)
@@ -166,6 +168,33 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
 
             if (type == TYPE_RECEIVE) {
                 tvProgress.setText("传输完毕," + getOpenTypeText(file));
+
+                if(file instanceof PicFile){
+
+                    File saveFile = FileUtils.getSaveFile(file);
+                    Glide.with(mContext)
+                            .load(saveFile)
+                            .placeholder(R.drawable.ic_thumb_empty)
+                            .crossFade()
+                            .centerCrop()
+                            .error(R.drawable.ic_header)
+                            .into(ivThumb);
+                }else {
+
+                    // 接受到的文件缩略图的名字为待接收的文件的MD5的值
+                    thumbFile = new File(com.merpyzf.xmshare.common.Constant.PIC_CACHES_DIR, Md5Utils.getMd5(file.getName()+file.getLength()));
+
+                    Glide.with(mContext)
+                            .load(thumbFile)
+                            .placeholder(R.drawable.ic_thumb_empty)
+                            .crossFade()
+                            .centerCrop()
+                            .error(R.drawable.ic_header)
+                            .into(ivThumb);
+
+                }
+
+
             } else {
                 tvProgress.setText("传输完毕");
             }
@@ -269,6 +298,9 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
                             ivDone.setVisibility(View.VISIBLE);
                             tvSpeed.setVisibility(View.INVISIBLE);
                             tvProgress.setText("传输完毕," + getOpenTypeText(fileInfo));
+
+
+
 
                         } else if (file.getFileTransferStatus() == Constant.TransferStatus.TRANSFER_FAILED) {
 

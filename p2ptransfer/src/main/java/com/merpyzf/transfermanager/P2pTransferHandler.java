@@ -75,6 +75,9 @@ public class P2pTransferHandler extends Handler {
 
                 for(int i=0;i<mTransferObserverLists.size();i++){
                     mTransferObserverLists.get(i).onTransferStatus(fileInfo1);
+
+
+
                 }
 
 

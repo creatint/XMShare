@@ -128,7 +128,7 @@ public class ReceiveActivity extends AppCompatActivity {
                     });
 
                     App.getSingleThreadPool().execute(receiverManager);
-                    Log.i("w2k", "开启一个ServerScoket等待设备接入");
+                    Log.i("w2k", "开启一个ServerSocket等待设备接入");
 
                     // 当接收到待传输的文件列表时，跳转到文件传输的界面
                     receiverManager.setOnTransferFileListListener(transferFileList -> {
@@ -149,8 +149,8 @@ public class ReceiveActivity extends AppCompatActivity {
 
                 @Override
                 public void onApEnableAction() {
-
                     ReceiverManager receiverManager = ReceiverManager.getInstance();
+                    // 开启一个socket服务
                     App.getSingleThreadPool().execute(receiverManager);
                     // 监听待传输的文件列表是否发送成功
                     receiverManager.setOnTransferFileListListener(transferFileList -> {

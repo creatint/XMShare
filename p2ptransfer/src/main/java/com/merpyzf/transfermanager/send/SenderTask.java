@@ -282,10 +282,15 @@ public class SenderTask implements ISendTask, Runnable {
 
         // 建立Socket连接
         try {
+            Log.i("wk", "等待建立连接的对端设备地址->"+mDestAddress);
             mSocket = new Socket(mDestAddress, Constant.SOCKET_PORT);
+            // TODO: 2018/4/10 建立连接失败的话mSocket对象会为null
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        Log.i("wk", "建立socket连接，对端地址->"+mSocket.getInetAddress().getHostAddress());
 
         init();
         /**

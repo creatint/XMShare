@@ -37,6 +37,7 @@ public class SenderManager {
 
                     mSenderManager = new SenderManager(context);
 
+
                 }
 
             }
@@ -98,4 +99,5 @@ public class SenderManager {
             mSenderTask.release();
         }
     }
+
 }

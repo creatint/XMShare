@@ -3,6 +3,7 @@ package com.merpyzf.transfermanager;
 import android.content.Context;
 import android.util.Log;
 
+import com.merpyzf.transfermanager.constant.Constant;
 import com.merpyzf.transfermanager.entity.SignMessage;
 import com.merpyzf.transfermanager.interfaces.PeerCommCallback;
 import com.merpyzf.transfermanager.interfaces.PeerTransferBreakCallBack;
@@ -38,7 +39,7 @@ public class PeerManager {
         this.nickName = nickName;
         // 创建Handler用于接收的UDP消息处理
         this.mPeerHandler = new PeerHandler(mContext, peerCallback);
-        this.mPeerCommunicate = new PeerCommunicate(mContext, mPeerHandler);
+        this.mPeerCommunicate = new PeerCommunicate(mContext, mPeerHandler, Constant.UDP_PORT);
     }
 
 
