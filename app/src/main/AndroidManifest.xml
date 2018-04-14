@@ -78,9 +78,8 @@
         <activity android:name=".ui.test.TestFileIndicatorActivity" />
         <activity android:name=".ui.test.TestChangeSkinActivity" />
         <activity android:name=".ui.test.TestApActivity" />
-        <activity android:name=".ui.test.QRTestActivity">
-
-        </activity>
+        <activity android:name=".ui.test.QRTestActivity"></activity>
+        <activity android:name=".ui.view.activity.InputHotspotPwdActivity"></activity>
     </application>
 
 </manifest>

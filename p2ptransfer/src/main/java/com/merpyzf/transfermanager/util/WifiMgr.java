@@ -24,6 +24,7 @@ public class WifiMgr {
     /**
      * 创建WifiConfiguration的类型
      */
+    public static final int WIFICIPHER_NONE = 0;
     public static final int WIFICIPHER_NOPASS = 1;
     public static final int WIFICIPHER_WEP = 2;
     public static final int WIFICIPHER_WPA = 3;
@@ -83,13 +84,17 @@ public class WifiMgr {
     /**
      * 开始扫描
      */
-    public void startScan() {
+    public List<ScanResult> startScan() {
 
         if (mWifiManager.isWifiEnabled()) {
             mWifiManager.startScan();
             mScanResults = mWifiManager.getScanResults();
             mConfiguredNetworks = mWifiManager.getConfiguredNetworks();
+            return mScanResults;
         }
+
+        return null;
+
     }
 
 
@@ -155,7 +160,7 @@ public class WifiMgr {
 //            config.wepKeys[0] = "";
 //            config.wepTxKeyIndex = 0;
         } else if (type == WIFICIPHER_WEP) {
-            config.hiddenSSID = true;
+//            config.hiddenSSID = true;
             config.wepKeys[0] = "\"" + password + "\"";
             config.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.SHARED);
             config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
@@ -166,13 +171,14 @@ public class WifiMgr {
             config.wepTxKeyIndex = 0;
         } else if (type == WIFICIPHER_WPA) {
             config.preSharedKey = "\"" + password + "\"";
-            config.hiddenSSID = true;
-            config.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
-            config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
-            config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
-            config.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
-            config.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
-            config.status = WifiConfiguration.Status.ENABLED;
+            // 注释一下代码，不然连接不上有密码的热点
+//            config.hiddenSSID = true;
+//            config.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
+//            config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+//            config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+//            config.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
+//            config.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
+//            config.status = WifiConfiguration.Status.ENABLED;
         }
 
         return config;
@@ -253,4 +259,13 @@ public class WifiMgr {
     }
 
 
+//    static int getSecurity(WifiConfiguration config) {
+//        if (config.allowedKeyManagement.get(WifiConfiguration.KeyMgmt.WPA_PSK)) {
+//            return WIFICIPHER_WPA;
+//        }
+//        if (config.allowedKeyManagement.get(WifiConfiguration.KeyMgmt.WPA_EAP) || config.allowedKeyManagement.get(WifiConfiguration.KeyMgmt.IEEE8021X)) {
+//            return WIFICIPHER_WEP;
+//        }
+//        return (config.wepKeys[0] != null) ? SECURITY_WEP : SECURITY_NONE;
+//    }
 }

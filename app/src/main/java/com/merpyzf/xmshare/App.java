@@ -2,6 +2,7 @@ package com.merpyzf.xmshare;
 
 import android.app.Application;
 import android.content.Context;
+import android.net.wifi.WifiManager;
 import android.util.Log;
 
 import com.litesuits.orm.LiteOrm;
@@ -30,6 +31,7 @@ public class App extends Application {
     private static ExecutorService mSingleThreadPool;
     private static LiteOrm mSingleLiteOrm;
     private static String TAG = App.class.getSimpleName();
+    private static WifiManager.LocalOnlyHotspotReservation mReservation = null;
 
     @Override
     public void onCreate() {
@@ -134,7 +136,17 @@ public class App extends Application {
     }
 
 
+
     public static Context getAppContext() {
         return AppContext;
+    }
+
+
+    public static void setReservation(WifiManager.LocalOnlyHotspotReservation reservation) {
+        mReservation = reservation;
+    }
+
+    public static WifiManager.LocalOnlyHotspotReservation getReservation() {
+        return mReservation;
     }
 }

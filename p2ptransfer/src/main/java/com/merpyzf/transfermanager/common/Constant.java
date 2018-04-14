@@ -1,4 +1,4 @@
-package com.merpyzf.transfermanager.constant;
+package com.merpyzf.transfermanager.common;
 
 /**
  * Created by wangke on 2017/12/12.
@@ -54,7 +54,10 @@ public class Constant {
     // 发送缩略图的尺寸
     public static final int SEND_FILE_THUMB_SIZE = 100;
 
+    // Android O以下版本所建立热点的前缀标识
+    public static final String HOTSPOT_PREFIX_IDENT = "XM";
 
+    public static final String HOTSPOT_PREFIX_IDENT_O = "AndroidShare_";
     // 文件在传输过程中的几个状态
     public class TransferStatus {
 

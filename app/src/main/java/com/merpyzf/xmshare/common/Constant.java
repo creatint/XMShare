@@ -22,17 +22,15 @@ public class Constant {
 
     // 传输模式
     public static final String KEY_TRANSFER_MODE = "transfer_mode";
-    // 使用已连接的局域网传输
+    // 使用已连接的局域网传输模式
     public static final int TRANSFER_MODE_LAN = -1;
-    // 通过建立热点组件局域网的方式传输
+    // 通过建立热点组件局域网的方式传输模式
     public static final int TRANSFER_MODE_AP = 1;
-
-    // 存放头像信息
-    public static ArrayList<Integer> AVATAR_LIST = null;
-
     // 存储图片缓存
     public static final File PIC_CACHES_DIR;
 
+    // 头像信息
+    public static ArrayList<Integer> AVATAR_LIST = null;
 
     // 初始化头像
     static {
@@ -54,8 +52,9 @@ public class Constant {
         AVATAR_LIST.add(R.drawable.ic_avatar_13);
         AVATAR_LIST.add(R.drawable.ic_avatar_14);
         AVATAR_LIST.add(R.drawable.ic_avatar_15);
+        AVATAR_LIST.add(R.drawable.ic_avatar_16_o);
 
-        PIC_CACHES_DIR =  App.getAppContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        PIC_CACHES_DIR = App.getAppContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
 
     }

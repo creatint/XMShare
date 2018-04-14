@@ -7,7 +7,6 @@ import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -110,7 +109,7 @@ public class PhotoDirsFragment extends Fragment implements LoaderManager.LoaderC
 
         }
 
-        mImageFragment.getTvTitle().setText("图片("+mPhotosNum+")");
+        mImageFragment.getTvTitle().setText("图片(" + mPhotosNum + ")");
 
 
         mRvDirsList.setLayoutManager(new LinearLayoutManager(mContext));
@@ -220,11 +219,6 @@ public class PhotoDirsFragment extends Fragment implements LoaderManager.LoaderC
 
                         }
 
-                    }
-
-                    if (Build.VERSION.SDK_INT < 14) {
-                        //在android 4.0及其以上的版本中，Cursor会自动关闭，不需要用户自己关闭
-                        cursor.close();
                     }
                     return mDirList;
                 })

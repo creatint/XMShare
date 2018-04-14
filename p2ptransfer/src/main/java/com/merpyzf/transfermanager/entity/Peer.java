@@ -1,5 +1,7 @@
 package com.merpyzf.transfermanager.entity;
 
+import com.merpyzf.transfermanager.common.Constant;
+
 /**
  * Created by wangke on 2017/12/13.
  * 描述设备的对象
@@ -21,8 +23,8 @@ public class Peer {
     // 标记是否是无线热点
     private boolean isHotsPot = false;
 
-
     public Peer() {
+
     }
 
     public Peer(String nickName, String hostAddress) {
@@ -70,6 +72,16 @@ public class Peer {
     public void setAvatarPosition(int avatarPosition) {
         this.avatarPosition = avatarPosition;
     }
+
+
+    public boolean isAndroidODevice(String ssid) {
+
+        if (ssid.startsWith(Constant.HOTSPOT_PREFIX_IDENT_O)) {
+            return true;
+        }
+        return false;
+    }
+
 
     @Override
     public boolean equals(Object o) {

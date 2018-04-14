@@ -5,7 +5,7 @@ import android.os.Message;
 import android.util.Log;
 
 import com.merpyzf.transfermanager.P2pTransferHandler;
-import com.merpyzf.transfermanager.constant.Constant;
+import com.merpyzf.transfermanager.common.Constant;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.util.FileUtils;
 
@@ -63,7 +63,7 @@ public class SenderTask implements ISendTask, Runnable {
     }
 
     /**
-     * 发送待传输文件列表(不计入传输的大小中去，传输时间可以小到忽略不计)
+     * 发送等待传输的文件清单
      */
     @Override
     public void sendTransferFileList() {

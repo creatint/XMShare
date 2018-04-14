@@ -4,7 +4,7 @@ package com.merpyzf.transfermanager.receive;
 import android.util.Log;
 
 import com.merpyzf.transfermanager.P2pTransferHandler;
-import com.merpyzf.transfermanager.constant.Constant;
+import com.merpyzf.transfermanager.common.Constant;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.interfaces.TransferObserver;
 

@@ -3,6 +3,7 @@ package com.merpyzf.xmshare.ui.view.fragment.transfer;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
@@ -14,7 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.merpyzf.transfermanager.constant.Constant;
+import com.merpyzf.transfermanager.common.Constant;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.receive.ReceiverManager;
 import com.merpyzf.xmshare.R;
@@ -149,6 +150,10 @@ public class TransferReceiveFragment extends Fragment {
     @Override
     public void onDestroy() {
         App.getSendFileList().clear();
+        WifiManager.LocalOnlyHotspotReservation reservation = App.getReservation();
+        if (reservation != null) {
+            reservation.close();
+        }
         super.onDestroy();
     }
 

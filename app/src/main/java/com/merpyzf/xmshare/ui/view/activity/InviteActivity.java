@@ -19,7 +19,6 @@ import java.io.File;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import butterknife.Unbinder;
 
 /**
  * 应用邀请安装界面
@@ -32,7 +31,6 @@ public class InviteActivity extends BaseActivity {
 
     @BindView(R.id.tool_bar)
     Toolbar mToolbar;
-    private Unbinder mUnbind;
     private static final String TAG = InviteActivity.class.getSimpleName();
 
 
@@ -124,8 +122,6 @@ public class InviteActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-
-        mUnbind.unbind();
         super.onDestroy();
     }
 }

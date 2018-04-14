@@ -1,6 +1,6 @@
 package com.merpyzf.transfermanager.entity;
 
-import com.merpyzf.transfermanager.constant.Constant;
+import com.merpyzf.transfermanager.common.Constant;
 
 import java.io.Serializable;
 

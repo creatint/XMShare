@@ -47,6 +47,7 @@ import com.merpyzf.transfermanager.util.ApManager;
 import com.merpyzf.transfermanager.util.NetworkUtil;
 import com.merpyzf.transfermanager.util.WifiMgr;
 import com.merpyzf.transfermanager.util.timer.OSTimer;
+import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Constant;
 import com.merpyzf.xmshare.receiver.APChangedReceiver;
@@ -369,6 +370,7 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
         };
 
         IntentFilter intentFilter = new IntentFilter(APChangedReceiver.ACTION_WIFI_AP_STATE_CHANGED);
+
         mContext.registerReceiver(mApChangedReceiver, intentFilter);
 
 
@@ -391,9 +393,7 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
 
                     String ssid = reservation.getWifiConfiguration().SSID;
                     String preSharedKey = reservation.getWifiConfiguration().preSharedKey;
-
-
-                    mReservation = reservation;
+                    App.setReservation(reservation);
                     radar.setVisibility(View.INVISIBLE);
                     mLlShowQrCodeInfo.setVisibility(View.VISIBLE);
 
@@ -536,7 +536,7 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
         String protocolStr = signMessage.convertProtocolStr();
         try {
             InetAddress dest = InetAddress.getByName(peer.getHostAddress());
-            mPeerManager.send2Peer(protocolStr, dest, com.merpyzf.transfermanager.constant.Constant.UDP_PORT);
+            mPeerManager.send2Peer(protocolStr, dest, com.merpyzf.transfermanager.common.Constant.UDP_PORT);
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
@@ -553,14 +553,10 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
         }
 
         releaseUdpListener();
-        // 释放ServerSocket资源
-//        ReceiverManager.getInstance().release();
-        mContext.unregisterReceiver(mApChangedReceiver);
 
-        if (mReservation != null) {
-            mReservation.close();
+        if (mApChangedReceiver != null) {
+            mContext.unregisterReceiver(mApChangedReceiver);
         }
-
 
         super.onDestroy();
     }
@@ -607,4 +603,6 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
     public void setOnReceivePairActionListener(OnReceivePairActionListener onReceivePairActionListener) {
         this.mOnReceivePairActionListener = onReceivePairActionListener;
     }
+
+
 }

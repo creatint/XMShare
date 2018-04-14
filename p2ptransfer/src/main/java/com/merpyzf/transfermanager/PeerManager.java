@@ -3,7 +3,7 @@ package com.merpyzf.transfermanager;
 import android.content.Context;
 import android.util.Log;
 
-import com.merpyzf.transfermanager.constant.Constant;
+import com.merpyzf.transfermanager.common.Constant;
 import com.merpyzf.transfermanager.entity.SignMessage;
 import com.merpyzf.transfermanager.interfaces.PeerCommCallback;
 import com.merpyzf.transfermanager.interfaces.PeerTransferBreakCallBack;

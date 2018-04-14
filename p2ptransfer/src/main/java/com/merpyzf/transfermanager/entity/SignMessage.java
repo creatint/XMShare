@@ -1,6 +1,6 @@
 package com.merpyzf.transfermanager.entity;
 
-import com.merpyzf.transfermanager.constant.Constant;
+import com.merpyzf.transfermanager.common.Constant;
 
 /**
  * Created by wangke on 2017/12/12.
