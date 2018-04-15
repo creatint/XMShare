@@ -2,13 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/XMShare.iml" filepath="$PROJECT_DIR$/.idea/XMShare.iml" />
-      <module fileurl="file://D:\XMShare\XMShare.iml" filepath="D:\XMShare\XMShare.iml" />
+      <module fileurl="file://$PROJECT_DIR$/XMShare.iml" filepath="$PROJECT_DIR$/XMShare.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/filemanager/filemanager.iml" filepath="$PROJECT_DIR$/filemanager/filemanager.iml" />
       <module fileurl="file://$PROJECT_DIR$/httpcoreserver/httpcoreserver.iml" filepath="$PROJECT_DIR$/httpcoreserver/httpcoreserver.iml" />
       <module fileurl="file://$PROJECT_DIR$/p2ptransfer/p2ptransfer.iml" filepath="$PROJECT_DIR$/p2ptransfer/p2ptransfer.iml" />
-      <module fileurl="file://D:\XMShare\p2ptransfer\p2ptransfercore.iml" filepath="D:\XMShare\p2ptransfer\p2ptransfercore.iml" />
       <module fileurl="file://$PROJECT_DIR$/qrcodescan/qrcodescan.iml" filepath="$PROJECT_DIR$/qrcodescan/qrcodescan.iml" />
       <module fileurl="file://$PROJECT_DIR$/radarview/radarview.iml" filepath="$PROJECT_DIR$/radarview/radarview.iml" />
     </modules>
