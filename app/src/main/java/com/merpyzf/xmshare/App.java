@@ -8,6 +8,7 @@ import android.util.Log;
 import com.litesuits.orm.LiteOrm;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.xmshare.common.Constant;
+import com.merpyzf.xmshare.util.SharedPreUtils;
 import com.squareup.leakcanary.LeakCanary;
 
 import java.util.ArrayList;
@@ -60,7 +61,7 @@ public class App extends Application {
     public static void addSendFiles(List<FileInfo> fileInfoList) {
 
         for (FileInfo fileInfo : fileInfoList) {
-            if (!mSendFileList.contains(fileInfo)){
+            if (!mSendFileList.contains(fileInfo)) {
                 mSendFileList.add(fileInfo);
             }
         }
@@ -136,7 +137,6 @@ public class App extends Application {
     }
 
 
-
     public static Context getAppContext() {
         return AppContext;
     }
@@ -146,7 +146,24 @@ public class App extends Application {
         mReservation = reservation;
     }
 
+    public static void closeHotspotOnAndroidO() {
+        if (mReservation != null) {
+            mReservation.close();
+        }
+    }
+
+
     public static WifiManager.LocalOnlyHotspotReservation getReservation() {
         return mReservation;
     }
+
+    /**
+     * 获取用户昵称
+     *
+     * @return
+     */
+    public static String getNickname() {
+        return SharedPreUtils.getString(AppContext, Constant.SP_USER, "nickName", "");
+    }
+
 }

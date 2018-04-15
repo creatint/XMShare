@@ -105,6 +105,7 @@ public class ReceiveActivity extends AppCompatActivity {
     private void initEvent() {
 
         if (mReceivePeerFragment != null) {
+            // 局域网下的事件
             mReceivePeerFragment.setOnReceivePairActionListener(new ReceivePeerFragment.OnReceivePairActionListener() {
                 @Override
                 public void onRequestSendFileAction() {
@@ -116,7 +117,6 @@ public class ReceiveActivity extends AppCompatActivity {
                         public void onTransferProgress(FileInfo fileInfo) {
 
                         }
-
                         // TODO: 2018/1/28 增加一个文件全部传输完毕的回调
                         @Override
                         public void onTransferStatus(FileInfo fileInfo) {
@@ -128,8 +128,6 @@ public class ReceiveActivity extends AppCompatActivity {
                     });
 
                     App.getSingleThreadPool().execute(receiverManager);
-                    Log.i("w2k", "开启一个ServerSocket等待设备接入");
-
                     // 当接收到待传输的文件列表时，跳转到文件传输的界面
                     receiverManager.setOnTransferFileListListener(transferFileList -> {
 
@@ -146,7 +144,7 @@ public class ReceiveActivity extends AppCompatActivity {
 
                 }
 
-
+                // 热点下的事件
                 @Override
                 public void onApEnableAction() {
                     ReceiverManager receiverManager = ReceiverManager.getInstance();

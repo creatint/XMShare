@@ -111,10 +111,8 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
         init();
         initUI();
 
-
-        String nickName = SharedPreUtils.getString(mContext, Constant.SP_USER, "nickName", "");
-        // 这里只需要建立一次
-        mPeerManager = new PeerManager(mContext, nickName, new PeerCommCallback() {
+        // 开启一个udp server 用于和局域网内的设备进行交互
+        mPeerManager = new PeerManager(mContext, App.getNickname(), new PeerCommCallback() {
             @Override
             public void onDeviceOnLine(Peer peer) {
                 if (!mPeerList.contains(peer)) {
@@ -158,7 +156,6 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
             }
 
         });
-        // 此处建立的是一个接收UDP信息的服务端
         mPeerManager.listenBroadcast();
 
         new OSTimer(null, () -> mHandler.sendEmptyMessage(TYPE_SCAN_WIFI), 0, false).start();
@@ -245,7 +242,7 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
             signMessage.setHostAddress(NetworkUtil.getLocalIp(mContext));
             signMessage.setNickName(SharedPreUtils.getNickName(mContext));
             signMessage.setAvatarPosition(SharedPreUtils.getAvatar(mContext));
-            signMessage.setMsgContent("建立连接请求");
+            signMessage.setMsgContent(" ");
             signMessage.setCmd(SignMessage.cmd.REQUEST_CONN);
             String msg = signMessage.convertProtocolStr();
 
@@ -263,9 +260,6 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
                 mOnPairActionListener.onSendConnRequestAction();
             }
             Toast.makeText(mContext, "发送建立请求连接", Toast.LENGTH_SHORT).show();
-
-            // 在屏幕中间显示一个火箭的图标
-            // 将这个事件回调给Activity
         }
 
 
@@ -276,24 +270,18 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
      * 连接热点并传输文件
      *
      * @param peer
-     * @param pwd  null: 表示是8.0一下设备建立的热点
+     * @param pwd  null: 表示要连接的热点密码为空
      */
     public void connectWifiAndTransfer(Peer peer, String pwd) {
 
-
-        Log.i("w2k", "连接wifi " + peer.getSsid());
         WifiConfiguration wifiCfg = null;
         if (null == pwd) {
             wifiCfg = WifiMgr.createWifiCfg(peer.getSsid(), null, WifiMgr.WIFICIPHER_NOPASS);
         } else {
-
-            Log.i("wk", "ssid-->"+peer.getSsid()+"pwd-->"+pwd+"--");
             wifiCfg = WifiMgr.createWifiCfg(peer.getSsid(), pwd, WifiMgr.WIFICIPHER_WPA);
-
-
         }
 
-        // 连接没有密码的热点
+//        连接热点
         mWifiMgr.connectNewWifi(wifiCfg);
 
         // 获取远端建立热点设备的ip地址
@@ -342,7 +330,7 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
             }
 
 
-            Log.i("w2k", "receiver get local Ip ----->>>" + mLocalAddress);
+            Log.i("wk", "receiver get local Ip ----->>>" + mLocalAddress);
 
         });
 
@@ -352,28 +340,12 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
      * 扫描WIFI
      */
     public void scanWifi() {
-        Log.i("wk", "开始扫描...");
+
         List<ScanResult> scanResults = mWifiMgr.startScan();
-
-
         WifiConfiguration configuration;
         if (scanResults == null) {
             return;
         }
-
-        Log.i("wk", "扫描完毕...");
-
-
-        for (ScanResult scanResult : scanResults) {
-
-            Log.i("wk", "ssid--> " + scanResult.SSID);
-
-            Log.i("wk", "加密方式-->"+scanResult.capabilities);
-
-
-        }
-
-
         // 扫描之前先移除上一次扫描到的热点信号
         for (int i = 0; i < mPeerList.size(); i++) {
             if (mPeerList.get(i).isHotsPot()) {
@@ -387,8 +359,8 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
                 int avatarPosition = 0;
                 if (scanResult.SSID.startsWith(com.merpyzf.transfermanager.common.Constant.HOTSPOT_PREFIX_IDENT)) {
                     String[] apNickAndAvatar = com.merpyzf.transfermanager.util.NetworkUtil.getApNickAndAvatar(scanResult.SSID);
-                    nick = apNickAndAvatar[0];
-                    avatarPosition = Integer.valueOf(apNickAndAvatar[1]);
+                    avatarPosition = Integer.valueOf(apNickAndAvatar[0]);
+                    nick = apNickAndAvatar[1];
                 } else if (scanResult.SSID.startsWith(com.merpyzf.transfermanager.common.Constant.HOTSPOT_PREFIX_IDENT_O)) {
                     nick = scanResult.SSID;
                     avatarPosition = Constant.AVATAR_LIST.size() - 1;
@@ -401,11 +373,9 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
                 peer.setHotsPot(true);
 
                 mPeerList.add(peer);
-
             }
         }
         mPeerAdapter.notifyDataSetChanged();
-
     }
 
 
@@ -517,18 +487,6 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
 
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        mUnbinder.unbind();
-        // 发送下线广播
-        mPeerManager.sendOffLineBroadcast();
-        // 关闭UdpServer端，停止接收数据
-        mPeerManager.stopUdpServer();
-        mHandler.removeCallbacks(null);
-        super.onDestroy();
-    }
 
     public interface OnPairActionListener {
 
@@ -566,7 +524,13 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
         this.mOnPairActionListener = onPairActionListener;
     }
 
-
+    /**
+     * 获取从上一个Activity拿到的用户名和密码，并与热点建立连接
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -574,7 +538,6 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
         if (resultCode == InputHotspotPwdActivity.RESULT_GET_HOTSPOT_INFO) {
             String hotspot_info = data.getStringExtra("hotspot_info");
             ToastUtils.showShort(getContext(), hotspot_info);
-
             Peer peer = new Peer();
             String preSharedKey = null;
             try {
@@ -590,8 +553,22 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
                 e.printStackTrace();
             }
 
+            // 连接热点
             connectWifiAndTransfer(peer, preSharedKey);
         }
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        mUnbinder.unbind();
+        // 发送下线广播
+        mPeerManager.sendOffLineBroadcast();
+        // 关闭UdpServer端，停止接收数据
+        mPeerManager.stopUdpServer();
+        mHandler.removeCallbacks(null);
+        super.onDestroy();
     }
 }

@@ -8,12 +8,12 @@
     android:gravity="center"
     tools:context="com.merpyzf.xmshare.ui.test.TestFileIndicatorActivity">
 
-    <com.merpyzf.filemanager.widget.FileSelectIndicator
+    <com.merpyzf.filemanager.widget.FileSelectIndicatorImp
         android:id="@+id/fileSelectIndicator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/yellow_50"
-        ></com.merpyzf.filemanager.widget.FileSelectIndicator>
+        ></com.merpyzf.filemanager.widget.FileSelectIndicatorImp>
 
 
     <Button

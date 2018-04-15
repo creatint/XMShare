@@ -3,14 +3,14 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
     
-    <com.merpyzf.filemanager.widget.FileSelectIndicator
+    <com.merpyzf.filemanager.widget.FileSelectIndicatorImp
         android:id="@+id/fileSelectIndicator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
         >
 
-    </com.merpyzf.filemanager.widget.FileSelectIndicator>
+    </com.merpyzf.filemanager.widget.FileSelectIndicatorImp>
     
     
     

@@ -16,7 +16,6 @@ import java.util.List;
 public class WifiMgr {
 
     private static WifiMgr mWifiMgr;
-    private Context mContext;
     private WifiManager mWifiManager;
     private List<ScanResult> mScanResults;
     private List<WifiConfiguration> mConfiguredNetworks;
@@ -32,7 +31,6 @@ public class WifiMgr {
 
 
     private WifiMgr(Context context) {
-        this.mContext = context;
         this.mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
     }
 

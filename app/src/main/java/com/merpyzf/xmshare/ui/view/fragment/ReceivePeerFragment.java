@@ -1,26 +1,18 @@
 package com.merpyzf.xmshare.ui.view.fragment;
 
 import android.Manifest;
-import android.animation.Animator;
-import android.animation.ObjectAnimator;
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -32,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +47,8 @@ import com.merpyzf.xmshare.receiver.APChangedReceiver;
 import com.merpyzf.xmshare.ui.adapter.PeerAdapter;
 import com.merpyzf.xmshare.util.DisplayUtils;
 import com.merpyzf.xmshare.util.SharedPreUtils;
+import com.merpyzf.xmshare.util.UiUtils;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -93,14 +88,16 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
     @BindView(R.id.iv_qrcode)
     ImageView mIvQrCode;
     // 展示二维码相关信息的布局
-    @BindView(R.id.ll_show_qrcode_info)
-    LinearLayout mLlShowQrCodeInfo;
+    @BindView(R.id.rl_show_qrcode_info)
+    RelativeLayout mRlShowQrCodeInfo;
     // 热点名称
     @BindView(R.id.tv_hotspot_name_o)
     TextView mTvHotspotNameO;
     // 热点密码
     @BindView(R.id.tv_hotspot_pwd)
     TextView mTvHotspotPwd;
+    @BindView(R.id.ll_show_peers_container)
+    LinearLayout mLlShowPeersContainer;
 
 
     private PeerManager mPeerManager;
@@ -141,6 +138,7 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
         mPeerAdapter = new PeerAdapter(R.layout.item_rv_recive_peer, mPeerList);
         mRvPeerList.setAdapter(mPeerAdapter);
         mPeerAdapter.setOnItemClickListener(this);
+
 
         // 传输的方式
         int transferMode = SharedPreUtils.getInteger(mContext, Constant.SP_USER, Constant.KEY_TRANSFER_MODE,
@@ -285,54 +283,19 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
             initAp();
 
         } else {
-            // 没有权限则去进行申请
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
-                // 6.0以上设备的权限申请方式
 
-                Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
-                intent.setData(Uri.parse("package:" + mContext.getPackageName()));
-                startActivityForResult(intent, REQUEST_CODE_WRITE_SETTINGS);
-
-            } else {
-
-                // 6.0一下的设备进行权限申请的方式
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_SETTINGS}, REQUEST_CODE_WRITE_SETTINGS);
-
-            }
-
+            new RxPermissions(getActivity())
+                    .requestEach(Manifest.permission.WRITE_SETTINGS)
+                    .subscribe(perm -> {
+                        if (perm.granted) {
+                            initAp();
+                        }
+                    });
         }
 
 
     }
-
-
-    @SuppressLint("NewApi")
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.i("w2k", "--> onRequestPermissionsResult");
-        if (requestCode == REQUEST_CODE_WRITE_SETTINGS && Settings.System.canWrite(mContext)) {
-            Log.i("w2k", "权限申请成功");
-            initAp();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
-        Log.i("w2k", "--> onRequestPermissionsResult");
-
-        if (requestCode == REQUEST_CODE_WRITE_SETTINGS && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            Log.i("w2k", "权限通过");
-            initAp();
-        } else {
-            Toast.makeText(mContext, "权限被拒绝，无法创建热点", Toast.LENGTH_SHORT).show();
-        }
-
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
 
     /**
      * 初始化热点
@@ -349,8 +312,7 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
             @Override
             public void onApEnableAction() {
 
-                Toast.makeText(mContext, "Ap初始化成功", Toast.LENGTH_SHORT).show();
-                //
+                mLlShowPeersContainer.setVisibility(View.INVISIBLE);
                 String apSSID = ApManager.getApSSID(mContext);
                 mTvNetName.setText(apSSID);
 
@@ -363,9 +325,8 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
 
             @Override
             public void onApDisAbleAction() {
-
                 // 热点被关闭的回调方法
-
+                mLlShowPeersContainer.setVisibility(View.VISIBLE);
             }
         };
 
@@ -377,64 +338,68 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
         // 开启热点
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
+            // 申请位置权限
+            new RxPermissions(getActivity())
+                    .requestEach(Manifest.permission.ACCESS_FINE_LOCATION)
+                    .subscribe(permission -> {
 
-            radar.setVisibility(View.INVISIBLE);
-
-
-            WifiManager manager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
-
-
-            manager.startLocalOnlyHotspot(new WifiManager.LocalOnlyHotspotCallback() {
-
-                @TargetApi(Build.VERSION_CODES.O)
-                @Override
-                public void onStarted(WifiManager.LocalOnlyHotspotReservation reservation) {
-                    super.onStarted(reservation);
-
-                    String ssid = reservation.getWifiConfiguration().SSID;
-                    String preSharedKey = reservation.getWifiConfiguration().preSharedKey;
-                    App.setReservation(reservation);
-                    radar.setVisibility(View.INVISIBLE);
-                    mLlShowQrCodeInfo.setVisibility(View.VISIBLE);
-
-                    mTvHotspotNameO.setText(ssid);
-                    mTvHotspotPwd.setText(preSharedKey);
+                        if (permission.granted) {
 
 
-                    JSONObject jsonObject = new JSONObject();
-                    try {
-                        jsonObject.put("ssid", reservation.getWifiConfiguration().SSID);
-                        jsonObject.put("preSharedKey", reservation.getWifiConfiguration().preSharedKey);
-                        String hotspotInfo = jsonObject.toString();
-                        Bitmap bmpLogo = BitmapFactory.decodeResource(getResources(), SharedPreUtils.getAvatar(mContext));
-                        Bitmap qrCode = EncodingHandler.createQRCode(hotspotInfo, DisplayUtils.dip2px(mContext, 200), DisplayUtils.dip2px(mContext, 200), bmpLogo);
-                        mIvQrCode.setImageBitmap(qrCode);
+                            ApManager.configApStateOnAndroidO(getContext(), new ApManager.HotspotStateCallback() {
+                                @RequiresApi(api = Build.VERSION_CODES.O)
+                                @Override
+                                public void onStarted(WifiManager.LocalOnlyHotspotReservation reservation) {
+
+                                    radar.setVisibility(View.INVISIBLE);
+                                    String ssid = reservation.getWifiConfiguration().SSID;
+                                    String preSharedKey = reservation.getWifiConfiguration().preSharedKey;
+                                    App.setReservation(reservation);
+                                    radar.setVisibility(View.INVISIBLE);
+                                    mRlShowQrCodeInfo.setVisibility(View.VISIBLE);
+
+                                    mTvHotspotNameO.setText(ssid);
+                                    mTvHotspotPwd.setText(preSharedKey);
 
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                                    JSONObject jsonObject = new JSONObject();
+                                    try {
+                                        jsonObject.put("ssid", reservation.getWifiConfiguration().SSID);
+                                        jsonObject.put("preSharedKey", reservation.getWifiConfiguration().preSharedKey);
+                                        String hotspotInfo = jsonObject.toString();
+                                        Bitmap bmpLogo = BitmapFactory.decodeResource(getResources(), SharedPreUtils.getAvatar(mContext));
+                                        Bitmap qrCode = EncodingHandler.createQRCode(hotspotInfo, DisplayUtils.dip2px(mContext, 200), DisplayUtils.dip2px(mContext, 200), bmpLogo);
+                                        mIvQrCode.setImageBitmap(qrCode);
 
 
-                }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
 
-                @Override
-                public void onStopped() {
-                    super.onStopped();
-                    Log.d(TAG, "onStopped: ");
-                }
 
-                @Override
-                public void onFailed(int reason) {
-                    super.onFailed(reason);
-                    Log.d(TAG, "onFailed: ");
-                }
-            }, new Handler());
+                                }
 
+                                @Override
+                                public void onStopped() {
+
+                                    Log.i(TAG, "stopped...");
+
+                                }
+
+                                @Override
+                                public void onFailed(int reason) {
+
+                                    Log.i(TAG, "onFailed...");
+                                }
+                            });
+
+                        }
+
+                    });
 
         } else {
             ApManager.configApState(mContext, SharedPreUtils.getNickName(mContext), SharedPreUtils.getAvatar(mContext));
-            mLlShowQrCodeInfo.setVisibility(View.INVISIBLE);
+            mRlShowQrCodeInfo.setVisibility(View.INVISIBLE);
             radar.setVisibility(View.VISIBLE);
 
         }
@@ -445,6 +410,7 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
 
         if (mPeerList.size() > 0) {
             mTvTip.setVisibility(View.VISIBLE);
+            UiUtils.delayHideView(getActivity(),mTvTip, 3*1000);
         } else {
             mTvTip.setVisibility(View.INVISIBLE);
         }
@@ -467,44 +433,9 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
             String ssid = currConnWifiInfo.getSSID();
             mTvNetName.setText(ssid);
             mTvNetMode.setVisibility(View.VISIBLE);
+            // 显示三秒钟后隐藏当前网络模式信息
+            UiUtils.delayHideView(getActivity(), mTvNetMode, 3 * 1000);
 
-            //时间3s
-            mHideTipTimer = new OSTimer(null, () -> {
-                getActivity().runOnUiThread(() -> {
-
-                    ObjectAnimator animator = ObjectAnimator.ofFloat(mTvNetMode, "alpha", 1f, 0f);
-                    animator.setDuration(1000);//时间1s
-                    animator.addListener(new Animator.AnimatorListener() {
-                        @Override
-                        public void onAnimationStart(Animator animation) {
-
-                        }
-
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-
-                            if (mTvNetMode == null) {
-                                return;
-                            }
-                            mTvNetMode.setVisibility(View.INVISIBLE);
-
-                        }
-
-                        @Override
-                        public void onAnimationCancel(Animator animation) {
-
-                        }
-
-                        @Override
-                        public void onAnimationRepeat(Animator animation) {
-
-                        }
-                    });
-                    animator.start();
-                });
-
-            }, 3000, false);
-            mHideTipTimer.start();
         } else {
 
             mTvNetMode.setVisibility(View.INVISIBLE);
@@ -515,8 +446,9 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
         radar.setStyleIsFILL(false);
         radar.setRadarColor(Color.WHITE);
         radar.start();
-
-        mRvPeerList.setLayoutManager(new LinearLayoutManager(mContext));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
+        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        mRvPeerList.setLayoutManager(linearLayoutManager);
         mTvTip.setVisibility(View.INVISIBLE);
 
     }

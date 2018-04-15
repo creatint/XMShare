@@ -42,7 +42,6 @@ public class SettingActivity extends BaseActivity {
         } else if (transferMode == Constant.TRANSFER_MODE_AP) {
             mSwitchTransferMode.setChecked(true);
         }
-
     }
 
     @Override
