@@ -7,13 +7,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import com.merpyzf.filemanager.widget.FileSelectIndicator;
+import com.merpyzf.filemanager.widget.FileSelectIndicatorImp;
 import com.merpyzf.filemanager.widget.bean.Label;
 import com.merpyzf.xmshare.R;
 
 public class TestFileIndicatorActivity extends AppCompatActivity {
 
-    private FileSelectIndicator mFileSelectIndicator;
+    private FileSelectIndicatorImp mFileSelectIndicatorImp;
     private Button mBtnAdd;
 
     @Override
@@ -26,10 +26,10 @@ public class TestFileIndicatorActivity extends AppCompatActivity {
 
         Log.i("wk", path);
 
-        mFileSelectIndicator = findViewById(R.id.fileSelectIndicator);
+        mFileSelectIndicatorImp = findViewById(R.id.fileSelectIndicator);
 
 
-        mFileSelectIndicator.add(new Label("内部文件存储", Environment.getExternalStorageDirectory().getParent()));
+        mFileSelectIndicatorImp.add(new Label("内部文件存储", Environment.getExternalStorageDirectory().getParent()));
 
         final int[] num = {2};
 
@@ -38,14 +38,14 @@ public class TestFileIndicatorActivity extends AppCompatActivity {
             public void onClick(View v) {
 
 
-                mFileSelectIndicator.add(new Label("wangke"+(num[0]++), "wangke"));
+                mFileSelectIndicatorImp.add(new Label("wangke"+(num[0]++), "wangke"));
 
 
             }
         });
 
 
-        mFileSelectIndicator.setIndicatorClickCallBack((currentPath, isBack) -> {
+        mFileSelectIndicatorImp.setIndicatorClickCallBack((currentPath, isBack) -> {
 
             Log.i("wk", "当前点击的路径 -> "+currentPath);
 

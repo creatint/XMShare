@@ -4,7 +4,7 @@ package com.merpyzf.transfermanager;
 import android.os.Handler;
 import android.os.Message;
 
-import com.merpyzf.transfermanager.constant.Constant;
+import com.merpyzf.transfermanager.common.Constant;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.interfaces.TransferObserver;
 import com.merpyzf.transfermanager.receive.ReceiverManager;
@@ -75,6 +75,9 @@ public class P2pTransferHandler extends Handler {
 
                 for(int i=0;i<mTransferObserverLists.size();i++){
                     mTransferObserverLists.get(i).onTransferStatus(fileInfo1);
+
+
+
                 }
 
 

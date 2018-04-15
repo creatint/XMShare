@@ -5,7 +5,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import com.merpyzf.transfermanager.constant.Constant;
+import com.merpyzf.transfermanager.common.Constant;
 import com.merpyzf.transfermanager.entity.SignMessage;
 import com.merpyzf.transfermanager.util.NetworkUtil;
 import com.merpyzf.transfermanager.util.SharedPreUtils;
@@ -36,22 +36,28 @@ public class PeerCommunicate extends Thread {
     private static final String TAG = PeerCommunicate.class.getName();
 
 
-    public PeerCommunicate(Context context, Handler handler) {
+    public PeerCommunicate(Context context, Handler handler, int port) {
 
         mContext = context;
         mHandler = handler;
         String nickName = SharedPreUtils.getString(context, Constant.SP_USER, "nickName", "");
 
-        init();
+        init(port);
     }
 
 
-    private void init() {
+    public PeerCommunicate(int port) {
+
+        init(port);
+    }
+
+
+    private void init(int port) {
         try {
             // 初始化发送端所用socket
             mUdpSocket = new DatagramSocket(null);
             mUdpSocket.setReuseAddress(true);
-            mUdpSocket.bind(new InetSocketAddress(Constant.UDP_PORT));
+            mUdpSocket.bind(new InetSocketAddress(port));
         } catch (SocketException e) {
             e.printStackTrace();
         }
@@ -115,7 +121,7 @@ public class PeerCommunicate extends Thread {
                 byte[] buffer = msg.getBytes(Constant.S_CHARSET);
                 DatagramPacket sendPacket = new DatagramPacket(buffer, buffer.length, dest, port);
                 mUdpSocket.send(sendPacket);
-//                Log.i("w22k", "消息发送出去了");
+
             }
 
         } catch (UnsupportedEncodingException e) {

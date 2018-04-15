@@ -347,6 +347,13 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // 关闭热点，考虑用户没有进行后续的文件传输直接退回到当前界面的情况
+        App.closeHotspotOnAndroidO();
+    }
+
     /**
      * 当头像和昵称发生变化时候的更新通知
      */
@@ -450,7 +457,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
             return;
         }
 
-        imageFragment.getFileSelectIndicator().back();
+            imageFragment.getFileSelectIndicator().back();
 
 
     }

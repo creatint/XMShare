@@ -171,16 +171,9 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                 LiteOrm liteOrm = App.getSingleLiteOrm();
                 ArrayList<FileMd5Model> queryResult = liteOrm.query(new QueryBuilder<FileMd5Model>(FileMd5Model.class)
                         .whereEquals("file_name", fileInfo.getPath()));
-
                 if (queryResult.size() == 1) {
-
-                    Log.i("wk", "查询结果-> " + queryResult.get(0).getMd5());
-                    // 给fileInfo对象设置Md5()
                     fileInfo.setMd5(queryResult.get(0).getMd5());
-
                 }
-
-
 
                 // 将文件选择的事件回调给外部
                 if (mFileSelectListener != null) {

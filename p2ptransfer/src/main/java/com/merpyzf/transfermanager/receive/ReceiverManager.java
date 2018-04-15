@@ -4,7 +4,7 @@ package com.merpyzf.transfermanager.receive;
 import android.util.Log;
 
 import com.merpyzf.transfermanager.P2pTransferHandler;
-import com.merpyzf.transfermanager.constant.Constant;
+import com.merpyzf.transfermanager.common.Constant;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.interfaces.TransferObserver;
 
@@ -29,7 +29,7 @@ public class ReceiverManager implements Runnable {
     private static ReceiverManager mReceiver;
     // 观察者集合
     private List<TransferObserver> mTransferObserverLists;
-    private ReceiveTask mReceiveTask;
+    private ReceiveTaskImp mReceiveTaskImp;
     private static final String TAG = ReceiverManager.class.getSimpleName();
     private static boolean isStop = false;
 
@@ -108,8 +108,8 @@ public class ReceiverManager implements Runnable {
                 mSocketClient = mServerSocket.accept();
                 Log.i(TAG, "有设备连接:" + mSocketClient.getInetAddress().getHostAddress());
 
-                mReceiveTask = new ReceiveTask(mSocketClient, mP2pTransferHandler);
-                mSingleThreadPool.execute(mReceiveTask);
+                mReceiveTaskImp = new ReceiveTaskImp(mSocketClient, mP2pTransferHandler);
+                mSingleThreadPool.execute(mReceiveTaskImp);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -148,8 +148,8 @@ public class ReceiverManager implements Runnable {
      */
     public void release() {
         isStop = true;
-        if (mReceiveTask != null) {
-            mReceiveTask.release();
+        if (mReceiveTaskImp != null) {
+            mReceiveTaskImp.release();
         }
     }
 }

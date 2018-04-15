@@ -5,6 +5,8 @@ import android.net.ConnectivityManager;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.os.Handler;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import java.lang.reflect.InvocationTargetException;
@@ -49,7 +51,12 @@ public class ApManager {
         }
     }
 
-    // toggle wifi hotspot on or off
+    /**
+     * 开启热点，热点的ssid和密码由系统随机指配
+     *
+     * @param context 上下文
+     * @return 开启状态
+     */
     public static boolean configApState(Context context) {
         WifiManager wifimanager = (WifiManager) context.getSystemService(context.WIFI_SERVICE);
         WifiConfiguration wificonfiguration = null;
@@ -70,7 +77,14 @@ public class ApManager {
     }
 
 
-    // toggle wifi hotspot on or off, and specify the hotspot name
+    /**
+     * 开启热点，热点的ssid可自行指配
+     *
+     * @param context  上下文
+     * @param nickName 昵称
+     * @param avatar   头像
+     * @return 开启状态
+     */
     public static boolean configApState(Context context, String nickName, int avatar) {
         WifiManager wifimanager = (WifiManager) context.getSystemService(context.WIFI_SERVICE);
         ConnectivityManager mCm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -95,13 +109,7 @@ public class ApManager {
 
             // Android6.0以上的设备需要进行特殊处理
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                Log.i("wk","当前运行的设备为Android6.0以上的设备");
-
-
-
-
-
-
+                Log.i("wk", "当前运行的设备为Android6.0以上的设备");
 
 
             }
@@ -113,6 +121,46 @@ public class ApManager {
         }
         return false;
     }
+
+    /**
+     * Android8.0以上的设备调用此方法开启热点，受系统限制开启的热点信息由系统指配
+     *
+     * @param context              上下文
+     * @param hotspotStateCallback 热点状态回调用
+     */
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public static void configApStateOnAndroidO(Context context, final HotspotStateCallback hotspotStateCallback) {
+        WifiManager manager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        manager.startLocalOnlyHotspot(new WifiManager.LocalOnlyHotspotCallback() {
+            @Override
+            public void onStarted(WifiManager.LocalOnlyHotspotReservation reservation) {
+                super.onStarted(reservation);
+
+                if (hotspotStateCallback != null) {
+                    hotspotStateCallback.onStarted(reservation);
+                }
+            }
+
+            @Override
+            public void onStopped() {
+                super.onStopped();
+                if (hotspotStateCallback != null) {
+                    hotspotStateCallback.onStopped();
+                }
+            }
+
+            @Override
+            public void onFailed(int reason) {
+                super.onFailed(reason);
+                if (hotspotStateCallback != null) {
+                    hotspotStateCallback.onFailed(reason);
+                }
+            }
+        }, new Handler());
+
+
+    }
+
 
     /**
      * 获取热点的ssid
@@ -139,6 +187,28 @@ public class ApManager {
         }
 
         return ssid;
+    }
+
+
+    public interface HotspotStateCallback {
+        /**
+         * 热点开启
+         *
+         * @param reservation
+         */
+        void onStarted(WifiManager.LocalOnlyHotspotReservation reservation);
+
+        /**
+         * 热点被关闭
+         */
+        void onStopped();
+
+        /**
+         * 开启失败
+         *
+         * @param reason
+         */
+        void onFailed(int reason);
     }
 
 

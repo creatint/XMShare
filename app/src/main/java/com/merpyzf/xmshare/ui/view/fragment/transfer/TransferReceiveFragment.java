@@ -14,11 +14,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.merpyzf.transfermanager.constant.Constant;
+import com.merpyzf.transfermanager.common.Constant;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.receive.ReceiverManager;
-import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.App;
+import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.ui.adapter.FileTransferAdapter;
 import com.merpyzf.xmshare.util.AppUtils;
 
@@ -149,6 +149,8 @@ public class TransferReceiveFragment extends Fragment {
     @Override
     public void onDestroy() {
         App.getSendFileList().clear();
+        // 关闭热点
+        App.closeHotspotOnAndroidO();
         super.onDestroy();
     }
 
