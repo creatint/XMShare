@@ -10,6 +10,8 @@ import android.view.View;
 
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.xmshare.R;
+import com.merpyzf.xmshare.bean.FileInfoFactory;
+import com.merpyzf.xmshare.bean.model.LitepalFileInfo;
 import com.merpyzf.xmshare.common.base.BaseFragment;
 import com.merpyzf.xmshare.util.FileUtils;
 
@@ -77,7 +79,7 @@ public class MainFragment extends BaseFragment {
                     Log.i("wk", "文档数量-->" + mDocFileList.size() + "apk " + mApkFileList.size() + "zip: " + mCompactFileList.size());
 
                     // TODO: 2018/4/16 1. 后台计算集合中文件的md5值 2.缓存apk的图标
-
+                    LitepalFileInfo.saveAll(FileInfoFactory.toLitepalFileInfoList(scanResults));
 
                 });
 

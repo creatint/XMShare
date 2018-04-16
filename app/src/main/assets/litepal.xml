@@ -7,6 +7,6 @@
     <list>
         <mapping class="com.merpyzf.xmshare.bean.model.FileMd5Model"></mapping>
         <!--缓存首页的三类不同类型的文件信息-->
-        <mapping class="com.merpyzf.transfermanager.entity.FileInfo"></mapping>
+        <mapping class="com.merpyzf.xmshare.bean.model.LitepalFileInfo"></mapping>
     </list>
 </litepal>

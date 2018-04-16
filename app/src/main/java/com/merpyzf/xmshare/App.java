@@ -30,7 +30,6 @@ public class App extends LitePalApplication {
      */
     private static List<FileInfo> mSendFileList;
     private static ExecutorService mSingleThreadPool;
-//    private static LiteOrm mSingleLiteOrm;
     private static String TAG = App.class.getSimpleName();
     private static WifiManager.LocalOnlyHotspotReservation mReservation = null;
 
@@ -41,7 +40,6 @@ public class App extends LitePalApplication {
         AppContext = getApplicationContext();
         mSendFileList = new ArrayList<>();
         mSingleThreadPool = Executors.newSingleThreadExecutor();
-        Log.i("w2k", "application的 onCreate方法执行了");
     }
 
 
@@ -121,21 +119,6 @@ public class App extends LitePalApplication {
         return mSingleThreadPool;
     }
 
-//
-//    public static LiteOrm getSingleLiteOrm() {
-//
-//        if (mSingleLiteOrm == null) {
-//            synchronized (Object.class) {
-//                if (mSingleLiteOrm == null) {
-//
-//                    mSingleLiteOrm = LiteOrm.newSingleInstance(AppContext, Const.DB_NAME);
-//                    // 开启Debug
-//                    mSingleLiteOrm.setDebugged(true);
-//                }
-//            }
-//        }
-//        return mSingleLiteOrm;
-//    }
 
 
     public static Context getAppContext() {
