@@ -22,17 +22,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.merpyzf.filemanager.fragment.MainFragment;
 import com.merpyzf.httpcoreserver.ui.HttpServerActivity;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.Constant;
+import com.merpyzf.xmshare.common.Const;
 import com.merpyzf.xmshare.common.base.BaseActivity;
 import com.merpyzf.xmshare.ui.adapter.FileSelectAdapter;
 import com.merpyzf.xmshare.ui.adapter.FilesFrgPagerAdapter;
 import com.merpyzf.xmshare.ui.view.fragment.FileListFragment;
 import com.merpyzf.xmshare.ui.view.fragment.PhotoFragment;
+import com.merpyzf.xmshare.ui.view.fragment.filemanager.MainFragment;
 import com.merpyzf.xmshare.ui.view.interfaces.PersonalObservable;
 import com.merpyzf.xmshare.ui.view.interfaces.PersonalObserver;
 import com.merpyzf.xmshare.util.SharedPreUtils;
@@ -43,6 +43,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import de.hdodenhof.circleimageview.CircleImageView;
+
 
 /**
  * 应用首页界面
@@ -89,6 +90,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
     private BottomSheetBehavior<View> mSheetBehavior;
     private FileSelectAdapter<FileInfo> mFileSelectAdapter;
     private String TAG = SelectFilesActivity.class.getSimpleName();
+
 
 
     @Override
@@ -361,8 +363,8 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
     public void update() {
 
         mNavTvNickname.setText(SharedPreUtils.getNickName(mContext));
-        setAvatar(mNavCivAvatar, Constant.AVATAR_LIST.get(SharedPreUtils.getAvatar(mContext)));
-        setAvatar(mCivAvatar, Constant.AVATAR_LIST.get(SharedPreUtils.getAvatar(mContext)));
+        setAvatar(mNavCivAvatar, Const.AVATAR_LIST.get(SharedPreUtils.getAvatar(mContext)));
+        setAvatar(mCivAvatar, Const.AVATAR_LIST.get(SharedPreUtils.getAvatar(mContext)));
 
 
     }

@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import com.merpyzf.httpcoreserver.ui.HttpServerActivity;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.Constant;
+import com.merpyzf.xmshare.common.Const;
 import com.merpyzf.xmshare.common.base.BaseActivity;
 import com.merpyzf.xmshare.ui.view.activity.ReceiveActivity;
 import com.merpyzf.xmshare.ui.view.activity.SelectFilesActivity;
@@ -115,7 +115,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 String nickName = edtNickName.getText().toString().trim();
 
                 if (!nickName.equals("")) {
-                    SharedPreUtils.putString(mContext, Constant.SP_USER, "nickName", nickName);
+                    SharedPreUtils.putString(mContext, Const.SP_USER, "nickName", nickName);
                 } else {
                     Toast.makeText(mContext, "昵称不能为空！", Toast.LENGTH_SHORT).show();
                 }
@@ -141,7 +141,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      */
     private void setNickName() {
 
-        String nickName = SharedPreUtils.getString(mContext, Constant.SP_USER, "nickName", "");
+        String nickName = SharedPreUtils.getString(mContext, Const.SP_USER, "nickName", "");
         if (!nickName.equals("")) {
             edtNickName.setText(nickName);
         }

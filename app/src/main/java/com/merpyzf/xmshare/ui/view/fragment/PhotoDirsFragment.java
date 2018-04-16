@@ -20,12 +20,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.merpyzf.filemanager.widget.bean.Label;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.bean.model.PhotoDirBean;
 import com.merpyzf.xmshare.ui.adapter.ImgDirsAdapter;
+import com.merpyzf.xmshare.ui.widget.bean.Label;
+import com.merpyzf.xmshare.util.Md5Utils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -210,6 +211,8 @@ public class PhotoDirsFragment extends Fragment implements LoaderManager.LoaderC
                                     photoDirBean.setName(file.getParentFile().getName());
                                     photoDirBean.setImageList(images);
 
+                                    Log.i("wk","images size->"+photoDirBean.getImageList().size());
+                                    Md5Utils.asyncGenerateFileMd5(photoDirBean.getImageList());
                                     mDirList.add(photoDirBean);
 
                                 }

@@ -12,11 +12,11 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import com.merpyzf.filemanager.widget.FileSelectIndicatorImp;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.ui.view.activity.OnFileSelectListener;
+import com.merpyzf.xmshare.ui.widget.FileSelectIndicatorImp;
 
 import java.util.List;
 

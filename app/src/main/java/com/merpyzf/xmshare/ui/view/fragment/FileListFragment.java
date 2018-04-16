@@ -28,15 +28,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.litesuits.orm.LiteOrm;
-import com.litesuits.orm.db.assit.QueryBuilder;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.bean.model.FileMd5Model;
 import com.merpyzf.xmshare.receiver.FileSelectedListChangedReceiver;
 import com.merpyzf.xmshare.ui.adapter.FileAdapter;
 import com.merpyzf.xmshare.ui.view.activity.OnFileSelectListener;
@@ -166,15 +163,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                 ivSelect.setVisibility(View.VISIBLE);
                 // 添加选中的文件
                 App.addSendFile(fileInfo);
-
-
-                LiteOrm liteOrm = App.getSingleLiteOrm();
-                ArrayList<FileMd5Model> queryResult = liteOrm.query(new QueryBuilder<FileMd5Model>(FileMd5Model.class)
-                        .whereEquals("file_name", fileInfo.getPath()));
-                if (queryResult.size() == 1) {
-                    fileInfo.setMd5(queryResult.get(0).getMd5());
-                }
-
+                fileInfo.setMd5(Md5Utils.getFileMd5(fileInfo));
                 // 将文件选择的事件回调给外部
                 if (mFileSelectListener != null) {
                     mFileSelectListener.onSelected(fileInfo);

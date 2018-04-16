@@ -18,7 +18,7 @@ import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.transfermanager.util.FormatUtils;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.Constant;
+import com.merpyzf.xmshare.common.Const;
 import com.merpyzf.xmshare.util.AnimationUtils;
 import com.merpyzf.xmshare.util.Md5Utils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
@@ -65,7 +65,7 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
             helper.setText(R.id.tv_artist, musicFile.getArtist());
             helper.setText(R.id.tv_size, FormatUtils.convert2Mb(musicFile.getLength()) + " MB");
 
-            File albumFile = new File(Constant.PIC_CACHES_DIR, Md5Utils.getMd5(musicFile.getAlbumId() + ""));
+            File albumFile = new File(Const.PIC_CACHES_DIR, Md5Utils.getMd5(musicFile.getAlbumId() + ""));
 
 
             ImageView imageView = helper.getView(R.id.iv_cover);
@@ -116,7 +116,7 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
             helper.setText(R.id.tv_size, FormatUtils.convert2Mb(videoFile.getLength()) + " MB");
             helper.setText(R.id.tv_duration, FormatUtils.convertMS2Str(videoFile.getDuration()));
             ImageView ivVideoThumb = helper.getView(R.id.iv_cover);
-            String videoThumbPath = Constant.PIC_CACHES_DIR + "/" + Md5Utils.getMd5(videoFile.getPath());
+            String videoThumbPath = Const.PIC_CACHES_DIR + "/" + Md5Utils.getMd5(videoFile.getPath());
 
             Glide.with(mContext)
                     .load(new File(videoThumbPath))

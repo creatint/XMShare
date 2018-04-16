@@ -1,15 +1,15 @@
 package com.merpyzf.xmshare;
 
-import android.app.Application;
 import android.content.Context;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
-import com.litesuits.orm.LiteOrm;
 import com.merpyzf.transfermanager.entity.FileInfo;
-import com.merpyzf.xmshare.common.Constant;
+import com.merpyzf.xmshare.common.Const;
 import com.merpyzf.xmshare.util.SharedPreUtils;
 import com.squareup.leakcanary.LeakCanary;
+
+import org.litepal.LitePalApplication;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ import java.util.concurrent.Executors;
  * Created by wangke on 2018/1/16.
  */
 
-public class App extends Application {
+public class App extends LitePalApplication {
 
 
     private static Context AppContext;
@@ -30,7 +30,7 @@ public class App extends Application {
      */
     private static List<FileInfo> mSendFileList;
     private static ExecutorService mSingleThreadPool;
-    private static LiteOrm mSingleLiteOrm;
+//    private static LiteOrm mSingleLiteOrm;
     private static String TAG = App.class.getSimpleName();
     private static WifiManager.LocalOnlyHotspotReservation mReservation = null;
 
@@ -121,20 +121,21 @@ public class App extends Application {
         return mSingleThreadPool;
     }
 
-    public static LiteOrm getSingleLiteOrm() {
-
-        if (mSingleLiteOrm == null) {
-            synchronized (Object.class) {
-                if (mSingleLiteOrm == null) {
-
-                    mSingleLiteOrm = LiteOrm.newSingleInstance(AppContext, Constant.DB_NAME);
-                    // 开启Debug
-                    mSingleLiteOrm.setDebugged(true);
-                }
-            }
-        }
-        return mSingleLiteOrm;
-    }
+//
+//    public static LiteOrm getSingleLiteOrm() {
+//
+//        if (mSingleLiteOrm == null) {
+//            synchronized (Object.class) {
+//                if (mSingleLiteOrm == null) {
+//
+//                    mSingleLiteOrm = LiteOrm.newSingleInstance(AppContext, Const.DB_NAME);
+//                    // 开启Debug
+//                    mSingleLiteOrm.setDebugged(true);
+//                }
+//            }
+//        }
+//        return mSingleLiteOrm;
+//    }
 
 
     public static Context getAppContext() {
@@ -163,7 +164,7 @@ public class App extends Application {
      * @return
      */
     public static String getNickname() {
-        return SharedPreUtils.getString(AppContext, Constant.SP_USER, "nickName", "");
+        return SharedPreUtils.getString(AppContext, Const.SP_USER, "nickName", "");
     }
 
 }

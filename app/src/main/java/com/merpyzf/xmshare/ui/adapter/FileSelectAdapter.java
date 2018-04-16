@@ -18,7 +18,7 @@ import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.transfermanager.util.Md5Utils;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.Constant;
+import com.merpyzf.xmshare.common.Const;
 import com.merpyzf.xmshare.receiver.FileSelectedListChangedReceiver;
 import com.merpyzf.xmshare.ui.view.activity.SelectFilesActivity;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
@@ -65,7 +65,7 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> im
 
 
             MusicFile musicFile = (MusicFile) item;
-            File albumFile = new File(Constant.PIC_CACHES_DIR, Md5Utils.getMd5(musicFile.getAlbumId()+""));
+            File albumFile = new File(Const.PIC_CACHES_DIR, Md5Utils.getMd5(musicFile.getAlbumId()+""));
             if (albumFile.exists()) {
                 //设置封面图片
                 Glide.with(mContext)
@@ -91,7 +91,7 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> im
 
 
             VideoFile videoFile = (VideoFile) item;
-            String videoThumbPath = Constant.PIC_CACHES_DIR+ "/" +Md5Utils.getMd5( videoFile.getPath());
+            String videoThumbPath = Const.PIC_CACHES_DIR+ "/" +Md5Utils.getMd5( videoFile.getPath());
             Glide.with(mContext)
                     .load(new File(videoThumbPath))
                     .crossFade()

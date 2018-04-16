@@ -1,5 +1,6 @@
 package com.merpyzf.xmshare;
 
+import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.transfermanager.util.FormatUtils;
 
 import org.junit.Test;
@@ -162,5 +163,14 @@ public class ExampleUnitTest {
             // 修改状态
             status = STOP;
         }
+    }
+
+    @Test
+    public void textSplitSuffix(){
+
+        String fileSuffix = FileUtils.getFileSuffix("/storage/emulated/0/xmshare/receive/apk/手机京东.apk");
+
+        System.out.println(fileSuffix);
+
     }
 }

@@ -4,7 +4,7 @@ package com.merpyzf.transfermanager.receive;
 import android.util.Log;
 
 import com.merpyzf.transfermanager.P2pTransferHandler;
-import com.merpyzf.transfermanager.common.Constant;
+import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.interfaces.TransferObserver;
 
@@ -56,14 +56,11 @@ public class ReceiverManager implements Runnable {
 
     private ReceiverManager() {
 
-        try {
-            mTransferObserverLists = new ArrayList<>();
-            mP2pTransferHandler = new P2pTransferHandler(mTransferObserverLists);
-            mServerSocket = new ServerSocket(Constant.SOCKET_PORT);
-            mSingleThreadPool = Executors.newSingleThreadExecutor();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        mTransferObserverLists = new ArrayList<>();
+        mP2pTransferHandler = new P2pTransferHandler(mTransferObserverLists);
+        mSingleThreadPool = Executors.newSingleThreadExecutor();
+
 
     }
 
@@ -100,23 +97,34 @@ public class ReceiverManager implements Runnable {
     @Override
     public void run() {
 
-        while (!isStop) {
+        try {
 
-            try {
+            mServerSocket = new ServerSocket(Const.SOCKET_PORT);
+
+            while (!isStop) {
+
                 Log.i(TAG, "SocketServer 阻塞中,等待设备连接....");
                 // TODO: 2018/1/26 将mServerSocket.accept()移动到ReceiveTask中避免主线程出错
                 mSocketClient = mServerSocket.accept();
                 Log.i(TAG, "有设备连接:" + mSocketClient.getInetAddress().getHostAddress());
 
+                if (mSocketClient == null) {
+                    Log.i("w22k", "mScoketClient为空");
+                }
+
+
                 mReceiveTaskImp = new ReceiveTaskImp(mSocketClient, mP2pTransferHandler);
+
+                if (mReceiveTaskImp == null) {
+                    Log.i("w22k", "mReceiveTaskImp为空");
+                }
                 mSingleThreadPool.execute(mReceiveTaskImp);
 
-            } catch (IOException e) {
-                e.printStackTrace();
+
             }
-
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
 
     }
 
@@ -138,7 +146,7 @@ public class ReceiverManager implements Runnable {
     /**
      * 重置
      */
-    private static void reset(){
+    private static void reset() {
         isStop = false;
     }
 

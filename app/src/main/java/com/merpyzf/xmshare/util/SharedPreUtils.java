@@ -2,7 +2,7 @@ package com.merpyzf.xmshare.util;
 
 import android.content.Context;
 
-import com.merpyzf.xmshare.common.Constant;
+import com.merpyzf.xmshare.common.Const;
 
 /**
  * Created by wangke on 2018/1/11.
@@ -53,7 +53,7 @@ public class SharedPreUtils {
      */
     public static String getNickName(Context context) {
 
-        return getString(context, Constant.SP_USER, "nickName", DeviceUtils.getDeviceName());
+        return getString(context, Const.SP_USER, "nickName", DeviceUtils.getDeviceName());
     }
 
     /**
@@ -63,7 +63,7 @@ public class SharedPreUtils {
      * @return
      */
     public static int getAvatar(Context context) {
-        return getInteger(context, Constant.SP_USER, "avatar", 0);
+        return getInteger(context, Const.SP_USER, "avatar", 0);
     }
 
 }

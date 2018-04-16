@@ -31,7 +31,7 @@ import com.merpyzf.transfermanager.util.WifiMgr;
 import com.merpyzf.transfermanager.util.timer.OSTimer;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.Constant;
+import com.merpyzf.xmshare.common.Const;
 import com.merpyzf.xmshare.ui.adapter.PeerAdapter;
 import com.merpyzf.xmshare.ui.view.activity.InputHotspotPwdActivity;
 import com.merpyzf.xmshare.util.SharedPreUtils;
@@ -255,7 +255,7 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
             }
 
             // 将消息发送给对端
-            mPeerManager.send2Peer(msg, dest, com.merpyzf.transfermanager.common.Constant.UDP_PORT);
+            mPeerManager.send2Peer(msg, dest, com.merpyzf.transfermanager.common.Const.UDP_PORT);
             if (mOnPairActionListener != null) {
                 mOnPairActionListener.onSendConnRequestAction();
             }
@@ -354,16 +354,16 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
         }
         for (ScanResult scanResult : scanResults) {
 
-            if (scanResult.SSID.startsWith(com.merpyzf.transfermanager.common.Constant.HOTSPOT_PREFIX_IDENT) || scanResult.SSID.startsWith(com.merpyzf.transfermanager.common.Constant.HOTSPOT_PREFIX_IDENT_O)) {
+            if (scanResult.SSID.startsWith(com.merpyzf.transfermanager.common.Const.HOTSPOT_PREFIX_IDENT) || scanResult.SSID.startsWith(com.merpyzf.transfermanager.common.Const.HOTSPOT_PREFIX_IDENT_O)) {
                 String nick = null;
                 int avatarPosition = 0;
-                if (scanResult.SSID.startsWith(com.merpyzf.transfermanager.common.Constant.HOTSPOT_PREFIX_IDENT)) {
+                if (scanResult.SSID.startsWith(com.merpyzf.transfermanager.common.Const.HOTSPOT_PREFIX_IDENT)) {
                     String[] apNickAndAvatar = com.merpyzf.transfermanager.util.NetworkUtil.getApNickAndAvatar(scanResult.SSID);
                     avatarPosition = Integer.valueOf(apNickAndAvatar[0]);
                     nick = apNickAndAvatar[1];
-                } else if (scanResult.SSID.startsWith(com.merpyzf.transfermanager.common.Constant.HOTSPOT_PREFIX_IDENT_O)) {
+                } else if (scanResult.SSID.startsWith(com.merpyzf.transfermanager.common.Const.HOTSPOT_PREFIX_IDENT_O)) {
                     nick = scanResult.SSID;
-                    avatarPosition = Constant.AVATAR_LIST.size() - 1;
+                    avatarPosition = Const.AVATAR_LIST.size() - 1;
                 }
                 Peer peer = new Peer();
                 peer.setHostAddress("未知");
@@ -543,7 +543,7 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
             try {
 
                 JSONObject jsonObject = new JSONObject(hotspot_info);
-                peer.setAvatarPosition(Constant.AVATAR_LIST.size() - 1);
+                peer.setAvatarPosition(Const.AVATAR_LIST.size() - 1);
                 peer.setHotsPot(true);
                 peer.setNickName((String) jsonObject.get("ssid"));
                 peer.setSsid((String) jsonObject.get("ssid"));

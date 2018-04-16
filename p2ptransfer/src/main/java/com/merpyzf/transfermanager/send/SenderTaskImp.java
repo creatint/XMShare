@@ -5,7 +5,7 @@ import android.os.Message;
 import android.util.Log;
 
 import com.merpyzf.transfermanager.P2pTransferHandler;
-import com.merpyzf.transfermanager.common.Constant;
+import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.util.FileUtils;
 
@@ -83,19 +83,19 @@ public class SenderTaskImp implements SendTask, Runnable {
 
             //文件类型
             sb.append(file.getType());
-            sb.append(Constant.S_SEPARATOR);
+            sb.append(Const.S_SEPARATOR);
 
             //文件名
             sb.append(file.getName());
-            sb.append(Constant.S_SEPARATOR);
+            sb.append(Const.S_SEPARATOR);
 
             // 后缀名
             sb.append(file.getSuffix());
-            sb.append(Constant.S_SEPARATOR);
+            sb.append(Const.S_SEPARATOR);
 
             // 文件大小
             sb.append(file.getLength());
-            sb.append(Constant.S_SEPARATOR);
+            sb.append(Const.S_SEPARATOR);
 
 
             int fileThumbLength = 0;
@@ -108,30 +108,30 @@ public class SenderTaskImp implements SendTask, Runnable {
             }
 
             sb.append(fileThumbLength);
-            sb.append(Constant.S_SEPARATOR);
+            sb.append(Const.S_SEPARATOR);
 
             // 文件MD5值
             sb.append(file.getMd5());
-            sb.append(Constant.S_SEPARATOR);
+            sb.append(Const.S_SEPARATOR);
 
             //最后一个文件
             if (i == mSendFileList.size() - 1) {
 
                 sb.append("1");
-                sb.append(Constant.S_SEPARATOR);
+                sb.append(Const.S_SEPARATOR);
 
             } else {
                 sb.append("-1");
-                sb.append(Constant.S_SEPARATOR);
+                sb.append(Const.S_SEPARATOR);
             }
 
-            sb.append(Constant.S_END);
+            sb.append(Const.S_END);
 
             int currentLength = sb.toString().getBytes().length;
 
-            if (currentLength < Constant.FILE_THUMB_HEADER_LENGTH) {
+            if (currentLength < Const.FILE_THUMB_HEADER_LENGTH) {
                 // 少于的部分使用空格填充
-                for (int j = 0; j < Constant.FILE_THUMB_HEADER_LENGTH - currentLength; j++) {
+                for (int j = 0; j < Const.FILE_THUMB_HEADER_LENGTH - currentLength; j++) {
                     sb.append(" ");
                 }
             }
@@ -172,7 +172,7 @@ public class SenderTaskImp implements SendTask, Runnable {
         // 1024个字节
         String header = file.getHeader();
         try {
-            mOutputStream.write(header.getBytes(Constant.S_CHARSET));
+            mOutputStream.write(header.getBytes(Const.S_CHARSET));
             mOutputStream.flush();
         } catch (IOException e) {
             e.printStackTrace();
@@ -195,7 +195,7 @@ public class SenderTaskImp implements SendTask, Runnable {
         // 文件传输的总长度
         long totalLength = file.length();
         int perSecondReadLength = 0;
-        byte[] buffer = new byte[Constant.BUFFER_LENGTH];
+        byte[] buffer = new byte[Const.BUFFER_LENGTH];
 
         int readLength = 0;
         // 每一次读取的字节长度
@@ -211,7 +211,7 @@ public class SenderTaskImp implements SendTask, Runnable {
             bis = new BufferedInputStream(new FileInputStream(file));
 
             // 设置传输状态为: 传输中
-            fileInfo.setFileTransferStatus(Constant.TransferStatus.TRANSFING);
+            fileInfo.setFileTransferStatus(Const.TransferStatus.TRANSFING);
             while ((currentLength = bis.read(buffer)) != -1) {
 
                 mOutputStream.write(buffer, 0, currentLength);
@@ -236,7 +236,7 @@ public class SenderTaskImp implements SendTask, Runnable {
 
                     // 传输进度
                     Message message = mP2pTransferHandler.obtainMessage();
-                    message.what = Constant.TransferStatus.TRANSFING;
+                    message.what = Const.TransferStatus.TRANSFING;
                     message.obj = fileInfo;
                     mP2pTransferHandler.sendMessage(message);
                     start = end;
@@ -245,9 +245,9 @@ public class SenderTaskImp implements SendTask, Runnable {
                 // TODO: 2018/1/18 这边需要计算文件传输的进度，和传输的速率
             }
             mOutputStream.flush();
-            fileInfo.setFileTransferStatus(Constant.TransferStatus.TRANSFER_SUCCESS);
+            fileInfo.setFileTransferStatus(Const.TransferStatus.TRANSFER_SUCCESS);
             Message message = mP2pTransferHandler.obtainMessage();
-            message.what = Constant.TransferStatus.TRANSFER_SUCCESS;
+            message.what = Const.TransferStatus.TRANSFER_SUCCESS;
             message.obj = fileInfo;
             mP2pTransferHandler.sendMessage(message);
 
@@ -269,6 +269,9 @@ public class SenderTaskImp implements SendTask, Runnable {
     public void release() {
 
         try {
+            if(mOutputStream==null){
+                return;
+            }
             mOutputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -286,37 +289,40 @@ public class SenderTaskImp implements SendTask, Runnable {
 
             while (true) {
 
-                mSocket = new Socket(mDestAddress, Constant.SOCKET_PORT);
-                if (mSocket!=null){
+                mSocket = new Socket(mDestAddress, Const.SOCKET_PORT);
+                if (mSocket != null) {
                     break;
                 }
             }
 
             // TODO: 2018/4/10 建立连接失败的话mSocket对象会为null
 
+            if(mSocket == null){
+
+                Log.i("wk", "socket是空的");
+            }
+
+            Log.i("wk", "建立socket连接，对端地址->" + mSocket.getInetAddress().getHostAddress());
+            init();
+            /**
+             * 发送文件列表和缩略图文件
+             */
+            sendTransferFileList();
+            for (int i = 0; i < mSendFileList.size(); i++) {
+
+                FileInfo fileInfo = mSendFileList.get(i);
+                fileInfo.setIsLast(-1);
+
+                // 标记发送的文件是最后一个文件
+                if (i == mSendFileList.size() - 1) {
+                    fileInfo.setIsLast(1);
+                }
+
+                sendFile(fileInfo);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        Log.i("wk", "建立socket连接，对端地址->" + mSocket.getInetAddress().getHostAddress());
-        init();
-        /**
-         * 发送文件列表和缩略图文件
-         */
-        sendTransferFileList();
-        for (int i = 0; i < mSendFileList.size(); i++) {
-
-            FileInfo fileInfo = mSendFileList.get(i);
-            fileInfo.setIsLast(-1);
-
-            // 标记发送的文件是最后一个文件
-            if (i == mSendFileList.size() - 1) {
-                fileInfo.setIsLast(1);
-            }
-
-            sendFile(fileInfo);
-        }
-
 
     }
 

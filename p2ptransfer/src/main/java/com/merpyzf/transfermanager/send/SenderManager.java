@@ -51,7 +51,7 @@ public class SenderManager {
         mTransferObserverLists = new ArrayList<>();
         mP2pTransferHandler = new P2pTransferHandler(mTransferObserverLists);
         mSingleThreadPool = Executors.newSingleThreadExecutor();
-        this.mContext = context;
+        this.mContext = context.getApplicationContext();
     }
 
     /**

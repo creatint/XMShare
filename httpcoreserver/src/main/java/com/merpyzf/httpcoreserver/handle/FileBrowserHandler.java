@@ -1,6 +1,6 @@
 package com.merpyzf.httpcoreserver.handle;
 
-import com.merpyzf.httpcoreserver.constant.Constant;
+import com.merpyzf.httpcoreserver.common.Const;
 import com.merpyzf.httpcoreserver.util.LogUtil;
 
 import org.apache.http.HttpEntity;
@@ -36,13 +36,13 @@ public class FileBrowserHandler implements HttpRequestHandler {
 
     private static final String TAG = FileBrowserHandler.class.getName();
     private HttpEntity entity = null;
-    private String mContentType = "text/html;charset=" + Constant.ENCODING;
+    private String mContentType = "text/html;charset=" + Const.ENCODING;
 
     @Override
     public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
 
 
-        String uri = URLDecoder.decode(request.getRequestLine().getUri(), Constant.ENCODING);
+        String uri = URLDecoder.decode(request.getRequestLine().getUri(), Const.ENCODING);
         final File targetFile = new File(uri);
 
         if (targetFile.exists()) {
@@ -57,14 +57,14 @@ public class FileBrowserHandler implements HttpRequestHandler {
                             return !file.isHidden() && !file.getName().startsWith(".");
                         }
                     });
-                    htmlContent.append(Constant.htmlStart);
+                    htmlContent.append(Const.htmlStart);
                     htmlContent.append("<h1>" + targetFile.getCanonicalPath() + "</h1>\n<hr/>");
                     if (listFiles.length > 0) {
 
                         for (File file : listFiles) {
                             //输出字符的编码是utf-8
                             LogUtil.i(TAG, file.getName());
-                            htmlContent.append("<a href=\"http://" + Constant.IP + ":" + Constant.PORT + encodeUri(file.getCanonicalPath()) + "\">" + getTitleContent(file) + "</a>");
+                            htmlContent.append("<a href=\"http://" + Const.IP + ":" + Const.PORT + encodeUri(file.getCanonicalPath()) + "\">" + getTitleContent(file) + "</a>");
                             htmlContent.append("<br/>");
                         }
 
@@ -74,8 +74,8 @@ public class FileBrowserHandler implements HttpRequestHandler {
                         htmlContent.append("<br/>");
                     }
 
-                    htmlContent.append(Constant.htmlEnd);
-                    entity = new StringEntity(htmlContent.toString(), Constant.ENCODING);
+                    htmlContent.append(Const.htmlEnd);
+                    entity = new StringEntity(htmlContent.toString(), Const.ENCODING);
                     response.setHeader("Content-Type", mContentType);
                     response.setEntity(entity);
 
@@ -86,7 +86,7 @@ public class FileBrowserHandler implements HttpRequestHandler {
                     int dotIndex = fileName.lastIndexOf(".");
                     //获取点击文件的后缀名
                     String suffixName = fileName.substring(dotIndex + 1).toLowerCase(Locale.ENGLISH);
-                    String mimeType = (String) Constant.theMimeTypes.get(suffixName);
+                    String mimeType = (String) Const.theMimeTypes.get(suffixName);
                     response.setHeader("Content-type", mimeType);
                     response.setHeader("Content-Description", "File Transfer");
                     response.setHeader("Content-Disposition", "filename=" + encodeName(targetFile));
@@ -110,10 +110,10 @@ public class FileBrowserHandler implements HttpRequestHandler {
             } else {
 
                 StringBuilder sb = new StringBuilder();
-                sb.append(Constant.htmlStart);
+                sb.append(Const.htmlStart);
                 sb.append("<p>本文件无操作权限</p>");
-                sb.append(Constant.htmlEnd);
-                entity = new StringEntity(sb.toString(), Constant.ENCODING);
+                sb.append(Const.htmlEnd);
+                entity = new StringEntity(sb.toString(), Const.ENCODING);
                 //没有读取的权限
                 response.setHeader("Content-Type", mContentType);
             }
@@ -122,10 +122,10 @@ public class FileBrowserHandler implements HttpRequestHandler {
 
             // 文件不存在
             StringBuilder sb = new StringBuilder();
-            sb.append(Constant.htmlStart);
+            sb.append(Const.htmlStart);
             sb.append("<p>所选文件不存在!</p>");
-            sb.append(Constant.htmlEnd);
-            entity = new StringEntity(sb.toString(), Constant.ENCODING);
+            sb.append(Const.htmlEnd);
+            entity = new StringEntity(sb.toString(), Const.ENCODING);
             //没有读取的权限
             response.setHeader("Content-Type", mContentType);
 
@@ -237,7 +237,7 @@ public class FileBrowserHandler implements HttpRequestHandler {
                 } else {
 
 
-                    newUri.append(URLEncoder.encode(token, Constant.ENCODING));
+                    newUri.append(URLEncoder.encode(token, Const.ENCODING));
 
                 }
             } catch (UnsupportedEncodingException e) {
@@ -259,7 +259,7 @@ public class FileBrowserHandler implements HttpRequestHandler {
 
         String name = null;
         try {
-            name = URLEncoder.encode(file.getName(), Constant.ENCODING);
+            name = URLEncoder.encode(file.getName(), Const.ENCODING);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }

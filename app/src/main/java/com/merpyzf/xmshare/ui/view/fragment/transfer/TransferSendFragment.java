@@ -12,13 +12,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.Peer;
+import com.merpyzf.transfermanager.interfaces.TransferObserver;
 import com.merpyzf.transfermanager.send.SenderManager;
+import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.transfermanager.util.WifiMgr;
-import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.App;
+import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.ui.adapter.FileTransferAdapter;
 
 import butterknife.BindView;
@@ -27,20 +31,34 @@ import butterknife.Unbinder;
 
 /**
  * 文件发送列表进度及状态展示界面
+ *
  * @author wangke
  */
 @SuppressLint("ValidFragment")
-public class TransferSendFragment extends Fragment  {
+public class TransferSendFragment extends Fragment {
 
     @BindView(R.id.rv_send_list)
     RecyclerView mRvSendList;
+    @BindView(R.id.tv_state)
+    TextView mTvState;
+    @BindView(R.id.tv_speed)
+    TextView mTvSpeed;
+    @BindView(R.id.tv_save)
+    TextView mTvSave;
+    // 显示传输时详细信息的布局
+    @BindView(R.id.rl_info)
+    RelativeLayout mRlInfo;
+
     private Unbinder mUnbinder;
     private Context mContext;
     private FileTransferAdapter<FileInfo> mFileTransferAdapter;
     private String mNickName;
     private WifiMgr mWifiMgr;
     private Peer mPeer;
+    private long mTotalSize = 0;
+    private long mLastFileSize = 0;
     private static final String TAG = TransferSendFragment.class.getSimpleName();
+
     @SuppressLint("ValidFragment")
     public TransferSendFragment(Peer peer) {
         this.mPeer = peer;
@@ -54,12 +72,48 @@ public class TransferSendFragment extends Fragment  {
         mUnbinder = ButterKnife.bind(this, rootView);
         mContext = getActivity();
         initUI();
+        initEvent();
 
         mFileTransferAdapter = new FileTransferAdapter<>(R.layout.item_rv_transfer,
                 FileTransferAdapter.TYPE_SEND, App.getSendFileList());
         mRvSendList.setAdapter(mFileTransferAdapter);
 
         return rootView;
+    }
+
+    private void initEvent() {
+
+        /**
+         * 监听文件的传输的进度，计算当前传输数据的大小
+         */
+        SenderManager.getInstance(getContext()).register(new TransferObserver() {
+            @Override
+            public void onTransferProgress(FileInfo fileInfo) {
+                String[] arrayStr = FileUtils.getFileSizeArrayStr((long) (mTotalSize + fileInfo.getLength() * fileInfo.getProgress()));
+                String[] transferSpeed = fileInfo.getTransferSpeed();
+                if (null != arrayStr && null != transferSpeed) {
+                    mTvSave.setText(arrayStr[0] + arrayStr[1]);
+                    mTvSpeed.setText(transferSpeed[0] + transferSpeed[1] + "/s");
+                }
+            }
+
+            @Override
+            public void onTransferStatus(FileInfo fileInfo) {
+
+                mLastFileSize = fileInfo.getLength();
+                mTotalSize += mLastFileSize;
+
+                if (fileInfo.getIsLast()) {
+                    String[] arrayStr = FileUtils.getFileSizeArrayStr((long) (mTotalSize + fileInfo.getLength() * fileInfo.getProgress()));
+                    // 传输完毕的事件
+                    mRlInfo.setVisibility(View.GONE);
+                    mTvState.setText("传输完成, 本次为您节省 " + arrayStr[0] + arrayStr[1] + " 流量 ");
+
+                }
+
+
+            }
+        });
     }
 
     @Override

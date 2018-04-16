@@ -12,7 +12,7 @@ import android.util.Log;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.Constant;
+import com.merpyzf.xmshare.common.Const;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -77,7 +77,7 @@ public class MusicUtils {
 
                     if (musicFile instanceof MusicFile) {
 
-                        if (Constant.PIC_CACHES_DIR.canWrite() && !isContain(Constant.PIC_CACHES_DIR, (MusicFile) musicFile)) {
+                        if (Const.PIC_CACHES_DIR.canWrite() && !isContain(Const.PIC_CACHES_DIR, (MusicFile) musicFile)) {
                             return true;
                         }
                     }

@@ -42,7 +42,7 @@ import com.merpyzf.transfermanager.util.WifiMgr;
 import com.merpyzf.transfermanager.util.timer.OSTimer;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.Constant;
+import com.merpyzf.xmshare.common.Const;
 import com.merpyzf.xmshare.receiver.APChangedReceiver;
 import com.merpyzf.xmshare.ui.adapter.PeerAdapter;
 import com.merpyzf.xmshare.util.DisplayUtils;
@@ -141,16 +141,16 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
 
 
         // 传输的方式
-        int transferMode = SharedPreUtils.getInteger(mContext, Constant.SP_USER, Constant.KEY_TRANSFER_MODE,
-                Constant.TRANSFER_MODE_LAN);
+        int transferMode = SharedPreUtils.getInteger(mContext, Const.SP_USER, Const.KEY_TRANSFER_MODE,
+                Const.TRANSFER_MODE_LAN);
 
-        if (transferMode == Constant.TRANSFER_MODE_AP) {
+        if (transferMode == Const.TRANSFER_MODE_AP) {
             // 热点传输优先-> 无论是否连接wifi都要建立热点
             requestPermissionAndInitAp();
             mBtnChangedAp.setVisibility(View.INVISIBLE);
 
 
-        } else if (transferMode == Constant.TRANSFER_MODE_LAN) {
+        } else if (transferMode == Const.TRANSFER_MODE_LAN) {
 
             // 局域网传输优先-> 如果没有连接wifi 就开启热点
             mWifiMgr = WifiMgr.getInstance(mContext);
@@ -201,7 +201,7 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
      */
     private void initUdpListener() {
 
-        String nickName = com.merpyzf.xmshare.util.SharedPreUtils.getString(mContext, Constant.SP_USER, "nickName", "");
+        String nickName = com.merpyzf.xmshare.util.SharedPreUtils.getString(mContext, Const.SP_USER, "nickName", "");
         mPeerManager = new PeerManager(mContext, nickName, new PeerCommCallback() {
             @Override
             public void onDeviceOnLine(Peer peer) {
@@ -422,7 +422,7 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
     private void initUI() {
 
         Glide.with(mContext)
-                .load(Constant.AVATAR_LIST.get(SharedPreUtils.getAvatar(mContext)))
+                .load(Const.AVATAR_LIST.get(SharedPreUtils.getAvatar(mContext)))
                 .crossFade()
                 .centerCrop()
                 .into(mCivAvatar);
@@ -468,7 +468,7 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
         String protocolStr = signMessage.convertProtocolStr();
         try {
             InetAddress dest = InetAddress.getByName(peer.getHostAddress());
-            mPeerManager.send2Peer(protocolStr, dest, com.merpyzf.transfermanager.common.Constant.UDP_PORT);
+            mPeerManager.send2Peer(protocolStr, dest, com.merpyzf.transfermanager.common.Const.UDP_PORT);
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }

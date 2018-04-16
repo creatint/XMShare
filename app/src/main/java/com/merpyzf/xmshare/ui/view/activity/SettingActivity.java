@@ -7,7 +7,7 @@ import android.view.MenuItem;
 import android.widget.Switch;
 
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.Constant;
+import com.merpyzf.xmshare.common.Const;
 import com.merpyzf.xmshare.common.base.BaseActivity;
 import com.merpyzf.xmshare.util.SharedPreUtils;
 
@@ -35,11 +35,11 @@ public class SettingActivity extends BaseActivity {
     @Override
     public void initViews(Bundle savedInstanceState) {
 
-        int transferMode = SharedPreUtils.getInteger(mContext, Constant.SP_USER, Constant.KEY_TRANSFER_MODE, Constant.TRANSFER_MODE_LAN);
+        int transferMode = SharedPreUtils.getInteger(mContext, Const.SP_USER, Const.KEY_TRANSFER_MODE, Const.TRANSFER_MODE_LAN);
 
-        if (transferMode == Constant.TRANSFER_MODE_LAN) {
+        if (transferMode == Const.TRANSFER_MODE_LAN) {
             mSwitchTransferMode.setChecked(false);
-        } else if (transferMode == Constant.TRANSFER_MODE_AP) {
+        } else if (transferMode == Const.TRANSFER_MODE_AP) {
             mSwitchTransferMode.setChecked(true);
         }
     }
@@ -51,14 +51,14 @@ public class SettingActivity extends BaseActivity {
 
             if (isChecked) {
                 // 热点
-                SharedPreUtils.putInteger(mContext, Constant.SP_USER, Constant.KEY_TRANSFER_MODE,
-                        Constant.TRANSFER_MODE_AP);
+                SharedPreUtils.putInteger(mContext, Const.SP_USER, Const.KEY_TRANSFER_MODE,
+                        Const.TRANSFER_MODE_AP);
                 Log.i(TAG, "设置 AP模式");
 
             } else {
                 // 局域网
-                SharedPreUtils.putInteger(mContext, Constant.SP_USER, Constant.KEY_TRANSFER_MODE,
-                        Constant.TRANSFER_MODE_LAN);
+                SharedPreUtils.putInteger(mContext, Const.SP_USER, Const.KEY_TRANSFER_MODE,
+                        Const.TRANSFER_MODE_LAN);
                 Log.i(TAG, "设置局域网模式");
             }
         });

@@ -11,7 +11,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.merpyzf.transfermanager.PeerManager;
-import com.merpyzf.transfermanager.common.Constant;
+import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.interfaces.TransferObserver;
 import com.merpyzf.transfermanager.receive.ReceiverManager;
@@ -121,7 +121,7 @@ public class ReceiveActivity extends AppCompatActivity {
                         @Override
                         public void onTransferStatus(FileInfo fileInfo) {
                             // 如果当前传输的是最后一个文件，并且传输成功后重置标记
-                            if (fileInfo.getIsLast() == 1 && fileInfo.getFileTransferStatus() == Constant.TransferStatus.TRANSFER_SUCCESS) {
+                            if (fileInfo.getIsLast() && fileInfo.getFileTransferStatus() == Const.TransferStatus.TRANSFER_SUCCESS) {
                                 isTransfering = false;
                             }
                         }
@@ -148,7 +148,6 @@ public class ReceiveActivity extends AppCompatActivity {
                 @Override
                 public void onApEnableAction() {
                     ReceiverManager receiverManager = ReceiverManager.getInstance();
-                    // 开启一个socket服务
                     App.getSingleThreadPool().execute(receiverManager);
                     // 监听待传输的文件列表是否发送成功
                     receiverManager.setOnTransferFileListListener(transferFileList -> {

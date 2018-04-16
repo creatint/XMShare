@@ -7,9 +7,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import com.merpyzf.filemanager.widget.FileSelectIndicatorImp;
-import com.merpyzf.filemanager.widget.bean.Label;
 import com.merpyzf.xmshare.R;
+import com.merpyzf.xmshare.ui.widget.FileSelectIndicatorImp;
+import com.merpyzf.xmshare.ui.widget.bean.Label;
 
 public class TestFileIndicatorActivity extends AppCompatActivity {
 

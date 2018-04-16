@@ -7,7 +7,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.Constant;
+import com.merpyzf.xmshare.common.Const;
 
 import java.util.List;
 
@@ -31,7 +31,7 @@ public class PeerAdapter extends BaseQuickAdapter<Peer, BaseViewHolder>{
 
         CircleImageView mCivPeerHeader =  helper.getView(R.id.civ_peer_header);
         Glide.with(mContext)
-                .load(Constant.AVATAR_LIST.get(item.getAvatarPosition()))
+                .load(Const.AVATAR_LIST.get(item.getAvatarPosition()))
                 .crossFade()
                 .centerCrop()
                 .into(mCivPeerHeader);

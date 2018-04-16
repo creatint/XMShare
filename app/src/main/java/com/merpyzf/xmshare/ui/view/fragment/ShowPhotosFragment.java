@@ -19,21 +19,18 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.litesuits.orm.LiteOrm;
-import com.litesuits.orm.db.assit.QueryBuilder;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.bean.model.FileMd5Model;
 import com.merpyzf.xmshare.bean.model.PhotoDirBean;
 import com.merpyzf.xmshare.receiver.FileSelectedListChangedReceiver;
 import com.merpyzf.xmshare.ui.adapter.FileAdapter;
 import com.merpyzf.xmshare.ui.view.activity.SelectFilesActivity;
 import com.merpyzf.xmshare.util.AnimationUtils;
+import com.merpyzf.xmshare.util.Md5Utils;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -59,6 +56,7 @@ public class ShowPhotosFragment extends Fragment implements BaseQuickAdapter.OnI
     private FileAdapter<FileInfo> mAdapter;
     private FileSelectedListChangedReceiver mFslcReceiver;
     private CheckBox mCheckBoxAll;
+    private static final String TAG = ShowPhotosFragment.class.getSimpleName();
 
     public static ShowPhotosFragment newInstance(Bundle args) {
         ShowPhotosFragment fragment = new ShowPhotosFragment();
@@ -173,30 +171,14 @@ public class ShowPhotosFragment extends Fragment implements BaseQuickAdapter.OnI
             ivSelect.setVisibility(View.VISIBLE);
             // 添加选中的文件
             App.addSendFile(fileInfo);
-
-
-            LiteOrm liteOrm = App.getSingleLiteOrm();
-            ArrayList<FileMd5Model> queryResult = liteOrm.query(new QueryBuilder<FileMd5Model>(FileMd5Model.class)
-                    .whereEquals("file_name", fileInfo.getPath()));
-
-            if (queryResult.size() == 1) {
-
-                Log.i("wk", "查询结果-> " + queryResult.get(0).getMd5());
-                // 给fileInfo对象设置Md5()
-                fileInfo.setMd5(queryResult.get(0).getMd5());
-
-            }
-
+            fileInfo.setMd5(Md5Utils.getFileMd5(fileInfo));
 
             if (mPhotoFrg != null) {
                 mPhotoFrg.selectPhoto((PicFile) fileInfo);
             }
 
-
-            //2.添加任务 动画
             View startView = null;
             View targetView = null;
-
 
             startView = view.findViewById(R.id.iv_cover);
             AnimationUtils.zoomOutCover(startView, 200);
@@ -227,6 +209,7 @@ public class ShowPhotosFragment extends Fragment implements BaseQuickAdapter.OnI
 
 
     }
+
 
     @Override
     public void onPause() {

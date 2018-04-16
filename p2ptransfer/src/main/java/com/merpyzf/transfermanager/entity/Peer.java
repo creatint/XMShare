@@ -1,6 +1,6 @@
 package com.merpyzf.transfermanager.entity;
 
-import com.merpyzf.transfermanager.common.Constant;
+import com.merpyzf.transfermanager.common.Const;
 
 /**
  * Created by wangke on 2017/12/13.
@@ -76,7 +76,7 @@ public class Peer {
 
     public boolean isAndroidODevice(String ssid) {
 
-        if (ssid.startsWith(Constant.HOTSPOT_PREFIX_IDENT_O)) {
+        if (ssid.startsWith(Const.HOTSPOT_PREFIX_IDENT_O)) {
             return true;
         }
         return false;

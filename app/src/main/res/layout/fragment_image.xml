@@ -49,13 +49,12 @@
     </RelativeLayout>
 
 
-    <com.merpyzf.filemanager.widget.FileSelectIndicatorImp
+    <com.merpyzf.xmshare.ui.widget.FileSelectIndicatorImp
         android:id="@+id/fileSelectIndicator"
         android:layout_width="match_parent"
         android:layout_height="30dp"
         app:baseName="相册"
-
-        ></com.merpyzf.filemanager.widget.FileSelectIndicatorImp>
+        ></com.merpyzf.xmshare.ui.widget.FileSelectIndicatorImp>
 
 
     <FrameLayout

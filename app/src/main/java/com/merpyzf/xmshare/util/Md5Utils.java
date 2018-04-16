@@ -1,9 +1,10 @@
 package com.merpyzf.xmshare.util;
 
-import com.litesuits.orm.LiteOrm;
-import com.litesuits.orm.db.assit.QueryBuilder;
+
+import android.database.Cursor;
+import android.util.Log;
+
 import com.merpyzf.transfermanager.entity.FileInfo;
-import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.bean.model.FileMd5Model;
 
 import java.io.File;
@@ -24,6 +25,8 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class Md5Utils {
+
+    private static final String TAG = Md5Utils.class.getSimpleName();
 
     /**
      * 获取文件的Md5
@@ -115,7 +118,6 @@ public class Md5Utils {
     }
 
 
-
     /**
      * 生成文件的Md5值并存储到数据库中
      */
@@ -127,31 +129,44 @@ public class Md5Utils {
         copyFileInfoList.addAll(fileList);
 
 
-        LiteOrm liteOrm = App.getSingleLiteOrm();
-
         Observable.fromIterable(copyFileInfoList)
                 .filter(fileInfo -> {
-                    // 过滤掉数据库中已经存在的文件
-                    ArrayList<FileMd5Model> fileMd5Models = liteOrm.query(new QueryBuilder<FileMd5Model>(FileMd5Model.class)
-                            .whereEquals("file_name", fileInfo.getPath()));
-                    if (fileMd5Models.size() == 0) {
-                        return true;
+                    int count = FileMd5Model.where("filename = ?", fileInfo.getPath()).count(FileMd5Model.class);
+                    if (count == 1) {
+                        return false;
                     }
-
-                    return false;
+                    return true;
                 }).subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .subscribe(fileInfo -> {
-                    // 计算文件的MD5耗时操作
                     String md5 = Md5Utils.getMd5(new File(fileInfo.getPath()));
-//                    Log.i(TAG, "计算"+fileInfo.getName()+"的MD5,并向数据库中写入");
-                    FileMd5Model fileMd5Model = new FileMd5Model(fileInfo.getPath(), md5);
-                    // 向数据库中写入
-                    liteOrm.insert(fileMd5Model);
-
+                    FileMd5Model fileMd5Model = new FileMd5Model();
+                    fileMd5Model.setFileName(fileInfo.getPath());
+                    fileMd5Model.setMd5(md5);
+                    fileMd5Model.save();
                 });
 
 
     }
 
+    /**
+     * 从数据库中获取根据文件计算出的md5值
+     *
+     * @param fileInfo
+     * @return
+     */
+    public static String getFileMd5(FileInfo fileInfo) {
+
+        Cursor cursor = FileMd5Model.findBySQL("select *from filemd5model where filename = ?", fileInfo.getPath());
+        Log.i(TAG, "cursor的长度-->" + cursor.getCount());
+        if (cursor.getCount() == 1) {
+            cursor.moveToNext();
+            String md5 = cursor.getString(cursor.getColumnIndex("md5"));
+            return md5;
+        } else {
+            return "";
+        }
+
+
+    }
 }

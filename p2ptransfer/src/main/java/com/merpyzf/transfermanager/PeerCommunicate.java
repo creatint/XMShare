@@ -5,7 +5,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import com.merpyzf.transfermanager.common.Constant;
+import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.entity.SignMessage;
 import com.merpyzf.transfermanager.util.NetworkUtil;
 import com.merpyzf.transfermanager.util.SharedPreUtils;
@@ -40,7 +40,7 @@ public class PeerCommunicate extends Thread {
 
         mContext = context;
         mHandler = handler;
-        String nickName = SharedPreUtils.getString(context, Constant.SP_USER, "nickName", "");
+        String nickName = SharedPreUtils.getString(context, Const.SP_USER, "nickName", "");
 
         init(port);
     }
@@ -72,8 +72,8 @@ public class PeerCommunicate extends Thread {
         try {
             if (mUdpSocket != null) {
                 while (isLoop) {
-                    byte[] buffer = new byte[Constant.BUFFER_LENGTH];
-                    DatagramPacket receivePacket = new DatagramPacket(buffer, 0, Constant.BUFFER_LENGTH);
+                    byte[] buffer = new byte[Const.BUFFER_LENGTH];
+                    DatagramPacket receivePacket = new DatagramPacket(buffer, 0, Const.BUFFER_LENGTH);
                     //block
                     mUdpSocket.receive(receivePacket);
                     if (receivePacket.getLength() == 0) {
@@ -118,7 +118,7 @@ public class PeerCommunicate extends Thread {
 
             if (mUdpSocket != null) {
 
-                byte[] buffer = msg.getBytes(Constant.S_CHARSET);
+                byte[] buffer = msg.getBytes(Const.S_CHARSET);
                 DatagramPacket sendPacket = new DatagramPacket(buffer, buffer.length, dest, port);
                 mUdpSocket.send(sendPacket);
 
@@ -145,7 +145,7 @@ public class PeerCommunicate extends Thread {
             e.printStackTrace();
         }
         String sinMsg = signMessage.convertProtocolStr();
-        sendUdpData(sinMsg, broadcastAddress, Constant.UDP_PORT);
+        sendUdpData(sinMsg, broadcastAddress, Const.UDP_PORT);
     }
 
     /**
@@ -161,7 +161,7 @@ public class PeerCommunicate extends Thread {
             e.printStackTrace();
         }
         String sinMsg = signMessage.convertProtocolStr();
-        sendUdpData(sinMsg, broadcastAddress, Constant.UDP_PORT);
+        sendUdpData(sinMsg, broadcastAddress, Const.UDP_PORT);
     }
 
 

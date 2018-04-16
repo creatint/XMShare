@@ -5,7 +5,7 @@ import android.os.Message;
 import android.util.Log;
 
 import com.merpyzf.transfermanager.P2pTransferHandler;
-import com.merpyzf.transfermanager.common.Constant;
+import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.entity.ApkFile;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
@@ -70,7 +70,7 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
     public synchronized void receiveTransferFileList() {
 
 
-        byte[] buffer = new byte[Constant.FILE_THUMB_HEADER_LENGTH];
+        byte[] buffer = new byte[Const.FILE_THUMB_HEADER_LENGTH];
         mReceiveFileList = new ArrayList<>();
 
         /**
@@ -91,11 +91,11 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
             try {
                 // 1024个字节
                 read = mInputStream.read(buffer, 0, buffer.length);
-                String str = new String(buffer, Constant.S_CHARSET);
+                String str = new String(buffer, Const.S_CHARSET);
                 // 拆分前面的数据部分
-                String strHeader = str.substring(0, str.indexOf(Constant.S_END));
+                String strHeader = str.substring(0, str.indexOf(Const.S_END));
 
-                String[] split = strHeader.split(Constant.S_SEPARATOR);
+                String[] split = strHeader.split(Const.S_SEPARATOR);
 
                 // 文件类型
                 int fileType = Integer.valueOf(split[0]);
@@ -114,7 +114,7 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
 
                 if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                     // Android系统提供的缓存存放目录
-                    File file = new File("/storage/emulated/0/Android/data/com.merpyzf.xmshare/files/Pictures", Md5Utils.getMd5(name+fileLength));
+                    File file = new File("/storage/emulated/0/Android/data/com.merpyzf.xmshare/files/Pictures", Md5Utils.getMd5(name + fileLength));
 
                     if (thumbLength != 0) {
                         // 如果对端发送的文件中包含文件的缩略图话就将缩略图写入到缓存中
@@ -133,7 +133,7 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
                         apkFile.setName(name);
                         apkFile.setType(FileInfo.FILE_TYPE_APP);
                         apkFile.setLength(fileLength);
-                        apkFile.setPath(Constant.SAVE_APK_PATH + "/" + name + "." + suffix);
+                        apkFile.setPath(Const.SAVE_APK_PATH + "/" + name + "." + suffix);
                         apkFile.setMd5(md5);
                         mReceiveFileList.add(apkFile);
 
@@ -146,7 +146,7 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
                         picFile.setName(name);
                         picFile.setType(FileInfo.FILE_TYPE_IMAGE);
                         picFile.setLength(fileLength);
-                        picFile.setPath(Constant.SAVE_APK_PATH + "/" + name + "." + suffix);
+                        picFile.setPath(Const.SAVE_APK_PATH + "/" + name + "." + suffix);
                         picFile.setMd5(md5);
                         mReceiveFileList.add(picFile);
 
@@ -159,7 +159,7 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
                         musicFile.setName(name);
                         musicFile.setType(FileInfo.FILE_TYPE_MUSIC);
                         musicFile.setLength(fileLength);
-                        musicFile.setPath(Constant.SAVE_APK_PATH + "/" + name + "." + suffix);
+                        musicFile.setPath(Const.SAVE_APK_PATH + "/" + name + "." + suffix);
                         musicFile.setMd5(md5);
                         mReceiveFileList.add(musicFile);
 
@@ -173,7 +173,7 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
                         videoFile.setName(name);
                         videoFile.setType(FileInfo.FILE_TYPE_VIDEO);
                         videoFile.setLength(fileLength);
-                        videoFile.setPath(Constant.SAVE_APK_PATH + "/" + name + "." + suffix);
+                        videoFile.setPath(Const.SAVE_APK_PATH + "/" + name + "." + suffix);
                         videoFile.setMd5(md5);
                         mReceiveFileList.add(videoFile);
 
@@ -187,14 +187,14 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
                 if (isLast == 1) {
                     break;
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
         Message message = mP2pTransferHandler.obtainMessage();
         // 通知待接收文件列表传输完成
-        message.what = Constant.TransferStatus.TRANSFER_FILE_LIST_SUCCESS;
+        message.what = Const.TransferStatus.TRANSFER_FILE_LIST_SUCCESS;
         message.obj = mReceiveFileList;
         mP2pTransferHandler.sendMessage(message);
     }
@@ -215,7 +215,7 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
             }
 
             readBody(fileInfo);
-            if (fileInfo.getIsLast() == 1) {
+            if (fileInfo.getIsLast()) {
                 break;
             }
 
@@ -228,7 +228,7 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
     public synchronized FileInfo parseHeader() {
 
 
-        byte[] headerBytes = new byte[Constant.HEADER_LENGTH];
+        byte[] headerBytes = new byte[Const.HEADER_LENGTH];
         int headCurrent = 0;
         int readByte = -1;
 
@@ -242,10 +242,10 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
                 }
             }
 
-            String str = new String(headerBytes, Constant.S_CHARSET);
+            String str = new String(headerBytes, Const.S_CHARSET);
 
             // 解析到的头部字符串
-            String header = str.substring(0, str.indexOf(Constant.S_END));
+            String header = str.substring(0, str.indexOf(Const.S_END));
 
             String[] split = header.split(":");
 
@@ -272,7 +272,7 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
             fileInfo.setSuffix(suffix);
             fileInfo.setIsLast(isLast);
             // 设置文件的传输状态为传输中
-            fileInfo.setFileTransferStatus(Constant.TransferStatus.TRANSFING);
+            fileInfo.setFileTransferStatus(Const.TransferStatus.TRANSFING);
 
             return fileInfo;
 
@@ -302,9 +302,9 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
         int readLength = -1;
         int perSecondReadLength = 0;
 
-        byte[] buffer = new byte[Constant.BUFFER_LENGTH];
+        byte[] buffer = new byte[Const.BUFFER_LENGTH];
         // 设置文件的传输状态
-        fileInfo.setFileTransferStatus(Constant.TransferStatus.TRANSFING);
+        fileInfo.setFileTransferStatus(Const.TransferStatus.TRANSFING);
         // TODO: 2018/1/18 这个方法名需需要修改
         File saveFile = FileUtils.getSaveFile(fileInfo);
         BufferedOutputStream bos = null;
@@ -318,8 +318,8 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
 
                 // 剩下的未读取的字节
                 int leftLength = totalLength - currentLength;
-                if (leftLength >= Constant.BUFFER_LENGTH) {
-                    readLength = mInputStream.read(buffer, 0, Constant.BUFFER_LENGTH);
+                if (leftLength >= Const.BUFFER_LENGTH) {
+                    readLength = mInputStream.read(buffer, 0, Const.BUFFER_LENGTH);
                 } else {
                     readLength = mInputStream.read(buffer, 0, leftLength);
                 }
@@ -343,7 +343,7 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
                     Message message = mP2pTransferHandler.obtainMessage();
                     message.obj = fileInfo;
                     // 标记传输中
-                    message.what = Constant.TransferStatus.TRANSFING;
+                    message.what = Const.TransferStatus.TRANSFING;
                     mP2pTransferHandler.sendMessage(message);
                     start = end;
                 }
@@ -353,13 +353,12 @@ public class ReceiveTaskImp implements Runnable, ReceiveTask {
 
             bos.flush();
             // 标记文件传输成功
-            fileInfo.setFileTransferStatus(Constant.TransferStatus.TRANSFER_SUCCESS);
+            fileInfo.setFileTransferStatus(Const.TransferStatus.TRANSFER_SUCCESS);
             // 回调通知外界文件传输完成
             Message message = mP2pTransferHandler.obtainMessage();
-            message.what = Constant.TransferStatus.TRANSFER_SUCCESS;
+            message.what = Const.TransferStatus.TRANSFER_SUCCESS;
             message.obj = fileInfo;
             mP2pTransferHandler.sendMessage(message);
-
 
 
         } catch (IOException e) {
