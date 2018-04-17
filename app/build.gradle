@@ -97,4 +97,7 @@ dependencies {
     implementation project(':qrcodescan')
     // orm
     compile 'org.litepal.android:core:1.6.1'
+    // gif图片加载
+    compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.12'
+
 }

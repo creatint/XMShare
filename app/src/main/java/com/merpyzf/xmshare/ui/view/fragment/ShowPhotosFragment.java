@@ -72,7 +72,6 @@ public class ShowPhotosFragment extends Fragment implements BaseQuickAdapter.OnI
         PhotoDirBean photoDirBean = (PhotoDirBean) getArguments().getSerializable("photos");
         mImages = photoDirBean.getImageList();
 
-
     }
 
     @Override

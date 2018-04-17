@@ -1,5 +1,6 @@
 package com.merpyzf.xmshare.ui.test;
 
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
@@ -12,6 +13,7 @@ import android.widget.ImageView;
 
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.ui.test.skin.ResourcesManager;
+import com.merpyzf.xmshare.ui.view.activity.SelectFilesActivity;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -39,7 +41,9 @@ public class TestChangeSkinActivity extends AppCompatActivity {
             public void onClick(View v) {
 
 
-                loadPlugin(skinPluginPath, pkgName);
+
+                startActivity(new Intent(getApplicationContext(), SelectFilesActivity.class));
+
 
             }
         });

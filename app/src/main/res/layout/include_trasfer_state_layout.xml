@@ -37,7 +37,7 @@
         <TextView
 
             android:id="@+id/tv_speed"
-            tools:text="1mb/s"
+            android:text="~ mb/s"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -51,17 +51,16 @@
             android:id="@+id/iv_save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@id/tv_speed"
-            android:src="@drawable/ic_transfer_save"
+            android:layout_alignParentTop="true"
 
-            />
+            android:layout_marginStart="11dp"
+            android:layout_toEndOf="@+id/tv_speed"
+            android:src="@drawable/ic_transfer_save" />
 
         <TextView
 
             android:id="@+id/tv_save"
-            tools:text="20Mb"
+            android:text="0Mb"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"

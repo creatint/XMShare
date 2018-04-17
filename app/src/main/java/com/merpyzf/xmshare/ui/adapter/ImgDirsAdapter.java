@@ -1,18 +1,21 @@
 package com.merpyzf.xmshare.ui.adapter;
 
 import android.support.annotation.Nullable;
-import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.bean.model.PhotoDirBean;
 
+import java.io.IOException;
 import java.util.List;
+
+import pl.droidsonroids.gif.GifDrawable;
+import pl.droidsonroids.gif.GifImageView;
 
 /**
  * Created by merpyzf on 2018/4/2.
@@ -31,29 +34,35 @@ public class ImgDirsAdapter extends BaseQuickAdapter<PhotoDirBean, BaseViewHolde
         helper.setText(R.id.tv_photo_dir_name, item.getName());
         helper.setText(R.id.tv_photo_num, item.getImageNumber() + "张照片");
 
-        ImageView iv_cover = helper.getView(R.id.iv_photo_dir_cover);
+        ImageView ivCover = helper.getView(R.id.iv_photo_dir_cover);
+        GifImageView gifIv = helper.getView(R.id.gif_photo_dir_cover);
 
         String suffix = FileUtils.getFileSuffix(item.getCoverImg());
 
 
+        if (suffix.toLowerCase().equals("gif")) {
+
+            ivCover.setVisibility(View.INVISIBLE);
+            gifIv.setVisibility(View.VISIBLE);
 
 
+            try {
+                GifDrawable gifDrawable = new GifDrawable(item.getCoverImg());
+                gifIv.setImageDrawable(gifDrawable);
 
-        if (suffix.equals("gif") || suffix.equals("GIF")) {
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-            Log.i("gif","GIF-->"+item.getCoverImg());
-            Glide.with(mContext)
-                    .load(item.getCoverImg())
-                    .asGif()
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .into(iv_cover);
 
         } else {
 
+            ivCover.setVisibility(View.VISIBLE);
+            gifIv.setVisibility(View.INVISIBLE);
             Glide.with(mContext)
                     .load(item.getCoverImg())
                     .centerCrop()
-                    .into(iv_cover);
+                    .into(ivCover);
 
         }
     }

@@ -24,7 +24,11 @@ import com.merpyzf.xmshare.util.Md5Utils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
+
+import pl.droidsonroids.gif.GifDrawable;
+import pl.droidsonroids.gif.GifImageView;
 
 /**
  * Created by wangke on 2017/12/24.
@@ -86,14 +90,35 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
         } else if (item instanceof PicFile) {
 
             ImageView iv = helper.getView(R.id.iv_cover);
+            GifImageView gifIv = helper.getView(R.id.gif_iv);
+
             PicFile picFile = (PicFile) item;
 
-            Glide.with(mContext)
-                    .load(picFile.getPath())
-                    .error(R.drawable.ic_thumb_empty)
-                    .crossFade()
-                    .fitCenter()
-                    .into(iv);
+            String suffix = picFile.getSuffix();
+            if (suffix.toLowerCase().equals("gif")) {
+
+                iv.setVisibility(View.INVISIBLE);
+                gifIv.setVisibility(View.VISIBLE);
+
+                try {
+                    GifDrawable gifDrawable = new GifDrawable(picFile.getPath());
+                    gifIv.setImageDrawable(gifDrawable);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            } else {
+
+                iv.setVisibility(View.VISIBLE);
+                gifIv.setVisibility(View.INVISIBLE);
+
+                Glide.with(mContext)
+                        .load(picFile.getPath())
+                        .error(R.drawable.ic_thumb_empty)
+                        .crossFade()
+                        .fitCenter()
+                        .into(iv);
+            }
 
 
             /**

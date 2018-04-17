@@ -44,10 +44,10 @@ public class ApkUtils {
      * @param mPackageManager
      * @return
      */
-    public static List<FileInfo> getApp(Activity context, PackageManager mPackageManager) {
+    public static List<ApkFile> getApp(Activity context, PackageManager mPackageManager) {
         long start = System.currentTimeMillis();
 
-        List<FileInfo> apkFileList = new ArrayList<>();
+        List<ApkFile> apkFileList = new ArrayList<>();
 
         List<ApplicationInfo> appList = mPackageManager.getInstalledApplications(PackageManager.GET_UNINSTALLED_PACKAGES);
 
@@ -171,18 +171,15 @@ public class ApkUtils {
     /**
      * 缓存apk的ico
      */
-    public static void asyncCacheApkIco(Context context, List<FileInfo> apkList) {
-
-
+    public static void asyncCacheApkIco(Context context, List<ApkFile> apkList) {
         Observable.fromIterable(apkList)
                 .filter(fileInfo -> {
 
-                    if (fileInfo instanceof ApkFile) {
 
-                        if (Const.PIC_CACHES_DIR.canWrite() && !isContain(Const.PIC_CACHES_DIR, (ApkFile) fileInfo)) {
+                        if (Const.PIC_CACHES_DIR.canWrite() && !isContain(Const.PIC_CACHES_DIR, fileInfo)) {
                             return true;
                         }
-                    }
+
                     return false;
 
                 }).flatMap(fileInfo -> Observable.just(((ApkFile) fileInfo)))
@@ -216,8 +213,6 @@ public class ApkUtils {
 
 
                 });
-
-
     }
 
 

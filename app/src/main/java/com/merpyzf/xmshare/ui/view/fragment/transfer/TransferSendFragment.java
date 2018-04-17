@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -91,10 +92,26 @@ public class TransferSendFragment extends Fragment {
             public void onTransferProgress(FileInfo fileInfo) {
                 String[] arrayStr = FileUtils.getFileSizeArrayStr((long) (mTotalSize + fileInfo.getLength() * fileInfo.getProgress()));
                 String[] transferSpeed = fileInfo.getTransferSpeed();
-                if (null != arrayStr && null != transferSpeed) {
-                    mTvSave.setText(arrayStr[0] + arrayStr[1]);
+
+                // TODO: 2018/4/17 此处有空指针异常
+                if (null != arrayStr) {
+                    if(mTvSave == null){
+
+                        Log.i("wk", "mTvSave == null");
+                    }
+                    mTvSave.setText(arrayStr[0] + arrayStr[1]+"");
+                }
+
+                if (null != transferSpeed) {
+
+                    if(mTvSpeed == null){
+                        Log.i("wk", "mTvSpeed == null");
+                    }
+
                     mTvSpeed.setText(transferSpeed[0] + transferSpeed[1] + "/s");
                 }
+
+
             }
 
             @Override

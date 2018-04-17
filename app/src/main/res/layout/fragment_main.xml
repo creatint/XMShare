@@ -90,22 +90,23 @@
                         <ImageView
                             android:layout_width="60dp"
                             android:layout_height="60dp"
-
                             android:src="@drawable/ic_header" />
 
 
                         <TextView
-                            android:id="@+id/tv_document"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="3dp"
-                            android:text="文档" />
+                            android:text="文稿" />
 
                         <TextView
                             android:id="@+id/tv_document_num"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="100" />
+                            android:gravity="center"
+                            android:textSize="12sp"
+                            tools:text="0" />
+
 
 
                     </LinearLayout>
@@ -126,7 +127,6 @@
 
 
                         <TextView
-                            android:id="@+id/tv_zip"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="3dp"
@@ -136,7 +136,7 @@
                             android:id="@+id/tv_zip_num"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="100" />
+                            tools:text="0" />
 
 
                     </LinearLayout>
@@ -158,17 +158,18 @@
 
 
                         <TextView
-                            android:id="@+id/tv_txt"
+                            android:id="@+id/tv_apk"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="3dp"
-                            android:text="电子书" />
+                            android:text="安装包" />
 
                         <TextView
-                            android:id="@+id/tv_txt_num"
+                            android:id="@+id/tv_apk_num"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="100" />
+                            tools:text="0"
+                            />
 
 
                     </LinearLayout>

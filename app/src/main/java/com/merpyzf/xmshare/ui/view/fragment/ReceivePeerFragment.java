@@ -2,11 +2,13 @@ package com.merpyzf.xmshare.ui.view.fragment;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -47,6 +49,7 @@ import com.merpyzf.xmshare.receiver.APChangedReceiver;
 import com.merpyzf.xmshare.ui.adapter.PeerAdapter;
 import com.merpyzf.xmshare.util.DisplayUtils;
 import com.merpyzf.xmshare.util.SharedPreUtils;
+import com.merpyzf.xmshare.util.ToastUtils;
 import com.merpyzf.xmshare.util.UiUtils;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
@@ -111,11 +114,12 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
     private String mNickName;
     private WifiMgr mWifiMgr;
     private APChangedReceiver mApChangedReceiver;
-    private static final int REQUEST_CODE_WRITE_SETTINGS = 1;
+
     private OSTimer mHideTipTimer;
     private WifiManager.LocalOnlyHotspotReservation mReservation;
     private static final String TAG = ReceivePeerFragment.class.getSimpleName();
 
+    private static final int REQUEST_CODE_WRITE_SETTINGS = 1;
     public ReceivePeerFragment() {
     }
 
@@ -266,6 +270,9 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
      * 申请并初始化AP
      */
     private void requestPermissionAndInitAp() {
+
+        Log.i("wk", "--> requestPermissionAndInitAp");
+
         // 检查是否具备修改系统设置的权限
         boolean permission = false;
         // 获取当前设备的SDK的版本
@@ -279,23 +286,19 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
         }
         if (permission) {
 
+            Log.i("wk", "拥有权限直接建立热点");
+
             // 拥有权限直接建立热点
             initAp();
 
         } else {
 
-
-            new RxPermissions(getActivity())
-                    .requestEach(Manifest.permission.WRITE_SETTINGS)
-                    .subscribe(perm -> {
-                        if (perm.granted) {
-                            initAp();
-                        }
-                    });
+            requestWriteSettings();
         }
 
 
     }
+
 
     /**
      * 初始化热点
@@ -410,7 +413,7 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
 
         if (mPeerList.size() > 0) {
             mTvTip.setVisibility(View.VISIBLE);
-            UiUtils.delayHideView(getActivity(),mTvTip, 3*1000);
+            UiUtils.delayHideView(getActivity(), mTvTip, 3 * 1000);
         } else {
             mTvTip.setVisibility(View.INVISIBLE);
         }
@@ -537,4 +540,29 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
     }
 
 
+
+    private void requestWriteSettings() {
+        Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+        intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
+        startActivityForResult(intent, REQUEST_CODE_WRITE_SETTINGS);
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.i("wk", "权限授权调用");
+        if (requestCode == REQUEST_CODE_WRITE_SETTINGS) {
+            if (Settings.System.canWrite(getActivity())) {
+                Log.i("wk", "通过授权");
+                initAp();
+
+            } else {
+
+
+                ToastUtils.showShort(getContext(), "授权之后才能开启热点");
+            }
+        }
+    }
 }

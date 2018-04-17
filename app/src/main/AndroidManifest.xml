@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.merpyzf.xmshare">
 
     <uses-permission android:name="android.permission.OVERRIDE_WIFI_CONFIG" />
@@ -31,6 +32,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:hardwareAccelerated="true"
         android:theme="@style/AppTheme">
         <activity android:name=".ui.view.MainActivity" />
         <activity android:name=".ui.view.SplashActivity" />
@@ -76,10 +78,24 @@
         <activity android:name=".ui.view.activity.InviteActivity" />
         <activity android:name=".ui.test.TestLiteOrmActivity" />
         <activity android:name=".ui.test.TestFileIndicatorActivity" />
-        <activity android:name=".ui.test.TestChangeSkinActivity" />
+        <activity android:name=".ui.test.TestChangeSkinActivity" >
+
+
+
+        </activity>
         <activity android:name=".ui.test.TestApActivity" />
         <activity android:name=".ui.test.QRTestActivity"></activity>
         <activity android:name=".ui.view.activity.InputHotspotPwdActivity"></activity>
     </application>
 
+    <provider
+        android:name="android.support.v4.content.FileProvider"
+        android:authorities="com.merpyzf.xmshare.fileprovider"
+        android:grantUriPermissions="true"
+        android:exported="false"
+        tools:ignore="WrongManifestParent">
+        <meta-data
+            android:name="android.support.FILE_PROVIDER_PATHS"
+            android:resource="@xml/file_paths" />
+    </provider>
 </manifest>

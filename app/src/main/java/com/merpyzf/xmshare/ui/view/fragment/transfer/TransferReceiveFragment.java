@@ -100,9 +100,12 @@ public class TransferReceiveFragment extends Fragment {
 
                 String[] arrayStr = FileUtils.getFileSizeArrayStr((long) (mTotalSize + fileInfo.getLength() * fileInfo.getProgress()));
                 String[] transferSpeed = fileInfo.getTransferSpeed();
-                if (null != arrayStr && null != transferSpeed) {
+                if (null != arrayStr) {
                     mTvSave.setText(arrayStr[0] + arrayStr[1]);
-                    mTvSpeed.setText(transferSpeed[0] + transferSpeed[1]+"/s");
+                }
+
+                if (null != transferSpeed) {
+                    mTvSpeed.setText(transferSpeed[0] + transferSpeed[1] + "/s");
                 }
 
             }

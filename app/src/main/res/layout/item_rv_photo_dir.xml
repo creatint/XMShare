@@ -6,21 +6,38 @@
     android:background="@drawable/item_touch_bg"
     >
 
+    <FrameLayout
+        android:id="@+id/fl_container"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:padding="5dp"
+        >
 
     <ImageView
         android:id="@+id/iv_photo_dir_cover"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:layout_margin="10dp"
+        android:src="@drawable/ic_thumb_empty"
         android:scaleType="centerCrop"
         />
+
+        <pl.droidsonroids.gif.GifImageView
+            android:id="@+id/gif_photo_dir_cover"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="centerCrop"
+            />
+
+
+
+    </FrameLayout>
 
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_toEndOf="@+id/iv_photo_dir_cover"
+        android:layout_toEndOf="@+id/fl_container"
         android:orientation="vertical"
         android:text="尾巴壁纸">
 
