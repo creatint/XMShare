@@ -9,7 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.merpyzf.httpcoreserver.R;
-import com.merpyzf.httpcoreserver.constant.Constant;
+import com.merpyzf.httpcoreserver.common.Const;
 import com.merpyzf.httpcoreserver.service.WebService;
 import com.merpyzf.httpcoreserver.util.NetworkUtil;
 
@@ -34,7 +34,7 @@ public class HttpServerActivity extends AppCompatActivity {
         btnStart = findViewById(R.id.btn_start);
 
         String ip = NetworkUtil.getLocalIp(this);
-        Constant.IP = ip;
+        Const.IP = ip;
         tvIpAddress.setText(ip);
 
         // 开启服务，并在服务中开启http服务器

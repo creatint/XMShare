@@ -3,6 +3,7 @@ package com.merpyzf.xmshare.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,7 +17,7 @@ import com.merpyzf.transfermanager.entity.ApkFile;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.Constant;
+import com.merpyzf.xmshare.common.Const;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -43,10 +44,10 @@ public class ApkUtils {
      * @param mPackageManager
      * @return
      */
-    public static List<FileInfo> getApp(Activity context, PackageManager mPackageManager) {
+    public static List<ApkFile> getApp(Activity context, PackageManager mPackageManager) {
         long start = System.currentTimeMillis();
 
-        List<FileInfo> apkFileList = new ArrayList<>();
+        List<ApkFile> apkFileList = new ArrayList<>();
 
         List<ApplicationInfo> appList = mPackageManager.getInstalledApplications(PackageManager.GET_UNINSTALLED_PACKAGES);
 
@@ -142,21 +143,43 @@ public class ApkUtils {
         return null;
     }
 
+
+    /**
+     * 获取apk的图标信息
+     *
+     * @param context
+     * @param apkPath
+     * @return
+     */
+    public static Drawable getApkIcon(Context context, String apkPath) {
+        PackageManager pm = context.getPackageManager();
+        PackageInfo info = pm.getPackageArchiveInfo(apkPath,
+                PackageManager.GET_ACTIVITIES);
+        if (info != null) {
+            ApplicationInfo appInfo = info.applicationInfo;
+            appInfo.sourceDir = apkPath;
+            appInfo.publicSourceDir = apkPath;
+            try {
+                return appInfo.loadIcon(pm);
+            } catch (OutOfMemoryError e) {
+                Log.e("ApkIconLoader", e.toString());
+            }
+        }
+        return null;
+    }
+
     /**
      * 缓存apk的ico
      */
-    public static void asyncCacheApkIco(Context context, List<FileInfo> apkList) {
-
-
+    public static void asyncCacheApkIco(Context context, List<ApkFile> apkList) {
         Observable.fromIterable(apkList)
                 .filter(fileInfo -> {
 
-                    if (fileInfo instanceof ApkFile) {
 
-                        if (Constant.PIC_CACHES_DIR.canWrite() && !isContain(Constant.PIC_CACHES_DIR, (ApkFile) fileInfo)) {
+                        if (Const.PIC_CACHES_DIR.canWrite() && !isContain(Const.PIC_CACHES_DIR, fileInfo)) {
                             return true;
                         }
-                    }
+
                     return false;
 
                 }).flatMap(fileInfo -> Observable.just(((ApkFile) fileInfo)))
@@ -190,9 +213,8 @@ public class ApkUtils {
 
 
                 });
-
-
     }
+
 
     /**
      * 判断缓存中是否已经存在

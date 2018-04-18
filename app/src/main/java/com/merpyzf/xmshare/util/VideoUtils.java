@@ -9,7 +9,7 @@ import android.util.Log;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.Constant;
+import com.merpyzf.xmshare.common.Const;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -70,7 +70,7 @@ public class VideoUtils {
 
                     if (videoFile instanceof VideoFile) {
 
-                        if (Constant.PIC_CACHES_DIR.canWrite() && !isContain(Constant.PIC_CACHES_DIR, (VideoFile) videoFile)) {
+                        if (Const.PIC_CACHES_DIR.canWrite() && !isContain(Const.PIC_CACHES_DIR, (VideoFile) videoFile)) {
                             return true;
                         }
                     }
@@ -95,7 +95,7 @@ public class VideoUtils {
                     Log.i("w2k", "写入本地存储的视频封面截图:" + fileName);
 
                     try {
-                        bos = new BufferedOutputStream(new FileOutputStream(new File(Constant.PIC_CACHES_DIR, Md5Utils.getMd5(videoPath))));
+                        bos = new BufferedOutputStream(new FileOutputStream(new File(Const.PIC_CACHES_DIR, Md5Utils.getMd5(videoPath))));
                         if (bitmap == null) {
 
                             bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_thumb_empty);

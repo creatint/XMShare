@@ -4,14 +4,20 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Switch;
 
+import com.bumptech.glide.Glide;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.Constant;
+import com.merpyzf.xmshare.common.Const;
 import com.merpyzf.xmshare.common.base.BaseActivity;
 import com.merpyzf.xmshare.util.SharedPreUtils;
+import com.merpyzf.xmshare.util.ToastUtils;
 
 import butterknife.BindView;
+import butterknife.OnClick;
+import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * 应用设置界面
@@ -35,14 +41,13 @@ public class SettingActivity extends BaseActivity {
     @Override
     public void initViews(Bundle savedInstanceState) {
 
-        int transferMode = SharedPreUtils.getInteger(mContext, Constant.SP_USER, Constant.KEY_TRANSFER_MODE, Constant.TRANSFER_MODE_LAN);
+        int transferMode = SharedPreUtils.getInteger(mContext, Const.SP_USER, Const.KEY_TRANSFER_MODE, Const.TRANSFER_MODE_LAN);
 
-        if (transferMode == Constant.TRANSFER_MODE_LAN) {
+        if (transferMode == Const.TRANSFER_MODE_LAN) {
             mSwitchTransferMode.setChecked(false);
-        } else if (transferMode == Constant.TRANSFER_MODE_AP) {
+        } else if (transferMode == Const.TRANSFER_MODE_AP) {
             mSwitchTransferMode.setChecked(true);
         }
-
     }
 
     @Override
@@ -52,14 +57,14 @@ public class SettingActivity extends BaseActivity {
 
             if (isChecked) {
                 // 热点
-                SharedPreUtils.putInteger(mContext, Constant.SP_USER, Constant.KEY_TRANSFER_MODE,
-                        Constant.TRANSFER_MODE_AP);
+                SharedPreUtils.putInteger(mContext, Const.SP_USER, Const.KEY_TRANSFER_MODE,
+                        Const.TRANSFER_MODE_AP);
                 Log.i(TAG, "设置 AP模式");
 
             } else {
                 // 局域网
-                SharedPreUtils.putInteger(mContext, Constant.SP_USER, Constant.KEY_TRANSFER_MODE,
-                        Constant.TRANSFER_MODE_LAN);
+                SharedPreUtils.putInteger(mContext, Const.SP_USER, Const.KEY_TRANSFER_MODE,
+                        Const.TRANSFER_MODE_LAN);
                 Log.i(TAG, "设置局域网模式");
             }
         });
@@ -74,6 +79,24 @@ public class SettingActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     }
+
+    @OnClick(R.id.rl_clear_cache)
+    public void clickClearCache(View view){
+
+        // 清理Glide查看图片时留下的缓存
+
+        ToastUtils.showShort(mContext,"正在为您进行缓存清理...");
+        Observable.just("")
+                .observeOn(Schedulers.io())
+                .subscribe(s -> {
+
+                    Glide.get(mContext)
+                            .clearDiskCache();
+
+                });
+
+    }
+
 
 
     @Override

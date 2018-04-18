@@ -1,6 +1,6 @@
 package com.merpyzf.httpcoreserver.http;
 
-import com.merpyzf.httpcoreserver.constant.Constant;
+import com.merpyzf.httpcoreserver.common.Const;
 import com.merpyzf.httpcoreserver.handle.FileBrowserHandler;
 import com.merpyzf.httpcoreserver.handle.RequestHandleTask;
 import com.merpyzf.httpcoreserver.util.LogUtil;
@@ -54,7 +54,7 @@ public class HttpRequestListener extends Thread {
             mServerSocket = new ServerSocket();
             // 这个方法的作用？
             mServerSocket.setReuseAddress(true);
-            mServerSocket.bind(new InetSocketAddress(Constant.PORT));
+            mServerSocket.bind(new InetSocketAddress(Const.PORT));
 
             // 2.添加HTTP协议拦截器，给response添加响应头信息
             BasicHttpProcessor httpProcessor = new BasicHttpProcessor();

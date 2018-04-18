@@ -12,7 +12,7 @@ import android.util.Log;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.Constant;
+import com.merpyzf.xmshare.common.Const;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -24,11 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
-import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -76,25 +73,17 @@ public class MusicUtils {
 
 
         Observable.fromIterable(musicList)
-                .filter(new Predicate<FileInfo>() {
-                    @Override
-                    public boolean test(FileInfo musicFile) throws Exception {
+                .filter(musicFile -> {
 
-                        if (musicFile instanceof MusicFile) {
+                    if (musicFile instanceof MusicFile) {
 
-                            if (Constant.PIC_CACHES_DIR.canWrite() && !isContain(Constant.PIC_CACHES_DIR, (MusicFile) musicFile)) {
-                                return true;
-                            }
+                        if (Const.PIC_CACHES_DIR.canWrite() && !isContain(Const.PIC_CACHES_DIR, (MusicFile) musicFile)) {
+                            return true;
                         }
-                        return false;
-
                     }
-                }).flatMap(new Function<FileInfo, ObservableSource<MusicFile>>() {
-            @Override
-            public ObservableSource<MusicFile> apply(FileInfo musicFile) throws Exception {
-                return Observable.just(((MusicFile) musicFile));
-            }
-        }).subscribeOn(Schedulers.io())
+                    return false;
+
+                }).flatMap(musicFile -> Observable.just(((MusicFile) musicFile))).subscribeOn(Schedulers.io())
                 .subscribe(new Observer<MusicFile>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -157,7 +146,7 @@ public class MusicUtils {
     private static synchronized boolean isContain(File parent, MusicFile musicFile) {
         String[] albums = parent.list();
         for (int i = 0; i < albums.length; i++) {
-            if (Md5Utils.getMd5(musicFile.getPath()).equals(albums[i])) {
+            if (Md5Utils.getMd5(musicFile.getAlbumId()+"").equals(albums[i])) {
                 return true;
             }
         }

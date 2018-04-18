@@ -4,7 +4,7 @@ package com.merpyzf.transfermanager;
 import android.os.Handler;
 import android.os.Message;
 
-import com.merpyzf.transfermanager.constant.Constant;
+import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.interfaces.TransferObserver;
 import com.merpyzf.transfermanager.receive.ReceiverManager;
@@ -38,7 +38,7 @@ public class P2pTransferHandler extends Handler {
             /**
              * 待接收文件列表传输完毕
              */
-            case Constant.TransferStatus.TRANSFER_FILE_LIST_SUCCESS:
+            case Const.TransferStatus.TRANSFER_FILE_LIST_SUCCESS:
 
                 List<FileInfo> mReceiveFileList = (List<FileInfo>) msg.obj;
 
@@ -54,7 +54,7 @@ public class P2pTransferHandler extends Handler {
             /**
              * 传输中
              */
-            case Constant.TransferStatus.TRANSFING:
+            case Const.TransferStatus.TRANSFING:
 
                 FileInfo fileInfo = (FileInfo) msg.obj;
 
@@ -68,13 +68,16 @@ public class P2pTransferHandler extends Handler {
             /**
              * 传输成功
              */
-            case Constant.TransferStatus.TRANSFER_SUCCESS:
+            case Const.TransferStatus.TRANSFER_SUCCESS:
 
 
                 FileInfo fileInfo1 = (FileInfo) msg.obj;
 
                 for(int i=0;i<mTransferObserverLists.size();i++){
                     mTransferObserverLists.get(i).onTransferStatus(fileInfo1);
+
+
+
                 }
 
 
@@ -83,7 +86,7 @@ public class P2pTransferHandler extends Handler {
             /**
              * 传输失败
              */
-            case Constant.TransferStatus.TRANSFER_FAILED:
+            case Const.TransferStatus.TRANSFER_FAILED:
 
 
                 break;

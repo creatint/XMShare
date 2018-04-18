@@ -1,8 +1,14 @@
 package com.merpyzf.xmshare;
 
+import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.transfermanager.util.FormatUtils;
 
 import org.junit.Test;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.functions.Consumer;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -163,4 +169,31 @@ public class ExampleUnitTest {
             status = STOP;
         }
     }
+
+    @Test
+    public void testSplitSuffix(){
+
+        String fileSuffix = FileUtils.getFileSuffix("/storage/emulated/0/xmshare/receive/apk/手机京东.apk");
+
+        System.out.println(fileSuffix);
+
+    }
+    @Test
+    public void testRx(){
+
+        Observable.create(new ObservableOnSubscribe<String>() {
+            @Override
+            public void subscribe(ObservableEmitter<String> e) throws Exception {
+                e.onNext("hello");
+            }
+        }).subscribe(new Consumer<String>() {
+            @Override
+            public void accept(String s) throws Exception {
+                System.out.println(s);
+            }
+        });
+
+
+    }
+
 }

@@ -12,13 +12,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.merpyzf.transfermanager.constant.Constant;
+import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.entity.FileInfo;
+import com.merpyzf.transfermanager.interfaces.TransferObserver;
 import com.merpyzf.transfermanager.receive.ReceiverManager;
-import com.merpyzf.xmshare.R;
+import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.xmshare.App;
+import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.ui.adapter.FileTransferAdapter;
 import com.merpyzf.xmshare.util.AppUtils;
 
@@ -38,6 +42,16 @@ public class TransferReceiveFragment extends Fragment {
 
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
+    @BindView(R.id.tv_state)
+    TextView mTvState;
+    @BindView(R.id.tv_speed)
+    TextView mTvSpeed;
+    @BindView(R.id.tv_save)
+    TextView mTvSave;
+    // 显示传输时详细信息的布局
+    @BindView(R.id.rl_info)
+    RelativeLayout mRlInfo;
+
 
     private Unbinder mUnbinder;
     private Context mContext;
@@ -46,6 +60,10 @@ public class TransferReceiveFragment extends Fragment {
     private List<FileInfo> mTransferFileList;
     private FileTransferAdapter mFileTransferAdapter;
     private static final String TAG = TransferReceiveFragment.class.getSimpleName();
+    private long mTotalSize = 0;
+    private long mLastFileSize = 0;
+    private String mLastFileName;
+
 
     @SuppressLint("ValidFragment")
     public TransferReceiveFragment(List<FileInfo> transferFileList) {
@@ -63,8 +81,6 @@ public class TransferReceiveFragment extends Fragment {
         mContext = getActivity();
 
         Log.i(TAG, "待传输的文件长度-> " + mTransferFileList.size());
-
-
         init();
         initUI();
         initEvent();
@@ -73,6 +89,50 @@ public class TransferReceiveFragment extends Fragment {
     }
 
     private void initEvent() {
+
+
+        /**
+         * 监听文件的传输的进度，计算当前传输数据的大小
+         */
+        ReceiverManager.getInstance().register(new TransferObserver() {
+            @Override
+            public void onTransferProgress(FileInfo fileInfo) {
+
+                String[] arrayStr = FileUtils.getFileSizeArrayStr((long) (mTotalSize + fileInfo.getLength() * fileInfo.getProgress()));
+                String[] transferSpeed = fileInfo.getTransferSpeed();
+                if (null != arrayStr) {
+                    mTvSave.setText(arrayStr[0] + arrayStr[1]);
+                }
+
+                if (null != transferSpeed) {
+                    mTvSpeed.setText(transferSpeed[0] + transferSpeed[1] + "/s");
+                }
+
+            }
+
+            @Override
+            public void onTransferStatus(FileInfo fileInfo) {
+
+                mLastFileSize = fileInfo.getLength();
+                mTotalSize += mLastFileSize;
+
+                if (fileInfo.getIsLast()) {
+                    String[] arrayStr = FileUtils.getFileSizeArrayStr((long) (mTotalSize + fileInfo.getLength() * fileInfo.getProgress()));
+
+                    // TODO: 2018/4/18 下面的两个View会偶尔出现空指针问题，原因未查明
+                    // 传输完毕的事件
+                    if (mRlInfo != null) {
+                        mRlInfo.setVisibility(View.GONE);
+                    }
+
+                    if (mTvState != null) {
+                        mTvState.setText("传输完成, 本次为您节省 " + arrayStr[0] + arrayStr[1] + " 流量 ");
+                    }
+                }
+
+
+            }
+        });
 
 
         mFileTransferAdapter.setOnItemClickListener((adapter, view, position) -> {
@@ -88,7 +148,7 @@ public class TransferReceiveFragment extends Fragment {
 
                 case FileInfo.FILE_TYPE_APP:
 
-                    if (fileInfo.getFileTransferStatus() == Constant.TransferStatus.TRANSFER_SUCCESS) {
+                    if (fileInfo.getFileTransferStatus() == Const.TransferStatus.TRANSFER_SUCCESS) {
 
                         AppUtils.installApk(mContext, new File(Environment.getExternalStorageDirectory() + fileInfo.getPath()));
 
@@ -143,12 +203,16 @@ public class TransferReceiveFragment extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         mFileTransferAdapter = new FileTransferAdapter<>(R.layout.item_rv_transfer, FileTransferAdapter.TYPE_RECEIVE, mTransferFileList);
         mRecyclerView.setAdapter(mFileTransferAdapter);
+
+
     }
 
 
     @Override
     public void onDestroy() {
         App.getSendFileList().clear();
+        // 关闭热点
+        App.closeHotspotOnAndroidO();
         super.onDestroy();
     }
 

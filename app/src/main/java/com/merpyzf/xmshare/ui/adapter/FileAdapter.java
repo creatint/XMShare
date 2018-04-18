@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.merpyzf.transfermanager.entity.ApkFile;
@@ -18,13 +19,17 @@ import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.transfermanager.util.FormatUtils;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.Constant;
+import com.merpyzf.xmshare.common.Const;
 import com.merpyzf.xmshare.util.AnimationUtils;
 import com.merpyzf.xmshare.util.Md5Utils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
+
+import pl.droidsonroids.gif.GifDrawable;
+import pl.droidsonroids.gif.GifImageView;
 
 /**
  * Created by wangke on 2017/12/24.
@@ -65,7 +70,7 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
             helper.setText(R.id.tv_artist, musicFile.getArtist());
             helper.setText(R.id.tv_size, FormatUtils.convert2Mb(musicFile.getLength()) + " MB");
 
-            File albumFile = new File(Constant.PIC_CACHES_DIR, Md5Utils.getMd5(musicFile.getAlbumId() + ""));
+            File albumFile = new File(Const.PIC_CACHES_DIR, Md5Utils.getMd5(musicFile.getAlbumId() + ""));
 
 
             ImageView imageView = helper.getView(R.id.iv_cover);
@@ -75,8 +80,9 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
                         .load(albumFile)
                         .dontAnimate()
                         .centerCrop()
-                        .placeholder(R.drawable.ic_thumb_empty)
-                        .error(R.drawable.ic_thumb_empty)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .placeholder(R.drawable.ic_holder_music)
+                        .error(R.drawable.ic_holder_music)
                         .into(imageView);
 
 
@@ -86,14 +92,36 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
         } else if (item instanceof PicFile) {
 
             ImageView iv = helper.getView(R.id.iv_cover);
+            GifImageView gifIv = helper.getView(R.id.gif_iv);
+
             PicFile picFile = (PicFile) item;
 
-            Glide.with(mContext)
-                    .load(picFile.getPath())
-                    .error(R.drawable.ic_thumb_empty)
-                    .crossFade()
-                    .fitCenter()
-                    .into(iv);
+            String suffix = picFile.getSuffix();
+            if (suffix.toLowerCase().equals("gif")) {
+
+                iv.setVisibility(View.INVISIBLE);
+                gifIv.setVisibility(View.VISIBLE);
+
+                try {
+                    GifDrawable gifDrawable = new GifDrawable(picFile.getPath());
+                    gifIv.setImageDrawable(gifDrawable);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            } else {
+
+                iv.setVisibility(View.VISIBLE);
+                gifIv.setVisibility(View.INVISIBLE);
+
+                Glide.with(mContext)
+                        .load(picFile.getPath())
+                        .error(R.drawable.ic_holder_image)
+                        .placeholder(R.drawable.ic_holder_image)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .centerCrop()
+                        .into(iv);
+            }
 
 
             /**
@@ -116,12 +144,13 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
             helper.setText(R.id.tv_size, FormatUtils.convert2Mb(videoFile.getLength()) + " MB");
             helper.setText(R.id.tv_duration, FormatUtils.convertMS2Str(videoFile.getDuration()));
             ImageView ivVideoThumb = helper.getView(R.id.iv_cover);
-            String videoThumbPath = Constant.PIC_CACHES_DIR + "/" + Md5Utils.getMd5(videoFile.getPath());
+            String videoThumbPath = Const.PIC_CACHES_DIR + "/" + Md5Utils.getMd5(videoFile.getPath());
 
             Glide.with(mContext)
                     .load(new File(videoThumbPath))
-                    .placeholder(R.drawable.ic_thumb_empty)
-                    .error(R.drawable.ic_thumb_empty)
+                    .placeholder(R.drawable.ic_holder_video)
+                    .error(R.drawable.ic_holder_video)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .dontAnimate()
                     .centerCrop()
                     .into(ivVideoThumb);

@@ -11,7 +11,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.merpyzf.transfermanager.PeerManager;
-import com.merpyzf.transfermanager.constant.Constant;
+import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.interfaces.TransferObserver;
 import com.merpyzf.transfermanager.receive.ReceiverManager;
@@ -105,6 +105,7 @@ public class ReceiveActivity extends AppCompatActivity {
     private void initEvent() {
 
         if (mReceivePeerFragment != null) {
+            // 局域网下的事件
             mReceivePeerFragment.setOnReceivePairActionListener(new ReceivePeerFragment.OnReceivePairActionListener() {
                 @Override
                 public void onRequestSendFileAction() {
@@ -116,20 +117,17 @@ public class ReceiveActivity extends AppCompatActivity {
                         public void onTransferProgress(FileInfo fileInfo) {
 
                         }
-
                         // TODO: 2018/1/28 增加一个文件全部传输完毕的回调
                         @Override
                         public void onTransferStatus(FileInfo fileInfo) {
                             // 如果当前传输的是最后一个文件，并且传输成功后重置标记
-                            if (fileInfo.getIsLast() == 1 && fileInfo.getFileTransferStatus() == Constant.TransferStatus.TRANSFER_SUCCESS) {
+                            if (fileInfo.getIsLast() && fileInfo.getFileTransferStatus() == Const.TransferStatus.TRANSFER_SUCCESS) {
                                 isTransfering = false;
                             }
                         }
                     });
 
                     App.getSingleThreadPool().execute(receiverManager);
-                    Log.i("w2k", "开启一个ServerScoket等待设备接入");
-
                     // 当接收到待传输的文件列表时，跳转到文件传输的界面
                     receiverManager.setOnTransferFileListListener(transferFileList -> {
 
@@ -146,10 +144,9 @@ public class ReceiveActivity extends AppCompatActivity {
 
                 }
 
-
+                // 热点下的事件
                 @Override
                 public void onApEnableAction() {
-
                     ReceiverManager receiverManager = ReceiverManager.getInstance();
                     App.getSingleThreadPool().execute(receiverManager);
                     // 监听待传输的文件列表是否发送成功

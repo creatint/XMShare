@@ -18,7 +18,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.Constant;
+import com.merpyzf.xmshare.common.Const;
 import com.merpyzf.xmshare.ui.adapter.AvatarAdapter;
 import com.merpyzf.xmshare.ui.view.interfaces.PersonalObservable;
 import com.merpyzf.xmshare.util.SharedPreUtils;
@@ -81,13 +81,13 @@ public class PersonalActivity extends AppCompatActivity {
 
             mAvatarIndex = position;
             Glide.with(mContext)
-                    .load(Constant.AVATAR_LIST.get(position))
+                    .load(Const.AVATAR_LIST.get(position))
                     .crossFade()
                     .centerCrop()
                     .into(mCivAvatar);
 
             // 设置颜色
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), Constant.AVATAR_LIST.get(position));
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), Const.AVATAR_LIST.get(position));
             Palette.from(bitmap).generate((Palette.PaletteAsyncListener) p -> {
 
                 Palette.Swatch swatch = p.getVibrantSwatch();
@@ -104,8 +104,8 @@ public class PersonalActivity extends AppCompatActivity {
 
         // 保存用户设置
         mBtnSave.setOnClickListener(v -> {
-            SharedPreUtils.putString(mContext, Constant.SP_USER, "nickName", mEdtNickname.getText().toString().trim());
-            SharedPreUtils.putInteger(mContext, Constant.SP_USER, "avatar", mAvatarIndex);
+            SharedPreUtils.putString(mContext, Const.SP_USER, "nickName", mEdtNickname.getText().toString().trim());
+            SharedPreUtils.putInteger(mContext, Const.SP_USER, "avatar", mAvatarIndex);
             Toast.makeText(mContext, "保存成功", Toast.LENGTH_SHORT).show();
             PersonalObservable.getInstance().notifyAllObserver();
         });
@@ -125,7 +125,7 @@ public class PersonalActivity extends AppCompatActivity {
         mEdtNickname.setText(SharedPreUtils.getNickName(mContext));
         // 设置头像
         Glide.with(mContext)
-                .load(Constant.AVATAR_LIST.get(SharedPreUtils.getAvatar(mContext)))
+                .load(Const.AVATAR_LIST.get(SharedPreUtils.getAvatar(mContext)))
                 .crossFade()
                 .centerCrop()
                 .into(mCivAvatar);
@@ -135,7 +135,7 @@ public class PersonalActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mRvAvatarList.setLayoutManager(new GridLayoutManager(mContext, 4));
-        mAvatarAdapter = new AvatarAdapter(R.layout.item_rv_avatar, Constant.AVATAR_LIST);
+        mAvatarAdapter = new AvatarAdapter(R.layout.item_rv_avatar, Const.AVATAR_LIST);
         mRvAvatarList.setAdapter(mAvatarAdapter);
 
 

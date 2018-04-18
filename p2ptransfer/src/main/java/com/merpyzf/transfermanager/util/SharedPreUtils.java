@@ -3,7 +3,7 @@ package com.merpyzf.transfermanager.util;
 
 import android.content.Context;
 
-import com.merpyzf.transfermanager.constant.Constant;
+import com.merpyzf.transfermanager.common.Const;
 
 
 /**
@@ -55,7 +55,7 @@ public class SharedPreUtils {
      */
     public static String getNickName(Context context) {
 
-        return getString(context, Constant.SP_USER, "nickName", DeviceUtils.getDeviceName());
+        return getString(context, Const.SP_USER, "nickName", DeviceUtils.getDeviceName());
     }
 
     /**
@@ -65,7 +65,7 @@ public class SharedPreUtils {
      * @return
      */
     public static int getAvatar(Context context) {
-        return getInteger(context, Constant.SP_USER, "avatar", 0);
+        return getInteger(context, Const.SP_USER, "avatar", 0);
     }
 
 }

@@ -12,11 +12,11 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import com.merpyzf.filemanager.widget.FileSelectIndicator;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.ui.view.activity.OnFileSelectListener;
+import com.merpyzf.xmshare.ui.widget.FileSelectIndicatorImp;
 
 import java.util.List;
 
@@ -35,7 +35,7 @@ public class PhotoFragment extends Fragment {
     @BindView(R.id.checkbox_all)
     CheckBox mCheckbox;
     @BindView(R.id.fileSelectIndicator)
-    FileSelectIndicator mFileSelectIndicator;
+    FileSelectIndicatorImp mFileSelectIndicator;
     private Unbinder mUnbinder;
     private OnFileSelectListener mFileSelectListener;
 
@@ -81,7 +81,7 @@ public class PhotoFragment extends Fragment {
         return mCheckbox;
     }
 
-    public FileSelectIndicator getFileSelectIndicator() {
+    public FileSelectIndicatorImp getFileSelectIndicator() {
 
         if (mFileSelectIndicator == null) {
 

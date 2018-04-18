@@ -16,7 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.merpyzf.transfermanager.PeerManager;
-import com.merpyzf.transfermanager.constant.Constant;
+import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.Peer;
 import com.merpyzf.transfermanager.interfaces.TransferObserver;
@@ -156,7 +156,7 @@ public class SendActivity extends AppCompatActivity implements ScanPeerFragment.
             @Override
             public void onTransferStatus(FileInfo fileInfo) {
                 // 如果当前传输的是最后一个文件，并且传输成功后重置标记
-                if (fileInfo.getIsLast() == 1 && fileInfo.getFileTransferStatus() == Constant.TransferStatus.TRANSFER_SUCCESS) {
+                if (fileInfo.getIsLast()&& fileInfo.getFileTransferStatus() == Const.TransferStatus.TRANSFER_SUCCESS) {
                     isTransfering = false;
                 }
             }
@@ -208,9 +208,6 @@ public class SendActivity extends AppCompatActivity implements ScanPeerFragment.
 
     @Override
     public void onSendToHotspotAction(Peer peer, List<FileInfo> fileInfoLis) {
-//        SenderManager senderManager = SenderManager.getInstance(mContext);
-        // 加载显示发送文件进度的fragment
-
         Log.i(TAG, "跳转到文件发送界面");
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         mTransferSendFragment = new TransferSendFragment(peer);

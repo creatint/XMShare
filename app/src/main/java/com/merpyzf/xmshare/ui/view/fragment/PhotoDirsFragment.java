@@ -7,7 +7,6 @@ import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -21,12 +20,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.merpyzf.filemanager.widget.bean.Label;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.bean.model.PhotoDirBean;
 import com.merpyzf.xmshare.ui.adapter.ImgDirsAdapter;
+import com.merpyzf.xmshare.ui.widget.bean.Label;
+import com.merpyzf.xmshare.util.Md5Utils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -110,7 +110,7 @@ public class PhotoDirsFragment extends Fragment implements LoaderManager.LoaderC
 
         }
 
-        mImageFragment.getTvTitle().setText("图片("+mPhotosNum+")");
+        mImageFragment.getTvTitle().setText("图片(" + mPhotosNum + ")");
 
 
         mRvDirsList.setLayoutManager(new LinearLayoutManager(mContext));
@@ -211,6 +211,8 @@ public class PhotoDirsFragment extends Fragment implements LoaderManager.LoaderC
                                     photoDirBean.setName(file.getParentFile().getName());
                                     photoDirBean.setImageList(images);
 
+                                    Log.i("wk","images size->"+photoDirBean.getImageList().size());
+                                    Md5Utils.asyncGenerateFileMd5(photoDirBean.getImageList());
                                     mDirList.add(photoDirBean);
 
                                 }
@@ -220,11 +222,6 @@ public class PhotoDirsFragment extends Fragment implements LoaderManager.LoaderC
 
                         }
 
-                    }
-
-                    if (Build.VERSION.SDK_INT < 14) {
-                        //在android 4.0及其以上的版本中，Cursor会自动关闭，不需要用户自己关闭
-                        cursor.close();
                     }
                     return mDirList;
                 })

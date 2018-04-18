@@ -73,14 +73,7 @@
                         android:text="传输进度" />
 
 
-                    <TextView
-                        android:id="@+id/tv_speed"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="12sp"
-                        android:textColor="@color/colorSecondaryText"
-                        android:layout_marginLeft="20dp"
-                        android:padding="2dp" />
+
 
 
                 </LinearLayout>

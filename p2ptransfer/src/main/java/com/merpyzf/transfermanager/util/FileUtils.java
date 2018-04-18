@@ -11,7 +11,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.merpyzf.transfermanager.R;
-import com.merpyzf.transfermanager.constant.Constant;
+import com.merpyzf.transfermanager.common.Const;
 import com.merpyzf.transfermanager.entity.ApkFile;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
@@ -51,12 +51,11 @@ public class FileUtils {
             return suffix;
         }
 
-
     }
 
 
     /**
-     * 根据文件路径获取文件的后缀名
+     * 根据文件获取文件的后缀名
      *
      * @param
      * @return 当获取不到时返回 ""
@@ -214,8 +213,8 @@ public class FileUtils {
         // 创建操作图片用的matrix对象
         Matrix matrix = new Matrix();
         // 计算宽高缩放率
-        float scaleWidth = ((float) Constant.SEND_FILE_THUMB_SIZE) / width;
-        float scaleHeight = ((float) Constant.SEND_FILE_THUMB_SIZE) / height;
+        float scaleWidth = ((float) Const.SEND_FILE_THUMB_SIZE) / width;
+        float scaleHeight = ((float) Const.SEND_FILE_THUMB_SIZE) / height;
         // 缩放图片动作
         matrix.postScale(scaleWidth, scaleHeight);
         Bitmap bitmap = Bitmap.createBitmap(bmp, 0, 0, (int) width,
@@ -238,12 +237,12 @@ public class FileUtils {
 
             if (bos == null) return;
 
-            byte[] buffer = new byte[Constant.BUFFER_LENGTH];
+            byte[] buffer = new byte[Const.BUFFER_LENGTH];
             // 读取文件
             while (length > 0) {
                 int readLength = 0;
-                if (length > Constant.BUFFER_LENGTH) {
-                    readLength = inputStream.read(buffer, 0, Constant.BUFFER_LENGTH);
+                if (length > Const.BUFFER_LENGTH) {
+                    readLength = inputStream.read(buffer, 0, Const.BUFFER_LENGTH);
                 } else {
                     readLength = inputStream.read(buffer, 0, (int) length);
                 }
@@ -291,7 +290,7 @@ public class FileUtils {
 
                 case FileInfo.FILE_TYPE_APP:
 
-                    parent = new File(Environment.getExternalStorageDirectory(), Constant.SAVE_APK_PATH);
+                    parent = new File(Environment.getExternalStorageDirectory(), Const.SAVE_APK_PATH);
 
                     if (!parent.exists()) {
                         boolean isCreated = parent.mkdirs();
@@ -305,7 +304,7 @@ public class FileUtils {
 
                 case FileInfo.FILE_TYPE_IMAGE:
 
-                    parent = new File(Environment.getExternalStorageDirectory(), Constant.SAVE_IMAGE_PATH);
+                    parent = new File(Environment.getExternalStorageDirectory(), Const.SAVE_IMAGE_PATH);
                     if (!parent.exists()) {
                         parent.mkdirs();
                     }
@@ -316,7 +315,7 @@ public class FileUtils {
 
                 case FileInfo.FILE_TYPE_MUSIC:
 
-                    parent = new File(Environment.getExternalStorageDirectory(), Constant.SAVE_MUSIC_PATH);
+                    parent = new File(Environment.getExternalStorageDirectory(), Const.SAVE_MUSIC_PATH);
                     if (!parent.exists()) {
                         parent.mkdirs();
                     }
@@ -327,7 +326,7 @@ public class FileUtils {
 
                 case FileInfo.FILE_TYPE_VIDEO:
 
-                    parent = new File(Environment.getExternalStorageDirectory(), Constant.SAVE_VIDEO_PATH);
+                    parent = new File(Environment.getExternalStorageDirectory(), Const.SAVE_VIDEO_PATH);
                     if (!parent.exists()) {
                         parent.mkdirs();
                     }

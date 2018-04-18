@@ -3,6 +3,7 @@ package com.merpyzf.xmshare;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,4 +40,13 @@ public class ExampleInstrumentedTest {
 
 
     }
+    @Test
+    public void testGetPackageName(){
+
+        Context appContext = InstrumentationRegistry.getTargetContext();
+
+        Log.i("wk","报名-->"+appContext.getPackageName());
+
+    }
+
 }

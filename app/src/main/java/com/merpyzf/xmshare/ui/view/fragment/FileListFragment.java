@@ -28,15 +28,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.litesuits.orm.LiteOrm;
-import com.litesuits.orm.db.assit.QueryBuilder;
+import com.merpyzf.transfermanager.entity.ApkFile;
 import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.transfermanager.entity.VideoFile;
 import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.bean.model.FileMd5Model;
 import com.merpyzf.xmshare.receiver.FileSelectedListChangedReceiver;
 import com.merpyzf.xmshare.ui.adapter.FileAdapter;
 import com.merpyzf.xmshare.ui.view.activity.OnFileSelectListener;
@@ -166,22 +164,7 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
                 ivSelect.setVisibility(View.VISIBLE);
                 // 添加选中的文件
                 App.addSendFile(fileInfo);
-
-
-                LiteOrm liteOrm = App.getSingleLiteOrm();
-                ArrayList<FileMd5Model> queryResult = liteOrm.query(new QueryBuilder<FileMd5Model>(FileMd5Model.class)
-                        .whereEquals("file_name", fileInfo.getPath()));
-
-                if (queryResult.size() == 1) {
-
-                    Log.i("wk", "查询结果-> " + queryResult.get(0).getMd5());
-                    // 给fileInfo对象设置Md5()
-                    fileInfo.setMd5(queryResult.get(0).getMd5());
-
-                }
-
-
-
+                fileInfo.setMd5(Md5Utils.getFileMd5(fileInfo));
                 // 将文件选择的事件回调给外部
                 if (mFileSelectListener != null) {
                     mFileSelectListener.onSelected(fileInfo);
@@ -311,10 +294,10 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
         // 异步扫描本地中已安装的应用
         new Thread(() -> {
             // 直接将获取到的app集合赋值给mFileLists会改变指针的指向，从而对适配器使用notifyDataSetChanged()失效
-            List<FileInfo> appList = ApkUtils.getApp(getActivity(), getActivity().getPackageManager());
+            List<ApkFile> appList = ApkUtils.getApp(getActivity(), getActivity().getPackageManager());
             mFileLists.addAll(appList);
             // 将apk的ico写入到缓存文件中
-            ApkUtils.asyncCacheApkIco(mContext, mFileLists);
+            ApkUtils.asyncCacheApkIco(mContext, appList);
             // 发送一个空的消息，提示扫描完毕
             mHandler.sendEmptyMessage(0);
             // 异步生成并文件的MD5并写入到数据库中
@@ -505,7 +488,10 @@ public class FileListFragment extends Fragment implements LoaderManager.LoaderCa
     /**
      * 本地应用扫描完毕后的Handler通知处理
      */
-    class ApkHandler extends Handler {
+     class ApkHandler extends Handler {
+
+
+
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);

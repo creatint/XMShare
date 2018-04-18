@@ -1,6 +1,6 @@
 package com.merpyzf.transfermanager.entity;
 
-import com.merpyzf.transfermanager.constant.Constant;
+import com.merpyzf.transfermanager.common.Const;
 
 /**
  * Created by wangke on 2017/12/12.
@@ -118,17 +118,17 @@ public class SignMessage {
 
         StringBuilder protocolStr = new StringBuilder();
         protocolStr.append(packetName);
-        protocolStr.append(Constant.S_SEPARATOR);
+        protocolStr.append(Const.S_SEPARATOR);
         protocolStr.append(hostAddress);
-        protocolStr.append(Constant.S_SEPARATOR);
+        protocolStr.append(Const.S_SEPARATOR);
         protocolStr.append(nickName);
-        protocolStr.append(Constant.S_SEPARATOR);
+        protocolStr.append(Const.S_SEPARATOR);
         protocolStr.append(avatarPosition);
-        protocolStr.append(Constant.S_SEPARATOR);
+        protocolStr.append(Const.S_SEPARATOR);
         protocolStr.append(msgContent);
-        protocolStr.append(Constant.S_SEPARATOR);
+        protocolStr.append(Const.S_SEPARATOR);
         protocolStr.append(String.valueOf(cmd));
-        protocolStr.append(Constant.S_END);
+        protocolStr.append(Const.S_END);
         return protocolStr.toString();
 
     }
@@ -143,18 +143,20 @@ public class SignMessage {
 
         if (signMessage != null && signMessage.length() > 0) {
 
-            int end = signMessage.indexOf(Constant.S_END);
+            int end = signMessage.indexOf(Const.S_END);
             signMessage = signMessage.subSequence(0, end).toString();
             SignMessage message = new SignMessage();
 
-            String[] MsgProperties = signMessage.split(Constant.S_SEPARATOR);
+            String[] MsgProperties = signMessage.split(Const.S_SEPARATOR);
 
-            message.setPacketName(MsgProperties[0]);
-            message.setHostAddress(MsgProperties[1]);
-            message.setNickName(MsgProperties[2]);
-            message.setAvatarPosition(Integer.valueOf(MsgProperties[3]));
-            message.setMsgContent(MsgProperties[4]);
-            message.setCmd(Integer.valueOf(MsgProperties[5]));
+            if (MsgProperties.length == 6) {
+                message.setPacketName(MsgProperties[0]);
+                message.setHostAddress(MsgProperties[1]);
+                message.setNickName(MsgProperties[2]);
+                message.setAvatarPosition(Integer.valueOf(MsgProperties[3]));
+                message.setMsgContent(MsgProperties[4]);
+                message.setCmd(Integer.valueOf(MsgProperties[5]));
+            }
             return message;
 
         }

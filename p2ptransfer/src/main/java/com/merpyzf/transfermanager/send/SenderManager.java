@@ -20,7 +20,7 @@ public class SenderManager {
     private ExecutorService mSingleThreadPool;
     private Context mContext;
     private static SenderManager mSenderManager;
-    private SenderTask mSenderTask;
+    private SenderTaskImp mSenderTaskImp;
     private P2pTransferHandler mP2pTransferHandler;
     // 观察者集合
     private List<TransferObserver> mTransferObserverLists;
@@ -37,6 +37,7 @@ public class SenderManager {
 
                     mSenderManager = new SenderManager(context);
 
+
                 }
 
             }
@@ -50,7 +51,7 @@ public class SenderManager {
         mTransferObserverLists = new ArrayList<>();
         mP2pTransferHandler = new P2pTransferHandler(mTransferObserverLists);
         mSingleThreadPool = Executors.newSingleThreadExecutor();
-        this.mContext = context;
+        this.mContext = context.getApplicationContext();
     }
 
     /**
@@ -85,8 +86,8 @@ public class SenderManager {
      */
     public void send(String destAddress, List<FileInfo> fileInfoList) {
 
-        mSenderTask = new SenderTask(mContext, destAddress, fileInfoList, mP2pTransferHandler);
-        mSingleThreadPool.execute(mSenderTask);
+        mSenderTaskImp = new SenderTaskImp(mContext, destAddress, fileInfoList, mP2pTransferHandler);
+        mSingleThreadPool.execute(mSenderTaskImp);
 
     }
 
@@ -94,8 +95,9 @@ public class SenderManager {
      * 传输结束时进行资源的释放
      */
     public void release() {
-        if (mSenderTask != null) {
-            mSenderTask.release();
+        if (mSenderTaskImp != null) {
+            mSenderTaskImp.release();
         }
     }
+
 }

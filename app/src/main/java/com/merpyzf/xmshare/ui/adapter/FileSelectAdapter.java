@@ -8,6 +8,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.merpyzf.transfermanager.entity.ApkFile;
@@ -15,17 +16,21 @@ import com.merpyzf.transfermanager.entity.FileInfo;
 import com.merpyzf.transfermanager.entity.MusicFile;
 import com.merpyzf.transfermanager.entity.PicFile;
 import com.merpyzf.transfermanager.entity.VideoFile;
+import com.merpyzf.transfermanager.util.FileUtils;
 import com.merpyzf.transfermanager.util.Md5Utils;
 import com.merpyzf.xmshare.App;
 import com.merpyzf.xmshare.R;
-import com.merpyzf.xmshare.common.Constant;
+import com.merpyzf.xmshare.common.Const;
 import com.merpyzf.xmshare.receiver.FileSelectedListChangedReceiver;
 import com.merpyzf.xmshare.ui.view.activity.SelectFilesActivity;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.List;
+
+import pl.droidsonroids.gif.GifDrawable;
 
 /**
  * Created by wangke on 2017/12/24.
@@ -65,13 +70,14 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> im
 
 
             MusicFile musicFile = (MusicFile) item;
-            File albumFile = new File(Constant.PIC_CACHES_DIR, Md5Utils.getMd5(musicFile.getAlbumId()+""));
+            File albumFile = new File(Const.PIC_CACHES_DIR, Md5Utils.getMd5(musicFile.getAlbumId() + ""));
             if (albumFile.exists()) {
                 //设置封面图片
                 Glide.with(mContext)
                         .load(albumFile)
                         .crossFade()
                         .centerCrop()
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .into(imageView);
             }
 
@@ -80,22 +86,41 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> im
 
 
             PicFile picFile = (PicFile) item;
-            Glide.with(mContext)
-                    .load(picFile.getPath())
-                    .crossFade()
-                    .centerCrop()
-                    .into(imageView);
 
+            String suffix = FileUtils.getFileSuffix(picFile.getPath()).toLowerCase();
+
+            if (suffix.equals("gif")) {
+
+                try {
+                    GifDrawable gifDrawable = new GifDrawable(picFile.getPath());
+                    imageView.setImageDrawable(gifDrawable);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+            } else {
+
+                Glide.with(mContext)
+                        .load(picFile.getPath())
+                        .crossFade()
+                        .centerCrop()
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .into(imageView);
+
+            }
 
         } else if (item instanceof VideoFile) {
 
 
             VideoFile videoFile = (VideoFile) item;
-            String videoThumbPath = Constant.PIC_CACHES_DIR+ "/" +Md5Utils.getMd5( videoFile.getPath());
+            String videoThumbPath = Const.PIC_CACHES_DIR + "/" + Md5Utils.getMd5(videoFile.getPath());
             Glide.with(mContext)
                     .load(new File(videoThumbPath))
                     .crossFade()
                     .centerCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(imageView);
 
         }
@@ -119,6 +144,6 @@ public class FileSelectAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> im
     @Override
     public String getSectionName(int position) {
 
-        return ((FileInfo)(mFileInfoList.get(position))).getName().substring(0,1);
+        return ((FileInfo) (mFileInfoList.get(position))).getName().substring(0, 1);
     }
 }

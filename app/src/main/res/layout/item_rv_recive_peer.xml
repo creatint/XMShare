@@ -1,30 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:gravity="center_vertical"
-
-
-    android:orientation="horizontal">
+    android:orientation="vertical">
 
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:background="@drawable/btn_shape"
+        android:gravity="center"
         android:foreground="@drawable/card_foreground"
-        android:padding="5dp"
+        android:padding="2dp"
         android:layout_margin="10dp"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/civ_peer_header"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:padding="10dp"
+            android:padding="4dp"
             app:civ_border_color="@color/white"
             app:civ_border_width="1dp"
             android:src="@drawable/ic_thumb_empty"
@@ -33,29 +31,34 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-
+            android:gravity="center"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tv_nickname"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
                 android:textColor="@color/white"
-                android:padding="3dp"
-                android:text="Smartisan"
-                android:textSize="14sp"
+                tools:text="Smartisan T2"
+                android:textSize="12sp"
+                android:gravity="center"
+                android:singleLine="true"
+                android:maxEms="8"
+                android:ellipsize="end"
 
                 />
 
             <TextView
+                android:layout_marginTop="2dp"
                 android:id="@+id/tv_hostaddress"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="3dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"
                 android:textColor="@color/white"
                 android:text="172.22.21.230"
-                android:textSize="14sp"
+                android:visibility="gone"
+                android:textSize="13sp"
                 />
 
         </LinearLayout>
