@@ -208,9 +208,6 @@ public class SendActivity extends AppCompatActivity implements ScanPeerFragment.
 
     @Override
     public void onSendToHotspotAction(Peer peer, List<FileInfo> fileInfoLis) {
-//        SenderManager senderManager = SenderManager.getInstance(mContext);
-        // 加载显示发送文件进度的fragment
-
         Log.i(TAG, "跳转到文件发送界面");
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         mTransferSendFragment = new TransferSendFragment(peer);

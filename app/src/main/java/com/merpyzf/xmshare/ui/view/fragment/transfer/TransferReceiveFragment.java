@@ -118,10 +118,16 @@ public class TransferReceiveFragment extends Fragment {
 
                 if (fileInfo.getIsLast()) {
                     String[] arrayStr = FileUtils.getFileSizeArrayStr((long) (mTotalSize + fileInfo.getLength() * fileInfo.getProgress()));
-                    // 传输完毕的事件
-                    mRlInfo.setVisibility(View.GONE);
-                    mTvState.setText("传输完成, 本次为您节省 " + arrayStr[0] + arrayStr[1] + " 流量 ");
 
+                    // TODO: 2018/4/18 下面的两个View会偶尔出现空指针问题，原因未查明
+                    // 传输完毕的事件
+                    if (mRlInfo != null) {
+                        mRlInfo.setVisibility(View.GONE);
+                    }
+
+                    if (mTvState != null) {
+                        mTvState.setText("传输完成, 本次为您节省 " + arrayStr[0] + arrayStr[1] + " 流量 ");
+                    }
                 }
 
 

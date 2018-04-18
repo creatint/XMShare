@@ -280,7 +280,7 @@ public class SelectFilesActivity extends BaseActivity implements PersonalObserve
         // 顶部menu按钮
         mLinearMenu.setOnClickListener(v -> {
             if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-                mDrawerLayout.closeDrawer(GravityCompat.END);
+                mDrawerLayout.closeDrawer(GravityCompat.START);
             } else {
                 mDrawerLayout.openDrawer(GravityCompat.START);
             }

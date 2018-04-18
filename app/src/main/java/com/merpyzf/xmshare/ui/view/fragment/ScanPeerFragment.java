@@ -1,6 +1,7 @@
 package com.merpyzf.xmshare.ui.view.fragment;
 
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -36,6 +37,8 @@ import com.merpyzf.xmshare.ui.adapter.PeerAdapter;
 import com.merpyzf.xmshare.ui.view.activity.InputHotspotPwdActivity;
 import com.merpyzf.xmshare.util.SharedPreUtils;
 import com.merpyzf.xmshare.util.ToastUtils;
+import com.merpyzf.xmshare.util.UiUtils;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -158,9 +161,29 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
         });
         mPeerManager.listenBroadcast();
 
-        new OSTimer(null, () -> mHandler.sendEmptyMessage(TYPE_SCAN_WIFI), 0, false).start();
-        mScanWifiTimer = new OSTimer(null, () -> mHandler.sendEmptyMessage(TYPE_SCAN_WIFI), 5000, true);
-        mScanWifiTimer.start();
+
+        // TODO: 2018/4/18 申请获取位置信息的权限
+
+        new RxPermissions(getActivity())
+                .requestEach(Manifest.permission.ACCESS_FINE_LOCATION)
+                .subscribe(permission -> {
+
+                    if(permission.granted){
+
+                        ToastUtils.showShort(getActivity(),"位置权限被授予");
+
+                        new OSTimer(null, () -> mHandler.sendEmptyMessage(TYPE_SCAN_WIFI), 0, false).start();
+                        mScanWifiTimer = new OSTimer(null, () -> mHandler.sendEmptyMessage(TYPE_SCAN_WIFI), 5000, true);
+                        mScanWifiTimer.start();
+
+
+                    }else {
+
+                        ToastUtils.showShort(mContext, "请授予位置权限，否则无法扫描附近的热点！");
+
+                    }
+
+                });
 
         return rootView;
     }
@@ -209,60 +232,67 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
 
 
-        Peer peer = (Peer) adapter.getItem(position);
+        if (UiUtils.clickValid()) {
 
-        if (peer == null) {
-            return;
-        }
+            Peer peer = (Peer) adapter.getItem(position);
 
-        // 用户点击的是开启热点的用户
-        if (peer.isHotsPot()) {
+            if (peer == null) {
+                return;
+            }
 
-            if (peer.isAndroidODevice(peer.getSsid())) {
+            // 用户点击的是开启热点的用户
+            if (peer.isHotsPot()) {
+
+                if (peer.isAndroidODevice(peer.getSsid())) {
 
 
-                Intent intent = new Intent(getContext(), InputHotspotPwdActivity.class);
-                intent.putExtra("ssid", peer.getSsid());
-                startActivityForResult(intent, 1);
+                    Intent intent = new Intent(getContext(), InputHotspotPwdActivity.class);
+                    intent.putExtra("ssid", peer.getSsid());
+                    startActivityForResult(intent, 1);
 
+
+                } else {
+                    mTvTip.setTextColor(Color.WHITE);
+                    mTvTip.setText("正在努力连接到该网络...");
+                    connectWifiAndTransfer(peer, null);
+                    isStopScan = true;
+                }
 
             } else {
-                mTvTip.setTextColor(Color.WHITE);
-                mTvTip.setText("正在努力连接到该网络...");
-                connectWifiAndTransfer(peer, null);
-                isStopScan = true;
+                // 点击的是局域网内的用户
+                // 需要在peer上加一个标记
+                mPeerRequestConn = peer;
+                // 构造UDP消息的内容
+                SignMessage signMessage = new SignMessage();
+                signMessage.setHostAddress(NetworkUtil.getLocalIp(mContext));
+                signMessage.setNickName(SharedPreUtils.getNickName(mContext));
+                signMessage.setAvatarPosition(SharedPreUtils.getAvatar(mContext));
+                signMessage.setMsgContent(" ");
+                signMessage.setCmd(SignMessage.cmd.REQUEST_CONN);
+                String msg = signMessage.convertProtocolStr();
+
+
+                InetAddress dest = null;
+                try {
+                    dest = InetAddress.getByName(mPeerRequestConn.getHostAddress());
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                }
+
+                // 将消息发送给对端
+                mPeerManager.send2Peer(msg, dest, com.merpyzf.transfermanager.common.Const.UDP_PORT);
+                if (mOnPairActionListener != null) {
+                    mOnPairActionListener.onSendConnRequestAction();
+                }
+                Toast.makeText(mContext, "发送建立请求连接", Toast.LENGTH_SHORT).show();
             }
 
         } else {
-            // 点击的是局域网内的用户
-            // 需要在peer上加一个标记
-            mPeerRequestConn = peer;
-            // 构造UDP消息的内容
-            SignMessage signMessage = new SignMessage();
-            signMessage.setHostAddress(NetworkUtil.getLocalIp(mContext));
-            signMessage.setNickName(SharedPreUtils.getNickName(mContext));
-            signMessage.setAvatarPosition(SharedPreUtils.getAvatar(mContext));
-            signMessage.setMsgContent(" ");
-            signMessage.setCmd(SignMessage.cmd.REQUEST_CONN);
-            String msg = signMessage.convertProtocolStr();
 
 
-            InetAddress dest = null;
-            try {
-                dest = InetAddress.getByName(mPeerRequestConn.getHostAddress());
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            }
+            Log.i("wk", "你点击的太快了");
 
-            // 将消息发送给对端
-            mPeerManager.send2Peer(msg, dest, com.merpyzf.transfermanager.common.Const.UDP_PORT);
-            if (mOnPairActionListener != null) {
-                mOnPairActionListener.onSendConnRequestAction();
-            }
-            Toast.makeText(mContext, "发送建立请求连接", Toast.LENGTH_SHORT).show();
         }
-
-
     }
 
 
@@ -274,6 +304,7 @@ public class ScanPeerFragment extends Fragment implements BaseQuickAdapter.OnIte
      */
     public void connectWifiAndTransfer(Peer peer, String pwd) {
 
+        // TODO: 2018/4/18 创建热点的时候提醒用户是否需要关闭移动数据
         WifiConfiguration wifiCfg = null;
         if (null == pwd) {
             wifiCfg = WifiMgr.createWifiCfg(peer.getSsid(), null, WifiMgr.WIFICIPHER_NOPASS);

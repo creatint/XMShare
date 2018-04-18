@@ -3,6 +3,7 @@ package com.merpyzf.xmshare.ui.adapter;
 import android.support.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.merpyzf.transfermanager.entity.Peer;
@@ -34,6 +35,7 @@ public class PeerAdapter extends BaseQuickAdapter<Peer, BaseViewHolder>{
                 .load(Const.AVATAR_LIST.get(item.getAvatarPosition()))
                 .crossFade()
                 .centerCrop()
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(mCivPeerHeader);
 
 

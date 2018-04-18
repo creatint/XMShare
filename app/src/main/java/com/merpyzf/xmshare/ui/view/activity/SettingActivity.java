@@ -4,14 +4,20 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Switch;
 
+import com.bumptech.glide.Glide;
 import com.merpyzf.xmshare.R;
 import com.merpyzf.xmshare.common.Const;
 import com.merpyzf.xmshare.common.base.BaseActivity;
 import com.merpyzf.xmshare.util.SharedPreUtils;
+import com.merpyzf.xmshare.util.ToastUtils;
 
 import butterknife.BindView;
+import butterknife.OnClick;
+import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * 应用设置界面
@@ -73,6 +79,24 @@ public class SettingActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     }
+
+    @OnClick(R.id.rl_clear_cache)
+    public void clickClearCache(View view){
+
+        // 清理Glide查看图片时留下的缓存
+
+        ToastUtils.showShort(mContext,"正在为您进行缓存清理...");
+        Observable.just("")
+                .observeOn(Schedulers.io())
+                .subscribe(s -> {
+
+                    Glide.get(mContext)
+                            .clearDiskCache();
+
+                });
+
+    }
+
 
 
     @Override

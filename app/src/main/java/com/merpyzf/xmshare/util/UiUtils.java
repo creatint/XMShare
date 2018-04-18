@@ -14,7 +14,16 @@ import com.merpyzf.transfermanager.util.timer.OSTimer;
 
 public class UiUtils {
 
+    private static final int CLICK_INTERVAL = 1000;
+    private static long lastClickTime = 0;
 
+    /**
+     * 延时隐藏View并带有渐变得动画
+     *
+     * @param context   上下文
+     * @param view      要隐藏的View
+     * @param delayTime 延时毫秒
+     */
     public static void delayHideView(Activity context, View view, int delayTime) {
 
         //时间3s
@@ -57,5 +66,21 @@ public class UiUtils {
 
     }
 
+    /**
+     * View点击的防抖动
+     *
+     * @return
+     */
+    public static boolean clickValid() {
+        boolean clickable = false;
+        long currentClickTime = System.currentTimeMillis();
+        if (currentClickTime - lastClickTime >= CLICK_INTERVAL) {
+            clickable = true;
+        } else {
+            clickable = false;
+        }
+        lastClickTime = currentClickTime;
+        return clickable;
+    }
 
 }

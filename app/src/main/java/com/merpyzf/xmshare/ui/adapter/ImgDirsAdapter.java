@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.merpyzf.transfermanager.util.FileUtils;
@@ -61,6 +62,7 @@ public class ImgDirsAdapter extends BaseQuickAdapter<PhotoDirBean, BaseViewHolde
             gifIv.setVisibility(View.INVISIBLE);
             Glide.with(mContext)
                     .load(item.getCoverImg())
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .centerCrop()
                     .into(ivCover);
 

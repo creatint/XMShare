@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,7 +72,7 @@ public class TransferSendFragment extends Fragment {
         mUnbinder = ButterKnife.bind(this, rootView);
         mContext = getActivity();
         initUI();
-        initEvent();
+        initEvent(rootView);
 
         mFileTransferAdapter = new FileTransferAdapter<>(R.layout.item_rv_transfer,
                 FileTransferAdapter.TYPE_SEND, App.getSendFileList());
@@ -82,7 +81,7 @@ public class TransferSendFragment extends Fragment {
         return rootView;
     }
 
-    private void initEvent() {
+    private void initEvent(View rootView) {
 
         /**
          * 监听文件的传输的进度，计算当前传输数据的大小
@@ -92,22 +91,18 @@ public class TransferSendFragment extends Fragment {
             public void onTransferProgress(FileInfo fileInfo) {
                 String[] arrayStr = FileUtils.getFileSizeArrayStr((long) (mTotalSize + fileInfo.getLength() * fileInfo.getProgress()));
                 String[] transferSpeed = fileInfo.getTransferSpeed();
-
-                // TODO: 2018/4/17 此处有空指针异常
+                // TODO: 2018/4/18 不明白此处为什么会出现 nullpointer expection,当传输的文件比较多的时候会偶尔触发，暂时通过下面的方法解决这个问题
                 if (null != arrayStr) {
-                    if(mTvSave == null){
-
-                        Log.i("wk", "mTvSave == null");
+                    if (mTvSave == null) {
+                        mTvSave = rootView.findViewById(R.id.tv_save);
                     }
-                    mTvSave.setText(arrayStr[0] + arrayStr[1]+"");
+                    mTvSave.setText(arrayStr[0] + arrayStr[1] + "");
                 }
 
                 if (null != transferSpeed) {
-
-                    if(mTvSpeed == null){
-                        Log.i("wk", "mTvSpeed == null");
+                    if (mTvSpeed == null) {
+                        mTvSpeed = rootView.findViewById(R.id.tv_speed);
                     }
-
                     mTvSpeed.setText(transferSpeed[0] + transferSpeed[1] + "/s");
                 }
 
@@ -122,10 +117,16 @@ public class TransferSendFragment extends Fragment {
 
                 if (fileInfo.getIsLast()) {
                     String[] arrayStr = FileUtils.getFileSizeArrayStr((long) (mTotalSize + fileInfo.getLength() * fileInfo.getProgress()));
-                    // 传输完毕的事件
-                    mRlInfo.setVisibility(View.GONE);
-                    mTvState.setText("传输完成, 本次为您节省 " + arrayStr[0] + arrayStr[1] + " 流量 ");
 
+                    // TODO: 2018/4/18   下面的两个View会偶尔出现空指针异常，原因未查明
+                    if (mRlInfo != null) {
+                        // 传输完毕的事件
+                        mRlInfo.setVisibility(View.GONE);
+                    }
+
+                    if(mTvSave!=null) {
+                        mTvState.setText("传输完成, 本次为您节省 " + arrayStr[0] + arrayStr[1] + " 流量 ");
+                    }
                 }
 
 

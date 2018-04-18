@@ -9,6 +9,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.merpyzf.transfermanager.common.Const;
@@ -106,9 +107,10 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
 
             Glide.with(mContext)
                     .load(thumbPath)
-                    .placeholder(R.drawable.ic_thumb_empty)
+                    .placeholder(R.drawable.ic_holder_video)
+                    .error(R.drawable.ic_holder_video)
                     .centerCrop()
-                    .error(R.drawable.ic_header)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(ivThumb);
 
 
@@ -122,6 +124,7 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
                     .placeholder(R.drawable.ic_thumb_empty)
                     .crossFade()
                     .centerCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .error(R.drawable.ic_header)
                     .into(ivThumb);
 
@@ -165,6 +168,7 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
                             .placeholder(R.drawable.ic_thumb_empty)
                             .crossFade()
                             .centerCrop()
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
                             .error(R.drawable.ic_header)
                             .into(ivThumb);
                 }else {
@@ -177,6 +181,7 @@ public class FileTransferAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> 
                             .placeholder(R.drawable.ic_thumb_empty)
                             .crossFade()
                             .centerCrop()
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
                             .error(R.drawable.ic_header)
                             .into(ivThumb);
 

@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.merpyzf.transfermanager.entity.ApkFile;
@@ -79,8 +80,9 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
                         .load(albumFile)
                         .dontAnimate()
                         .centerCrop()
-                        .placeholder(R.drawable.ic_thumb_empty)
-                        .error(R.drawable.ic_thumb_empty)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .placeholder(R.drawable.ic_holder_music)
+                        .error(R.drawable.ic_holder_music)
                         .into(imageView);
 
 
@@ -114,9 +116,10 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
 
                 Glide.with(mContext)
                         .load(picFile.getPath())
-                        .error(R.drawable.ic_thumb_empty)
-                        .crossFade()
-                        .fitCenter()
+                        .error(R.drawable.ic_holder_image)
+                        .placeholder(R.drawable.ic_holder_image)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .centerCrop()
                         .into(iv);
             }
 
@@ -145,8 +148,9 @@ public class FileAdapter<T> extends BaseQuickAdapter<T, BaseViewHolder> implemen
 
             Glide.with(mContext)
                     .load(new File(videoThumbPath))
-                    .placeholder(R.drawable.ic_thumb_empty)
-                    .error(R.drawable.ic_thumb_empty)
+                    .placeholder(R.drawable.ic_holder_video)
+                    .error(R.drawable.ic_holder_video)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .dontAnimate()
                     .centerCrop()
                     .into(ivVideoThumb);

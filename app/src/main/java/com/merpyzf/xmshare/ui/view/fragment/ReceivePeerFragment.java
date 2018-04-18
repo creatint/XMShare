@@ -120,6 +120,7 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
     private static final String TAG = ReceivePeerFragment.class.getSimpleName();
 
     private static final int REQUEST_CODE_WRITE_SETTINGS = 1;
+
     public ReceivePeerFragment() {
     }
 
@@ -184,20 +185,22 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
 
         mBtnChangedAp.setOnClickListener(v -> {
 
+            if(UiUtils.clickValid()){
+
             // 如果当前是网络wifi环境下才可以切换到热点模式进行传输
             if (NetworkUtil.isWifi(mContext)) {
 
+                // 发送离线通知
                 // 释放UDP局域网内设备发现涉及到的相关资源
                 releaseUdpListener();
                 // 建立AP
                 requestPermissionAndInitAp();
                 // 隐藏切换到热点模式按钮
                 mBtnChangedAp.setVisibility(View.INVISIBLE);
-
                 Toast.makeText(mContext, "正在拼命开启热点中，请等待...", Toast.LENGTH_SHORT).show();
 
             }
-        });
+        }});
     }
 
     /**
@@ -460,23 +463,30 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
     @Override
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
 
-        // 发送同意对端发送文件的回应
-        Peer peer = (Peer) adapter.getItem(position);
-        SignMessage signMessage = new SignMessage();
-        signMessage.setHostAddress(NetworkUtil.getLocalIp(mContext));
-        signMessage.setCmd(SignMessage.cmd.ANSWER_REQUEST_CONN);
-        signMessage.setMsgContent("回应建立连接请求");
-        signMessage.setNickName(SharedPreUtils.getNickName(mContext));
-        signMessage.setAvatarPosition(SharedPreUtils.getAvatar(mContext));
-        String protocolStr = signMessage.convertProtocolStr();
-        try {
-            InetAddress dest = InetAddress.getByName(peer.getHostAddress());
-            mPeerManager.send2Peer(protocolStr, dest, com.merpyzf.transfermanager.common.Const.UDP_PORT);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-    }
+        // 防抖动
+        if (UiUtils.clickValid()) {
 
+            // 发送同意对端发送文件的回应
+            Peer peer = (Peer) adapter.getItem(position);
+            SignMessage signMessage = new SignMessage();
+            signMessage.setHostAddress(NetworkUtil.getLocalIp(mContext));
+            signMessage.setCmd(SignMessage.cmd.ANSWER_REQUEST_CONN);
+            signMessage.setMsgContent(" ");
+            signMessage.setNickName(SharedPreUtils.getNickName(mContext));
+            signMessage.setAvatarPosition(SharedPreUtils.getAvatar(mContext));
+            String protocolStr = signMessage.convertProtocolStr();
+            try {
+                InetAddress dest = InetAddress.getByName(peer.getHostAddress());
+                mPeerManager.send2Peer(protocolStr, dest, com.merpyzf.transfermanager.common.Const.UDP_PORT);
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+        }else {
+
+            Log.i("wk", "你点击太快了");
+        }
+
+    }
 
     @Override
     public void onDestroy() {
@@ -538,7 +548,6 @@ public class ReceivePeerFragment extends Fragment implements BaseQuickAdapter.On
     public void setOnReceivePairActionListener(OnReceivePairActionListener onReceivePairActionListener) {
         this.mOnReceivePairActionListener = onReceivePairActionListener;
     }
-
 
 
     private void requestWriteSettings() {
